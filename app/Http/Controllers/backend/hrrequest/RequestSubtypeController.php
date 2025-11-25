@@ -6,13 +6,15 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Models\hrrequest\RequestSubtypes;
+use App\Models\hrrequest\RequestType;
 
 class RequestSubtypeController extends Controller
 {
     public function index()
     {
         $requestsubtypes = RequestSubtypes::all();
-        return view('backend.request_subtype.index', compact('requestsubtypes'));
+        $requesttypes = RequestType::all();
+        return view('backend.request_subtype.index', compact('requestsubtypes', 'requesttypes'));
     }
 
     public function store(Request $request)
@@ -27,7 +29,7 @@ class RequestSubtypeController extends Controller
 
         RequestSubtypes::create($request->all());
 
-        return redirect()->route('request-subtype.index')->with('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว.');
+        return redirect()->route('request-subtypes.index')->with('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว.');
     }
 
     public function update(Request $request, $id)
@@ -44,7 +46,7 @@ class RequestSubtypeController extends Controller
         $requestsubtype = RequestSubtypes::findOrFail($id);
         $requestsubtype->update($request->all());
 
-        return redirect()->route('request-subtype.index')->with('success', 'อัปเดตข้อมูลเรียบร้อยแล้ว.');
+        return redirect()->route('request-subtypes.index')->with('success', 'อัปเดตข้อมูลเรียบร้อยแล้ว.');
     }
 
     public function destroy($id)
@@ -52,7 +54,7 @@ class RequestSubtypeController extends Controller
         $requestsubtype = RequestSubtypes::findOrFail($id);
         $requestsubtype->delete();
 
-        return redirect()->route('request-subtype.index')->with('success', 'ลบข้อมูลเรียบร้อยแล้ว.');
+        return redirect()->route('request-subtypes.index')->with('success', 'ลบข้อมูลเรียบร้อยแล้ว.');
     }
 
 }

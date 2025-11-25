@@ -96,15 +96,21 @@
                         <li>
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('welcome') }}">หน้าหลัก</a>
                         </li>
-                        <!-- <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('welcome.system') }}">บริการ</a>
-                        </li> -->
                         <li>
+                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="#">Dashboard</a>
+                        </li>
+                        <!-- <li>
+
+                        </li> -->
+
+
+
+                        <!-- <li>
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">HA Guide Book</a>
                         </li>
                         <li>
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">Calendar</a>
-                        </li>
+                        </li> -->
                         <!-- <li>
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">รับสมัครงาน</a>
                         </li>
@@ -115,7 +121,7 @@
                         <!-- <li class="relative group">
                             <button type="button" id="about-btn"
                                 class="navbar-link px-4 py-1 text-base text-black rounded-xl shadow flex items-center transition dropdown-toggle mr-1">
-                                เกี่ยวกับเรา
+                                Reports
                                 <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>

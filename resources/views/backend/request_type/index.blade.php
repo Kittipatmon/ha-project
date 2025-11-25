@@ -52,6 +52,7 @@
                                 data-name_en="{{ $requesttype->name_en }}"
                                 data-description="{{ $requesttype->description }}"
                                 data-is_active="{{ $requesttype->is_active }}"
+                                data-category_id="{{ $requesttype->requestCategory->id ?? '' }}"
                                 title="แก้ไข">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
@@ -91,7 +92,7 @@
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
-        <form method="POST" action="{{ route('request-categories.store') }}" class="px-6 mb-4 space-y-4">
+        <form method="POST" action="{{ route('request-types.store') }}" class="px-6 mb-4 space-y-4">
             @csrf
             <div class="grid grid-cols-2 gap-4">
                 <!-- <div>
@@ -115,7 +116,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ประเภทคำร้อง</label>
-                    <select name="type_id" class="select select-bordered w-full dark:text-black">
+                    <select name="category_id" class="select select-bordered w-full dark:text-black" required>
                         <option value="" disabled selected>-- เลือกประเภทคำร้อง --</option>
                         @foreach($requestcategories as $category)
                             <option value="{{ $category->id }}">{{ $category->name_th }}</option>
@@ -169,18 +170,15 @@
                     </select>
                 </div>
             </div>    
-            <div class="grid grid-cols-1 gap-4">
-                <div>
-                    <label for="edit_type_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ประเภทคำร้อง</label>
-                    <select name="type_id" id="edit_type_id" class="select select-bordered w-full dark:text-black">
-                        <option value="" disabled>-- เลือกประเภทคำร้อง --</option>
-                        @foreach($requestcategories as $category)
-                            <option value="{{ $category->type_id }}">{{ $category->name_th }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            <div>
+                <label for="edit_category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ประเภทคำร้อง</label>
+                <select name="category_id" id="edit_category_id" class="select select-bordered w-full dark:text-black" required>
+                    <option value="" disabled selected>-- เลือกประเภทคำร้อง --</option>
+                    @foreach($requestcategories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name_th }}</option>
+                    @endforeach
+                </select>
             </div>
-            </script>
             <!-- <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ชื่อ (EN)</label>
                 <input name="name_en" id="edit_name_en" type="text" class="input input-bordered w-full" />
@@ -261,10 +259,14 @@
             // document.getElementById('edit_name_en').value = btn.dataset.name_en || '';
             document.getElementById('edit_description').value = btn.dataset.description || '';
             document.getElementById('edit_is_active').value = btn.dataset.is_active || '0';
+            const categorySelect = document.getElementById('edit_category_id');
+            if (categorySelect) {
+                categorySelect.value = btn.dataset.category_id || '';
+            }
             
             const editForm = document.getElementById('editForm');
             // Ensure the route URL is correct
-            editForm.action = `{{ url('request-categories') }}/${id}`;
+            editForm.action = `{{ url('request-types') }}/${id}`;
             
             openModal(editModal);
         });
@@ -278,7 +280,7 @@
             
             document.getElementById('deleteName').textContent = name;
             const deleteForm = document.getElementById('deleteForm');
-            deleteForm.action = `{{ url('request-categories') }}/${id}`;
+            deleteForm.action = `{{ url('request-types') }}/${id}`;
             
             openModal(deleteModal);
         });

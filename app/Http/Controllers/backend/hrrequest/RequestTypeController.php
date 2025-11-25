@@ -29,7 +29,7 @@ class RequestTypeController extends Controller
 
         RequestType::create($request->all());
 
-        return redirect()->route('request-type.index')->with('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว.');
+        return redirect()->route('request-types.index')->with('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว.');
     }
 
     public function update(Request $request, $id)
@@ -46,7 +46,7 @@ class RequestTypeController extends Controller
         $requesttype = RequestType::findOrFail($id);
         $requesttype->update($request->all());
 
-        return redirect()->route('request-type.index')->with('success', 'อัปเดตข้อมูลเรียบร้อยแล้ว.');
+        return redirect()->route('request-types.index')->with('success', 'อัปเดตข้อมูลเรียบร้อยแล้ว.');
     }
 
     public function destroy($id)
@@ -54,6 +54,6 @@ class RequestTypeController extends Controller
         $requesttype = RequestType::findOrFail($id);
         $requesttype->delete();
 
-        return redirect()->route('request-type.index')->with('success', 'ลบข้อมูลเรียบร้อยแล้ว.');
+        return redirect()->route('request-types.index')->with('success', 'ลบข้อมูลเรียบร้อยแล้ว.');
     }
 }

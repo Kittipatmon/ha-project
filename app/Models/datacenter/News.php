@@ -24,5 +24,8 @@ class News extends Model
     protected $casts = [
         'published_date' => 'date',
         'is_active' => 'boolean',
+        'image_path' => 'array',
+        'file_news' => 'array',
     ];
+
 }

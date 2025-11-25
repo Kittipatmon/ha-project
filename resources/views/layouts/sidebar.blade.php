@@ -61,6 +61,17 @@
                 }
             }
         }
+        @if(session('success'))
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ',
+                    text: @json(session('success')),
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            });
+        @endif
     </script>
 </head>
 
@@ -68,7 +79,7 @@
 
     <div class="flex h-screen overflow-hidden">
 
-        <aside id="sidebar" class="w-62 flex-shrink-0 flex flex-col h-full bg-[#0F1115] text-white border-r border-gray-800 shadow-xl z-20 relative">
+        <aside id="sidebar" class="w-62 flex-shrink-0 flex flex-col h-full bg-[#150f0f] text-white border-r border-gray-800 shadow-xl z-20 relative">
 
             <div class="h-20 flex items-center justify-between px-6 border-b border-gray-800 bg-gradient-to-r from-[#0F1115] to-[#1a1d24]">
                 
@@ -114,7 +125,7 @@
                     </button>
 
                     <div id="dropdown-datapublic" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                        <a href="{{ route('news.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
                             - ข้อมูลข่าวสาร
                         </a>
                     </div>
@@ -385,6 +396,9 @@
         }
 
     </script>
-    @stack('scripts')
+    
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    @yield('scripts')
+    
 </body>
 </html>

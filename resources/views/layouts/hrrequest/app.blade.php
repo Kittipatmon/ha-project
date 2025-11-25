@@ -52,7 +52,7 @@
 
 <body class="overflow-x-hidden min-h-screen flex flex-col">
     <div class="flex-1 flex flex-col overflow-x-hidden">
-        @include('layouts.navigation')
+        @include('layouts.hrrequest.navigation')
 
         <!-- Page Heading -->
         @if(isset($breadcrumbs) && is_array($breadcrumbs))

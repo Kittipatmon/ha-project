@@ -40,7 +40,7 @@
             </div>
 
             <div class="lg:col-span-3 lg:pl-8">
-                <h3 class="text-[#003366] font-bold text-xs uppercase tracking-wider mb-4">Quick Links</h3>
+                <h3 class="text-[#D71920] font-bold text-xs uppercase tracking-wider mb-4">Quick Links</h3>
                 <ul class="space-y-2 text-sm text-gray-600">
                     <li><a href="{{ route('welcome') }}" class="hover:text-[#D71920] transition-colors dark:text-white">หน้าหลัก</a></li>
                     <li><a href="#" class="hover:text-[#D71920] transition-colors dark:text-white">ข่าวสาร/ประชาสัมพันธ์</a></li>
@@ -50,7 +50,7 @@
             </div>
 
             <div class="lg:col-span-3">
-                <h3 class="text-[#003366] font-bold text-xs uppercase tracking-wider mb-4">Support</h3>
+                <h3 class="text-[#D71920] font-bold text-xs uppercase tracking-wider mb-4">Support</h3>
                 <ul class="space-y-2 text-sm text-gray-600">
                     <li><a href="#" class="hover:text-[#D71920] transition-colors dark:text-white">ติดต่อเรา</a></li>
                     <li><a href="#" class="hover:text-[#D71920] transition-colors dark:text-white" onclick="Swal.fire('Info', 'Coming Soon', 'info'); return false;">ข้อเสนอแนะ</a></li>
@@ -59,7 +59,7 @@
             </div>
 
              <div class="lg:col-span-2">
-                <h3 class="text-[#003366] font-bold text-xs uppercase tracking-wider mb-4">เกี่ยวกับ</h3>
+                <h3 class="text-[#D71920] font-bold text-xs uppercase tracking-wider mb-4">เกี่ยวกับ</h3>
                 <ul class="space-y-2 text-sm text-gray-600">
                     <li><a href="#" class="hover:text-[#D71920] transition-colors dark:text-white">เว็บไซต์บริษัท</a></li>
                     <li><a href="#" class="hover:text-[#D71920] transition-colors dark:text-white">HAMS Portal</a></li>
