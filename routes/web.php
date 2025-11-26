@@ -20,7 +20,9 @@ use App\Http\Controllers\backend\ApproveController;
 
 
 use App\Http\Controllers\backend\NewsController;
+use App\Http\Controllers\backend\UserController;
 use App\Models\datacenter\News;
+use App\Models\hrrequest\HrRequests;
 
 
 Route::get('/', function () {
@@ -29,12 +31,12 @@ Route::get('/', function () {
         ->get();
 
     $highlight = $newsItems->first();
-    $otherNews = $newsItems->slice(1); // collection without highlight
+    $otherNews = $newsItems->slice(1);
 
     return view('welcome', [
         'highlight' => $highlight,
         'otherNews' => $otherNews,
-        'newsItems' => $newsItems,
+        'newsItems' => $newsItems
     ]);
 })->name('welcome');
 
@@ -45,21 +47,31 @@ Route::get('/dashboard', function () {
 // welcomeSystem
 Route::get('/welcome-system', [SystemController::class, 'welcomeSystem'])->name('welcome.system');
 
-Route::get('/welcomehrrequest', [RequestHRController::class, 'welcomeRequest'])->name('request.hr');
-Route::get('/request-data', [RequestDataController::class, 'welcomeData'])->name('request.data');
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/welcomehrrequest', [RequestHRController::class, 'welcomeRequest'])->name('request.hr');
+    Route::get('/request-data', [RequestDataController::class, 'welcomeData'])->name('request.data');
 
     Route::get('/requestHR', [RequestHRController::class, 'requestHR'])->name('requesthr.index');
     Route::get('/requestHR/list', [RequestHRController::class, 'requesthrList'])->name('requesthr.list');
     Route::get('/requestHR/listall', [RequestHRController::class, 'requesthrlistall'])->name('requesthr.listall');
     Route::get('/requestHR/detail/{id}', [RequestHRController::class, 'detailUser'])->name('requesthr.detailUser');
     Route::post('/requestHR/store', [RequestHRController::class, 'requestStore'])->name('request.store');
+    Route::get('/requestHR/edit/{id}', [RequestHRController::class, 'requestHREdit'])->name('requesthr.edit');
+    Route::post('/requestHR/update/{id}', [RequestHRController::class, 'requestUpdate'])->name('request.update');
 
     //hrlist
+    Route::get('/approvehrlist', [ApproveController::class, 'approvehrlist'])->name('approve.approvehrlist');
+    Route::get('/detailHR/{id}', [RequestHRController::class, 'detailHr'])->name('requesthr.detailhr');
+    Route::post('/hrCheck/{id}', [ApproveController::class, 'hrCheck'])->name('approve.hrCheck');
+    //hrlistall
     Route::get('/approvehrlistall', [ApproveController::class, 'approvehrlistall'])->name('approve.approvehrlistall');
 
+    //manager
+    Route::get('/approvemanalist', [ApproveController::class, 'approvemanalist'])->name('approve.approvemanalist');
+    Route::get('/detailMana/{id}', [RequestHRController::class, 'detailMana'])->name('requesthr.detailMana');
+    Route::post('/managerCheck/{id}', [ApproveController::class, 'managerCheck'])->name('approve.managerCheck');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -85,6 +97,9 @@ Route::middleware('auth')->group(function () {
     //News
     Route::resource('news', NewsController::class);
     Route::get('news/detail/{id}', [NewsController::class, 'detail'])->name('news.detail');
+
+    //profile user
+    Route::get('users/profile/{id}', [UserController::class, 'profileUser'])->name('users.profile');
 
 });
 // 

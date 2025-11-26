@@ -5,9 +5,10 @@
         <ul>
             <li><a href="{{ route('welcome') }}">Home</a></li>
             <li><a href="{{ route('request.hr') }}">Request HR</a></li>
+            <li><a href="{{ route('requesthr.list') }}">รายการรอดำเนินการ</a></li>
             <li>
                 <a class="font-semibold text-gray-800 dark:text-red-500">
-                    Request HR Form
+                    แก้ไขคำร้องขอ HR เลขที่ {{ $hrrequest->request_code }}
                 </a>
             </li>
         </ul>
@@ -16,25 +17,13 @@
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-clipboard-list text-error"></i> Request HR Form
+                    <i class="fa-solid fa-pen-to-square text-warning"></i> แก้ไขคำร้องขอ HR
                 </h1>
-                <p class="text-sm text-gray-500">แจ้งร้องขอดำเนินการเอกสารฝ่ายทรัพยากรบุคคล</p>
+                <p class="text-sm text-gray-500">แก้ไขข้อมูลเอกสารฝ่ายทรัพยากรบุคคล</p>
             </div>
-            <div class="text-xs mt-2 md:mt-0 bg-red-500 text-white px-3 py-1 rounded-full font-medium shadow-sm">
-                วันที่ร้องขอ: {{ date('d/m/Y') }}
+            <div class="text-xs mt-2 md:mt-0 bg-warning text-white px-3 py-1 rounded-full font-medium shadow-sm">
+                วันที่ร้องขอ: {{ \Carbon\Carbon::parse($hrrequest->submitted_at)->format('d/m/Y') }}
             </div>
-            <!-- <div class="dropdown dropdown-end">
-                <div tabindex="0" role="button" class="btn btn-primary btn-sm text-white shadow-lg shadow-primary/30">
-                    <i class="fa-solid fa-list-check"></i> Action 
-                    <span class="badge badge-warning badge-sm border-0">0</span> 
-                    <span class="badge badge-success badge-sm border-0 text-white">0</span>
-                </div>
-                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow-xl border border-gray-100 mt-2">
-                    <li><a class="flex justify-between">รายการรออนุมัติ <span class="badge badge-warning badge-sm">0</span></a></li>
-                    <li><a class="flex justify-between">รายการที่เสร็จสิ้น <span class="badge badge-success badge-sm text-white">0</span></a></li>
-                    <li><a class="flex justify-between">รายการทั้งหมด <span class="badge badge-info badge-sm text-white">0</span></a></li>
-                </ul>
-            </div> -->
         </div>
 
         <div class="card bg-base-100 ">
@@ -51,9 +40,9 @@
                                 <span class="label-text">หมวดคำร้อง (Request Category) <span class="text-error">*</span></span>
                             </label>
                             <select id="categorySelect" name="category_id" class="select select-bordered w-full transition-colors">
-                                <option disabled selected value="">เลือกหมวดคำร้อง</option>
+                                <option disabled value="">เลือกหมวดคำร้อง</option>
                                 @foreach ($Requestcategories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name_th }}</option>
+                                    <option value="{{ $category->id }}" {{ $hrrequest->category_id == $category->id ? 'selected' : '' }}>{{ $category->name_th }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -62,8 +51,13 @@
                             <label class="label font-medium">
                                 <span class="label-text">ประเภทคำร้อง (Request Type) <span class="text-error">*</span></span>
                             </label>
-                            <select id="typeSelect" name="type_id" class="select select-bordered w-full transition-colors" disabled>
-                                <option disabled selected value="">เลือกหมวดคำร้องก่อน</option>
+                            <select id="typeSelect" name="type_id" class="select select-bordered w-full transition-colors">
+                                <option disabled value="">เลือกหมวดคำร้องก่อน</option>
+                                @foreach ($Requesttypes as $type)
+                                    @if($type->category_id == $hrrequest->category_id)
+                                        <option value="{{ $type->id }}" {{ $hrrequest->type_id == $type->id ? 'selected' : '' }}>{{ $type->name_th }}</option>
+                                    @endif
+                                @endforeach
                             </select>
                         </div>
 
@@ -71,8 +65,13 @@
                             <label class="label font-medium">
                                 <span class="label-text">ตัวเลือกรายละเอียด (Request Subtype) <span class="text-error">*</span></span>
                             </label>
-                            <select id="subtypeSelect" name="subtype_id" class="select select-bordered w-full transition-colors" disabled>
-                                <option disabled selected value="">เลือกประเภทคำร้องก่อน</option>
+                            <select id="subtypeSelect" name="subtype_id" class="select select-bordered w-full transition-colors">
+                                <option disabled value="" {{ is_null($hrrequest->subtype_id) ? 'selected' : '' }}>เลือกประเภทคำร้องก่อน</option>
+                                @foreach ($Requestsubtypes as $subtype)
+                                    @if($subtype->type_id == $hrrequest->type_id)
+                                        <option value="{{ $subtype->id }}" {{ $hrrequest->subtype_id == $subtype->id ? 'selected' : '' }}>{{ $subtype->name_th }}</option>
+                                    @endif
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -85,30 +84,37 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2">
                                     <label class="label font-medium">เหตุผลที่ขอดำเนินการ</label>
-                                    <textarea name="edit_reason" class="textarea textarea-bordered w-full h-24" placeholder="ระบุสาเหตุ..."></textarea>
+                                    <textarea name="edit_reason" class="textarea textarea-bordered w-full h-24" placeholder="ระบุสาเหตุ...">{{ $hrrequest->timeEdit->edit_reason ?? '' }}</textarea>
                                 </div>
                                 
                                 <div class="form-control">
                                     <label class="label">วันที่เริ่มต้น</label>
-                                    <input type="date" name="edit_start_date" class="input input-bordered" />
+                                    <input type="date" name="edit_start_date" class="input input-bordered" value="{{ $hrrequest->timeEdit->edit_start_date ?? '' }}" />
                                 </div>
                                 <div class="form-control">
                                     <label class="label">เวลาเริ่มต้น</label>
-                                    <input type="time" name="edit_start_time" id="edit_start_time" class="input input-bordered" />
+                                    <input type="time" name="edit_start_time" id="edit_start_time" class="input input-bordered" value="{{ $hrrequest->timeEdit->edit_start_time ?? '' }}" />
                                 </div>
                                 
                                 <div class="form-control">
                                     <label class="label">วันที่สิ้นสุด</label>
-                                    <input type="date" name="edit_end_date" class="input input-bordered" />
+                                    <input type="date" name="edit_end_date" class="input input-bordered" value="{{ $hrrequest->timeEdit->edit_end_date ?? '' }}" />
                                 </div>
                                 <div class="form-control">
                                     <label class="label">เวลาสิ้นสุด</label>
-                                    <input type="time" name="edit_end_time" id="edit_end_time" class="input input-bordered" />
+                                    <input type="time" name="edit_end_time" id="edit_end_time" class="input input-bordered" value="{{ $hrrequest->timeEdit->edit_end_time ?? '' }}" />
                                 </div>
                             </div>
 
                             <div class="form-control mt-4">
                                 <label class="label font-medium">แนบไฟล์หลักฐาน</label>
+                                @if(isset($hrrequest->timeEdit->timefile))
+                                    <div class="mb-2">
+                                        <a href="{{ asset($hrrequest->timeEdit->timefile) }}" target="_blank" class="link link-primary text-sm">
+                                            <i class="fa-solid fa-paperclip"></i> ไฟล์แนบเดิม
+                                        </a>
+                                    </div>
+                                @endif
                                 <div class="flex items-center gap-4">
                                     <input type="file" id="fileInput" name="timefile" class="file-input file-input-bordered file-input-primary w-full max-w-md" accept="image/*,application/pdf" />
                                 </div>
@@ -133,25 +139,23 @@
                                 <div class="form-control">
                                     <label class="label">เพศ</label>
                                     <select name="uniform_gender" class="select select-bordered w-full">
-                                        <option disabled selected value="">เลือกเพศ</option>
-                                        <option value="ชาย">ชาย</option>
-                                        <option value="หญิง">หญิง</option>
+                                        <option disabled value="" {{ !isset($hrrequest->uniform->uniform_gender) ? 'selected' : '' }}>เลือกเพศ</option>
+                                        <option value="ชาย" {{ ($hrrequest->uniform->uniform_gender ?? '') == 'ชาย' ? 'selected' : '' }}>ชาย</option>
+                                        <option value="หญิง" {{ ($hrrequest->uniform->uniform_gender ?? '') == 'หญิง' ? 'selected' : '' }}>หญิง</option>
                                     </select>
                                 </div>
                                 <div class="form-control">
                                     <label class="label">ขนาดชุด</label>
                                     <select name="uniform_size" class="select select-bordered w-full">
-                                        <option disabled selected value="">เลือกขนาด</option>
-                                        <option value="S">S</option>
-                                        <option value="M">M</option>
-                                        <option value="L">L</option>
-                                        <option value="XL">XL</option>
-                                        <option value="XXL">XXL</option>
+                                        <option disabled value="" {{ !isset($hrrequest->uniform->uniform_size) ? 'selected' : '' }}>เลือกขนาด</option>
+                                        @foreach(['S', 'M', 'L', 'XL', 'XXL'] as $size)
+                                            <option value="{{ $size }}" {{ ($hrrequest->uniform->uniform_size ?? '') == $size ? 'selected' : '' }}>{{ $size }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="label">เหตุผลที่ขอชุด</label>
-                                    <textarea name="uniform_reason" class="textarea textarea-bordered w-full" placeholder="ระบุเหตุผล..."></textarea>
+                                    <textarea name="uniform_reason" class="textarea textarea-bordered w-full" placeholder="ระบุเหตุผล...">{{ $hrrequest->uniform->uniform_reason ?? '' }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -162,7 +166,23 @@
                             <label class="label font-medium">รายการอุปกรณ์ที่ร้องขอ</label>
                             
                             <div id="safetyListContainer" class="space-y-3">
-                                </div>
+                                @if($hrrequest->safetyItems && $hrrequest->safetyItems->count() > 0)
+                                    @foreach($hrrequest->safetyItems as $item)
+                                        <div class="flex gap-2 items-center animate-fade-in-down">
+                                            <div class="relative w-full">
+                                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                    <i class="fa-solid fa-helmet-safety text-gray-400"></i>
+                                                </div>
+                                                <input type="text" name="safety_item_name[]" value="{{ $item->item_name }}" class="input input-bordered pl-10 w-full" placeholder="ชื่ออุปกรณ์" />
+                                            </div>
+                                            <input type="number" name="safety_item_quantity[]" min="1" value="{{ $item->quantity }}" class="input input-bordered w-24 text-center" />
+                                            <button type="button" class="btn btn-square btn-outline btn-error btn-sm btn-remove-safety">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
 
                             <button type="button" id="btnAddSafety" class="btn btn-outline btn-info btn-sm">
                                 <i class="fa-solid fa-plus"></i> เพิ่มรายการ
@@ -173,7 +193,7 @@
                         <div id="sectionCertificateReason" class="hidden space-y-4 mt-4">
                             <div class="form-control">
                                 <label class="label font-medium">เหตุผลที่ขอเอกสาร Certificate</label>
-                                <textarea name="certificate_reason" class="textarea textarea-bordered w-full h-24" placeholder="ระบุเหตุผล..."></textarea>
+                                <textarea name="certificate_reason" class="textarea textarea-bordered w-full h-24" placeholder="ระบุเหตุผล...">{{ $hrrequest->certificate->certificate_reason ?? '' }}</textarea>
                             </div>
                         </div>    
 
@@ -181,7 +201,7 @@
                         <div id="sectionWelfareReason" class="hidden space-y-4 mt-4">
                             <div class="form-control">
                                 <label class="label font-medium">เหตุผลที่ขอเอกสาร Welfare Request</label>
-                                <textarea name="welfare_reason" class="textarea textarea-bordered w-full h-24" placeholder="ระบุเหตุผล..."></textarea>
+                                <textarea name="welfare_reason" class="textarea textarea-bordered w-full h-24" placeholder="ระบุเหตุผล...">{{ $hrrequest->welfare->welfare_reason ?? '' }}</textarea>
                             </div>
                         </div>
 
@@ -189,18 +209,18 @@
                         <div id="sectionSafetyReason" class="hidden space-y-4 mt-4">
                             <div class="form-control">
                                 <label class="label font-medium">เหตุผลที่ขอเอกสาร Safety</label>
-                                <textarea name="safety_reason" class="textarea textarea-bordered w-full h-24" placeholder="ระบุเหตุผล..."></textarea>
+                                <textarea name="safety_reason" class="textarea textarea-bordered w-full h-24" placeholder="ระบุเหตุผล...">{{ $hrrequest->safetyDoc->safety_reason ?? '' }}</textarea>
                             </div>
                         </div>
 
                     </div>
 
                     <div class="card-actions justify-end mt-8 pt-4 border-t border-gray-100">
-                        <button type="button" class="btn btn-secondary">
+                        <a href="{{ route('requesthr.list') }}" class="btn btn-secondary">
                             <i class="fa-solid fa-xmark"></i> ยกเลิก
-                        </button>
+                        </a>
                         <button type="button" class="btn btn-success px-8 text-white shadow-lg shadow-primary/30" onclick="submitForm()">
-                            <i class="fa-solid fa-save"></i> บันทึกข้อมูล
+                            <i class="fa-solid fa-save"></i> บันทึกการแก้ไข
                         </button>
                     </div>
                 </form>
@@ -279,7 +299,7 @@
         // ฟังก์ชันรีเซ็ต Dropdown
         function resetSelect(selectEl, placeholder) {
             selectEl.innerHTML = `<option disabled selected value="">${placeholder}</option>`;
-            selectEl.disabled = true;
+            // selectEl.disabled = true; // Don't disable in edit mode if populated
         }
 
         // ==========================================
@@ -296,8 +316,7 @@
             const selectedTypeText = selectedTypeOption ? selectedTypeOption.text : "";
 
             // 3.2 เช็คเงื่อนไขเพื่อแสดงผล (*** แก้เลข ID และข้อความให้ตรงกับ DB ของคุณ ***)
-            // โครงสร้างถูกเปลี่ยนเป็น if เดี่ยวๆ เพื่อให้แสดงผลซ้อนกันได้ (เช่น เหตุผล + รายการอุปกรณ์)
-
+            
             // --- แสดงผลตามหมวดหมู่ (Category) ---
 
             // ถ้าเลือกหมวด "Safety/ความปลอดภัย" (ID=3) ให้แสดงฟิลด์เหตุผลเสมอ
@@ -331,13 +350,6 @@
             if (selectedTypeText === 'ใบร้องขอสวัสดิการ') {
                 if(sections.welfareReason) sections.welfareReason.classList.remove('hidden');
             }
-            
-            // --- ตัวอย่างเพิ่มเติม: เช็คลึกถึงระดับ Type หรือ Subtype ---
-            /*
-            if (typeId == '15') { 
-                // ถ้าเลือกประเภท ID 15 ให้โชว์ฟอร์มเฉพาะ
-            }
-            */
         }
 
         // ==========================================
@@ -405,11 +417,8 @@
 
 
         // ==========================================
-        // 5. SAFETY & FILE LOGIC (คงเดิม)
+        // 5. SAFETY & FILE LOGIC
         // ==========================================
-        
-        // ... (ส่วน Safety List และ File Preview ใช้โค้ดเดิมได้เลยครับ) ...
-        // เพื่อความกระชับ ผมละไว้ในฐานที่เข้าใจ ถ้าต้องการให้แปะซ้ำแจ้งได้ครับ
         
         // --- Safety List Logic ---
         const safetyContainer = document.getElementById('safetyListContainer');
@@ -436,7 +445,18 @@
             safetyContainer.appendChild(div);
         }
         if(safetyContainer) {
-            addSafetyItem(); 
+            // If empty (no existing items), add one
+            if(safetyContainer.children.length === 0) {
+                addSafetyItem(); 
+            } else {
+                // Attach events to existing items
+                document.querySelectorAll('.btn-remove-safety').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        if (safetyContainer.children.length > 1) this.closest('.flex').remove();
+                        else Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'ต้องมีรายการอย่างน้อย 1 รายการ', timer: 1500, showConfirmButton: false });
+                    });
+                });
+            }
             btnAddSafety.addEventListener('click', addSafetyItem);
         }
 
@@ -475,6 +495,9 @@
                 previewContainer.classList.add('hidden');
             });
         }
+
+        // Initialize UI on load
+        updateFormUI();
     });
 
     // Global Submit
@@ -486,8 +509,8 @@
         }
 
         Swal.fire({
-            title: 'บันทึกข้อมูล?',
-            text: "ต้องการยืนยันการทำรายการหรือไม่",
+            title: 'บันทึกการแก้ไข?',
+            text: "ต้องการยืนยันการแก้ไขข้อมูลหรือไม่",
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'ยืนยัน',
@@ -499,7 +522,7 @@
                 // Add CSRF token
                 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                 
-                fetch("{{ route('request.store') }}", {
+                fetch("{{ route('request.update', $hrrequest->hr_request_id) }}", {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': token,
@@ -510,7 +533,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        Swal.fire('บันทึกสำเร็จ!', 'ระบบได้รับข้อมูลเรียบร้อยแล้ว', 'success')
+                        Swal.fire('บันทึกสำเร็จ!', 'แก้ไขข้อมูลเรียบร้อยแล้ว', 'success')
                         .then(() => {
                             window.location.href = "{{ route('requesthr.list') }}";
                         });

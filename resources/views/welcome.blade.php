@@ -224,6 +224,7 @@ body {
             <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Card 1: HR Requests -->
                 <div class="service-card rounded-2xl p-4 flex flex-col">
+                    @auth
                     <a href="{{ route('request.hr') }}">
                         <div class="service-image-wrapper mb-3">
                             <img src="/images/welcome/reporting.jpg" alt="Reporting System"
@@ -237,9 +238,27 @@ body {
                         <h3 class="service-title text-white text-sm mb-1">HR Request System</h3>
                         <p class="service-desc text-gray-400 mb-3">คำร้องทุกประเภท (แก้ไขเวลา, ใบรับรองเงินเดือน,
                             สวัสดิการ ฯลฯ) พร้อมติดตามสถานะ</p>
-                        <div class="mt-auto"><a href="#" class="service-btn inline-flex items-center gap-1">Open <i
-                                    class="fa-solid fa-arrow-right text-[10px]"></i></a></div>
+                        <div class="mt-auto"><span class="service-btn inline-flex items-center gap-1">Open <i
+                                    class="fa-solid fa-arrow-right text-[10px]"></i></span></div>
                     </a>
+                    @else
+                    <div class="cursor-pointer login-open-btn">
+                        <div class="service-image-wrapper mb-3">
+                            <img src="/images/welcome/reporting.jpg" alt="Reporting System"
+                                onerror="this.src='https://source.unsplash.com/600x400?report,data';">
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] text-gray-300 flex items-center gap-1"><i
+                                    class="fa-regular fa-file-lines text-custom-red"></i> HR Requests</span>
+                            <span class="service-badge">OPEN</span>
+                        </div>
+                        <h3 class="service-title text-white text-sm mb-1">HR Request System</h3>
+                        <p class="service-desc text-gray-400 mb-3">คำร้องทุกประเภท (แก้ไขเวลา, ใบรับรองเงินเดือน,
+                            สวัสดิการ ฯลฯ) พร้อมติดตามสถานะ</p>
+                        <div class="mt-auto"><span class="service-btn inline-flex items-center gap-1">Open <i
+                                    class="fa-solid fa-arrow-right text-[10px]"></i></span></div>
+                    </div>
+                    @endauth
                 </div>
 
                 <!-- Card 2: Manpower -->
@@ -334,6 +353,7 @@ body {
                 </div>
 
                 <!-- Card 7: Data Management -->
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                 <div class="service-card rounded-2xl p-4 flex flex-col">
                     <a href="{{ route('request.data') }}">
                         <div class="service-image-wrapper mb-3">
@@ -370,6 +390,7 @@ body {
                             class="service-btn inline-flex items-center gap-1 opacity-40 cursor-not-allowed">ดูรายละเอียด
                             <i class="fa-solid fa-arrow-right text-[10px]"></i></a></div>
                 </div>
+                @endif
             </div>
         </div>
     </div>

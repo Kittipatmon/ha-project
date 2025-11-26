@@ -165,7 +165,7 @@
                         </div>
                     </button>
                     <div id="profile-menu" class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden-custom">
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('users.profile', ['id' => auth()->id()]) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Profile') }}
                         </a>
                         <form method="POST" action="{{ route('logout') }}">

@@ -75,6 +75,46 @@ class HrRequests extends Model
         return $this->belongsTo(User::class, 'approver_hr_id', 'id');
     }
 
+    public function timeEdits()
+    {
+        return $this->hasMany(Request_Time_Edits::class, 'request_id', 'hr_request_id');
+    }
+
+    public function timeEdit()
+    {
+        return $this->hasOne(Request_Time_Edits::class, 'request_id', 'hr_request_id');
+    }
+
+    public function uniform()
+    {
+        return $this->hasOne(Request_Uniforms::class, 'request_id', 'hr_request_id');
+    }
+
+    public function safetyItems()
+    {
+        return $this->hasMany(Request_Safety_Items::class, 'request_id', 'hr_request_id');
+    }
+
+    public function safetyDoc()
+    {
+        return $this->hasOne(Request_Safety_Docs::class, 'request_id', 'hr_request_id');
+    }
+
+    public function certificate()
+    {
+        return $this->hasOne(RequestCertificates::class, 'request_id', 'hr_request_id');
+    }
+
+    public function welfare()
+    {
+        return $this->hasOne(RequestWelfare::class, 'request_id', 'hr_request_id');
+    }
+    
+    public function welfares()
+    {
+        return $this->hasOne(RequestWelfare::class, 'request_id', 'hr_request_id');
+    }
+
 
     const STATUS_PENDING = 'pending';
     const STATUS_APPROVED_MANAGER = 'approved_manager';

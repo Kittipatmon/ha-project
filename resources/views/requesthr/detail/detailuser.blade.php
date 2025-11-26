@@ -1,5 +1,4 @@
-@extends('layouts.app')
-
+@extends('layouts.hrrequest.app')
 @section('content')
 <div
     class="mt-6 mb-3 p-6 border border-gray-300 dark:border-gray-200/40 rounded-xl bg-base-100 dark:bg-gray-800 shadow-lg">
@@ -81,17 +80,68 @@
                         </div>
                     </div>
 
+                    <!-- รายละเอียดเมื่อมีการขอแก้ไขเวลา -->
+                    @if($hrrequest->timeEdits && $hrrequest->timeEdits->count())
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            @foreach($hrrequest->timeEdits as $timeEdit)
+                                <div>
+                                    <div class="text-xs text-base-content/60 mb-1">วันที่เริ่มต้น</div>
+                                    <div class="text-sm">
+                                        {{ \Carbon\Carbon::parse($timeEdit->edit_start_date)->format('d/m/Y') }} 
+                                        เวลา : {{ \Carbon\Carbon::parse($timeEdit->edit_start_time)->format('H:i') }}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-base-content/60 mb-1">วันที่สิ้นสุด</div>
+                                    <div class="text-sm">
+                                        {{ \Carbon\Carbon::parse($timeEdit->edit_end_date)->format('d/m/Y') }}
+                                        เวลา : {{ \Carbon\Carbon::parse($timeEdit->edit_end_time)->format('H:i') }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="space-y-4">
                         <div>
                             <div class="text-xs text-base-content/60 mb-1">รายละเอียด</div>
                             <div class="text-sm">
-                                {{ $hrrequest->detail ?? '-' }}
+                                @if($hrrequest->detail)
+                                    {!! nl2br(e($hrrequest->detail)) !!}
+                                @endif
+
+                                @if(!empty($hrrequest->welfares->welfare_reason))
+                                        <div>{{ $hrrequest->welfares->welfare_reason ?? '-' }}</div>
+                                @endif
+                                <!-- certificates -->
+
+                                @if(!empty($hrrequest->certificate->certificate_reason))
+                                    <div>{{ $hrrequest->certificate->certificate_reason ?? '-' }}</div>
+                                @endif
+
+                                
+                             
                             </div>
                         </div>
                     </div>
+                    @if($hrrequest->timeEdits && $hrrequest->timeEdits->count())
+                     <div>
+                        ไฟล์แนบ :
+                            @foreach($hrrequest->timeEdits as $timeEdit)
+                                @if($timeEdit->timefile)
+                                    <a href="{{ asset($timeEdit->timefile) }}" target="_blank" class="text-error hover:underline">
+                                        {{ basename($timeEdit->timefile) }}
+                                    </a>
+                                @endif
+                            @endforeach
+                        </div>
+                        @endif
                 </div>
             </div>
+        </div>
+        
 
+        <div class="lg:col-span-5 flex flex-col gap-6">
             <div class="card bg-base-100 shadow-sm border border-gray-300 dark:border-gray-200/40 rounded-xl">
                 <div class="card-body p-6">
                     <h2 class="card-title text-base font-bold mb-2">สถานะการอนุมัติ</h2>
@@ -104,13 +154,30 @@
                                 <span class="px-2 py-1 rounded-full badge {{ $hrrequest->approver_manager_status_color }} badge-sm">
                                     {{ $hrrequest->approver_manager_status_label }}
                                 </span>
+                                
                             </div>
                         </div>
                         <div class="text-right">
                             <div class="font-bold text-sm">
                                 {{ $hrrequest->approverManager->fullname ?? '-' }}
                             </div>
-                            <div class="text-xs text-base-content/60">รอดำเนินการ</div>
+                            <div class="text-xs text-base-content/60">
+                                @if($hrrequest->approver_manager_status == '1')
+                                <span class="text-green-500 font-semibold">
+                                    {{ $hrrequest->approver_manager_comment ?? '-' }}
+                                </span>
+                                @endif
+                                @if($hrrequest->approver_manager_status == '2')
+                                <span class="text-red-500 font-semibold">
+                                    {{ $hrrequest->approver_manager_comment ?? '-' }}
+                                </span>
+                                @endif
+                                @if($hrrequest->approver_manager_status == '3')
+                                <span class="text-orange-500 font-semibold">
+                                    {{ $hrrequest->approver_manager_comment ?? '-' }}
+                                </span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <div class="flex justify-between items-center border-b border-base-200 pb-4 mb-2">
@@ -123,6 +190,11 @@
                                     class="px-2 py-1 rounded-full badge {{ $hrrequest->approver_hr_status_color }} badge-sm">
                                     {{ $hrrequest->approver_hr_status_label }}
                                 </span>
+                                @if($hrrequest->approver_hr_status == '3')    
+                                <a href="{{ route('requesthr.edit', $hrrequest->hr_request_id ) }}" class="btn btn-warning btn-sm ml-2 hover:underline" title="ห้ามกดตอนนี้">
+                                    <i class="fas fa-edit"></i> แก้ไขข้อมูล
+                                </a>
+                                @endif
                             </div>
                         </div>
                         <div class="text-right">
@@ -130,7 +202,21 @@
                                 {{ $hrrequest->approverhr->fullname ?? '-' }}
                             </div>
                             <div class="text-xs text-base-content/60">
-                                {{ $hrrequest->approver_hr_status_label }}
+                                @if($hrrequest->approver_hr_status == '1')
+                                <span class="text-green-500 font-semibold">
+                                    {{ $hrrequest->approver_hr_comment ?? '-' }}
+                                </span>
+                                @endif
+                                @if($hrrequest->approver_hr_status == '2')
+                                <span class="text-red-500 font-semibold">
+                                    {{ $hrrequest->approver_hr_comment ?? '-' }}
+                                </span>
+                                @endif
+                                @if($hrrequest->approver_hr_status == '3')
+                                <span class="text-orange-500 font-semibold">
+                                    {{ $hrrequest->approver_hr_comment ?? '-' }}
+                                </span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -139,9 +225,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="lg:col-span-5 flex flex-col gap-6">
             @if($hrrequest->type_id == '9')
             <div class="card bg-base-100 shadow-sm border border-gray-300 dark:border-gray-200/40 rounded-xl">
                 <div class="card-body p-6">

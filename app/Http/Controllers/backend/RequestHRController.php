@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+use App\Models\User;
+use App\Models\Department;
+use App\Models\Division;
+use App\Models\Section;
 
 class RequestHRController extends Controller
 {
@@ -31,8 +35,28 @@ class RequestHRController extends Controller
             ['label' => 'Request HR', 'url' => null],
         ];
 
+        $hrrequestsCount = HrRequests::where('employee_id', Auth::id())
+        ->count();
+        $hrrequests = HrRequests::where('employee_id', Auth::id())
+            ->whereIn('status', [
+                HrRequests::STATUS_PENDING, 
+                HrRequests::STATUS_APPROVED_MANAGER, 
+                HrRequests::STATUS_APPROVED_HR, 
+                HrRequests::STATUS_RETURNED
+            ])
+            ->count();
 
-        return view('requesthr.welcomerequest', compact('breadcrumbs'));
+        $hrrequestapprovemanacount = HrRequests::where('approver_manager_id', Auth::id())
+            // ->where('approver_manager_status', HrRequests::APPROVER_MANAGER_PENDING)
+            ->where('status', HrRequests::STATUS_PENDING)
+            ->count();
+
+            $hrrequestapprovehrcount = HrRequests::where('status', HrRequests::STATUS_APPROVED_HR)
+            ->count();
+
+        $hrrequestCounts = HrRequests::count();
+
+        return view('requesthr.welcomerequest', compact('breadcrumbs', 'hrrequestsCount' , 'hrrequests', 'hrrequestapprovemanacount' , 'hrrequestapprovehrcount' , 'hrrequestCounts'));
     }
 
     public function requestHR()
@@ -79,6 +103,53 @@ class RequestHRController extends Controller
             $hrRequest->subtype_id = $request->subtype_id;
             $hrRequest->status = HrRequests::STATUS_PENDING;
             $hrRequest->submitted_at = now();
+
+            // Determine approver_manager_id based on creator's level_user
+            $currentUser = Auth::user();
+            $approverManagerId = null;
+
+            if ($currentUser) {
+                $level = (int) $currentUser->level_user;
+
+                if (in_array($level, [1,2,3,4,5,6], true)) {
+                    $approver = User::where('level_user', User::LEVEL_USER_DEPT_MGR)
+                        ->where('department_id', $currentUser->department_id)
+                        ->where('division_id', $currentUser->division_id)
+                        ->first();
+
+                    if (! $approver) {
+                        $approver = User::where('level_user', User::LEVEL_USER_DEPT_MGR)
+                            ->where('department_id', $currentUser->department_id)
+                            ->first();
+                    }
+
+                    if (! $approver) {
+                        $approver = User::where('level_user', User::LEVEL_USER_DIVISION_MGR)
+                            ->where('division_id', $currentUser->division_id)
+                            ->first();
+                    }
+
+                    if (! $approver) {
+                        $approver = User::where('level_user', User::LEVEL_USER_C_LEVEL)->first();
+                    }
+
+                    $approverManagerId = $approver?->id;
+
+                } elseif (in_array($level, [7,8], true)) {
+                    $approver = User::where('level_user', User::LEVEL_USER_C_LEVEL)
+                        ->where('section_id', $currentUser->section_id)
+                        ->first();
+
+                    if (! $approver) {
+                        $approver = User::where('level_user', User::LEVEL_USER_C_LEVEL)->first();
+                    }
+
+                    $approverManagerId = $approver?->id;
+                }
+            }
+
+            $hrRequest->approver_manager_id = $approverManagerId;
+            $hrRequest->approver_manager_status = HrRequests::APPROVER_MANAGER_PENDING;
             
             // Determine Title based on type
             $type = RequestType::find($request->type_id);
@@ -97,8 +168,10 @@ class RequestHRController extends Controller
                 $timeEdit->edit_end_time = $request->edit_end_time;
                 
                 if ($request->hasFile('timefile')) {
-                    $path = $request->file('timefile')->store('public/hr_requests/time_edits');
-                    $timeEdit->timefile = str_replace('public/', '', $path);
+                    $file = $request->file('timefile');
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path('files/hrrequest'), $filename);
+                    $timeEdit->timefile = 'files/hrrequest/' . $filename;
                 }
                 
                 $timeEdit->created_at = now();
@@ -170,7 +243,15 @@ class RequestHRController extends Controller
         }
     }
 
+    public function requestHREdit($id)
+    {
+        $hrrequest = HrRequests::findOrFail($id);
+        $Requestcategories = RequestCategories::all();
+        $Requesttypes = RequestType::all();
+        $Requestsubtypes = RequestSubtypes::all();
 
+        return view('requesthr.requesthredit', compact('hrrequest', 'Requestcategories', 'Requesttypes', 'Requestsubtypes'));
+    }
 
 
     public function requesthrList()
@@ -185,6 +266,7 @@ class RequestHRController extends Controller
                     HrRequests::STATUS_APPROVED_HR, 
                     HrRequests::STATUS_RETURNED
                 ])
+                ->orderBy('created_at', 'desc')
                 ->get();
         }
         return view('requesthr.requesthrlist', compact('hrrequests'));
@@ -204,5 +286,196 @@ class RequestHRController extends Controller
         $hrrequest = HrRequests::findOrFail($id);
 
         return view('requesthr.detail.detailuser', compact('hrrequest'));
+    }
+
+    public function detailMana($id)
+    {
+        $hrrequest = HrRequests::findOrFail($id);
+
+        return view('requesthr.detail.detailmana', compact('hrrequest'));
+    }
+
+    public function detailHr($id)
+    {
+        $hrrequest = HrRequests::findOrFail($id);
+
+        return view('requesthr.detail.detailhr', compact('hrrequest'));
+    }
+
+
+    public function requestHrCancel(Request $request, $id)
+    {
+        $hrrequest = HrRequests::findOrFail($id);
+
+        if ($hrrequest->employee_id !== auth()->id()) {
+            abort(403, 'คุณไม่มีสิทธิ์ยกเลิกคำขอนี้');
+        }
+
+        $data = $request->validate([
+            'cancel_reason'  => 'required|string|max:1000',
+        ]);
+
+        $hrrequest->cancel_id = auth()->id();
+        $hrrequest->cancel_status = 1; // ยกเลิกคำขอ
+        $hrrequest->cancel_comment = $data['cancel_reason'];
+        $hrrequest->cancel_date = now();
+        $hrrequest->status = HrRequests::STATUS_CANCELLED;
+
+        if ($hrrequest->save()) {
+            return redirect()->route('requesthr.list')->with('success', 'ยกเลิกคำขอเรียบร้อยแล้ว');
+        }
+
+        return redirect()->back()->with('error', 'เกิดข้อผิดพลาดในการยกเลิกคำขอ');
+    }
+
+    public function requestUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'category_id' => 'required',
+            'type_id' => 'required',
+            'subtype_id' => 'nullable',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $hrRequest = HrRequests::findOrFail($id);
+            
+            // Check permission (optional but good practice)
+            if ($hrRequest->employee_id !== Auth::id()) {
+                throw new \Exception('คุณไม่มีสิทธิ์แก้ไขคำร้องนี้');
+            }
+
+            $hrRequest->category_id = $request->category_id;
+            $hrRequest->type_id = $request->type_id;
+            $hrRequest->subtype_id = $request->subtype_id;
+            
+            // Update title if type changed
+            $type = RequestType::find($request->type_id);
+            $hrRequest->title = $type ? $type->name_th : 'คำร้องทั่วไป';
+            
+            // Reset status if needed? Usually editing a returned request sets it back to pending?
+            // If status is RETURNED, set back to PENDING or APPROVED_MANAGER_PENDING?
+            if ($hrRequest->status == HrRequests::STATUS_RETURNED) {
+                 $hrRequest->status = HrRequests::STATUS_PENDING;
+                 $hrRequest->approver_manager_status = HrRequests::APPROVER_MANAGER_PENDING;
+                 $hrRequest->approver_hr_status = HrRequests::APPROVER_HR_PENDING;
+            }
+
+            $hrRequest->save();
+
+            // 1. Time Edit
+            if ($request->has('edit_reason')) {
+                $timeEdit = Request_Time_Edits::where('request_id', $hrRequest->hr_request_id)->first();
+                if (!$timeEdit && $request->filled('edit_reason')) {
+                    $timeEdit = new Request_Time_Edits();
+                    $timeEdit->request_id = $hrRequest->hr_request_id;
+                }
+                
+                if ($timeEdit) {
+                    $timeEdit->edit_reason = $request->edit_reason;
+                    $timeEdit->edit_start_date = $request->edit_start_date;
+                    $timeEdit->edit_end_date = $request->edit_end_date;
+                    $timeEdit->edit_start_time = $request->edit_start_time;
+                    $timeEdit->edit_end_time = $request->edit_end_time;
+                    
+                    if ($request->hasFile('timefile')) {
+                        // Delete old file if exists?
+                        if ($timeEdit->timefile && file_exists(public_path($timeEdit->timefile))) {
+                            // unlink(public_path($timeEdit->timefile)); // Optional
+                        }
+                        
+                        $file = $request->file('timefile');
+                        $filename = time() . '_' . $file->getClientOriginalName();
+                        $file->move(public_path('files/hrrequest'), $filename);
+                        $timeEdit->timefile = 'files/hrrequest/' . $filename;
+                    }
+                    $timeEdit->save();
+                }
+            }
+
+            // 2. Uniform
+            if ($request->has('uniform_gender')) {
+                $uniform = Request_Uniforms::where('request_id', $hrRequest->hr_request_id)->first();
+                if (!$uniform && $request->filled('uniform_gender')) {
+                    $uniform = new Request_Uniforms();
+                    $uniform->request_id = $hrRequest->hr_request_id;
+                }
+                
+                if ($uniform) {
+                    $uniform->uniform_gender = $request->uniform_gender;
+                    $uniform->uniform_size = $request->uniform_size;
+                    $uniform->uniform_reason = $request->uniform_reason;
+                    $uniform->save();
+                }
+            }
+
+            // 3. Safety Items
+            // Delete all existing and recreate
+            if ($request->has('safety_item_name')) {
+                Request_Safety_Items::where('request_id', $hrRequest->hr_request_id)->delete();
+                
+                $names = $request->safety_item_name;
+                $quantities = $request->safety_item_quantity;
+                
+                foreach ($names as $index => $name) {
+                    if (!empty($name)) {
+                        $safetyItem = new Request_Safety_Items();
+                        $safetyItem->request_id = $hrRequest->hr_request_id;
+                        $safetyItem->item_name = $name;
+                        $safetyItem->quantity = $quantities[$index] ?? 1;
+                        $safetyItem->created_at = now();
+                        $safetyItem->save();
+                    }
+                }
+            }
+
+            // 4. Safety Docs
+            if ($request->has('safety_reason')) {
+                 $safetyDoc = Request_Safety_Docs::where('request_id', $hrRequest->hr_request_id)->first();
+                 if (!$safetyDoc && $request->filled('safety_reason')) {
+                     $safetyDoc = new Request_Safety_Docs();
+                     $safetyDoc->request_id = $hrRequest->hr_request_id;
+                 }
+                 if ($safetyDoc) {
+                     $safetyDoc->safety_reason = $request->safety_reason;
+                     $safetyDoc->save();
+                 }
+            }
+
+            // 5. Certificate
+            if ($request->has('certificate_reason')) {
+                $cert = RequestCertificates::where('request_id', $hrRequest->hr_request_id)->first();
+                if (!$cert && $request->filled('certificate_reason')) {
+                    $cert = new RequestCertificates();
+                    $cert->request_id = $hrRequest->hr_request_id;
+                }
+                if ($cert) {
+                    $cert->certificate_reason = $request->certificate_reason;
+                    $cert->save();
+                }
+            }
+
+            // 6. Welfare
+            if ($request->has('welfare_reason')) {
+                $welfare = RequestWelfare::where('request_id', $hrRequest->hr_request_id)->first();
+                if (!$welfare && $request->filled('welfare_reason')) {
+                    $welfare = new RequestWelfare();
+                    $welfare->request_id = $hrRequest->hr_request_id;
+                }
+                if ($welfare) {
+                    $welfare->welfare_reason = $request->welfare_reason;
+                    $welfare->save();
+                }
+            }
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'แก้ไขข้อมูลสำเร็จ']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()], 500);
+        }
     }
 }

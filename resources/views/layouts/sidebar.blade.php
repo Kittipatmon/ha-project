@@ -87,7 +87,7 @@
                     <div class="w-8 h-8 rounded-lg bg-kumwell-red flex items-center justify-center shadow-lg shadow-red-900/50 flex-shrink-0">
                         <span class="font-bold text-white text-sm">H</span>
                     </div>
-                    <a href="#"> <div class="flex flex-col leading-none">
+                    <a href="{{ route('welcome') }}"> <div class="flex flex-col leading-none">
                             <span class="text-lg font-bold tracking-wide text-white">Kumwell</span>
                             <span class="text-[10px] text-kumwell-red font-bold uppercase tracking-widest">HA System</span>
                         </div>

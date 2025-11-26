@@ -113,18 +113,10 @@
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('welcome.system') }}">บริการ</a>
                         </li> -->
                         <li>
-                            @auth
-                                <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">HA Guide Book</a>
-                            @else
-                                <button type="button" class="login-open-btn navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition">HA Guide Book</button>
-                            @endauth
+                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">HA Guide Book</a>
                         </li>
                         <li>
-                            @auth
-                                <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">Calendar</a>
-                            @else
-                                <button type="button" class="login-open-btn navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition">Calendar</button>
-                            @endauth
+                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">Calendar</a>
                         </li>
                         <!-- <li>
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">รับสมัครงาน</a>
@@ -159,7 +151,7 @@
 
                 <div class="relative ml-1">
                     @guest
-                    <button type="button" class="login-open-btn navbar-link px-4 py-1.5 text-base text-black rounded-xl shadow transition">
+                    <button type="button" id="login-open-btn" class="navbar-link px-4 py-2 text-base text-black rounded-xl shadow transition">
                         <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Login
                     </button>
                     @endguest
@@ -241,7 +233,7 @@
         @guest
         <div class="pt-4 pb-4 border-t border-gray-200">
             <div class="px-4">
-                <button type="button" class="login-open-btn w-full navbar-link px-4 py-2 text-base rounded-xl shadow transition">
+                <button type="button" id="login-open-btn" class="w-full navbar-link px-4 py-2 text-base rounded-xl shadow transition">
                     <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Login
                 </button>
             </div>
@@ -407,19 +399,17 @@
         });
 
         // --- Login Modal Logic (Guest only) ---
-        const loginOpenBtns = document.querySelectorAll('.login-open-btn');
+        const loginOpenBtn = document.getElementById('login-open-btn');
         const loginModal = document.getElementById('login-modal');
         const loginCloseBtn = document.getElementById('login-close-btn');
-        if (loginOpenBtns.length > 0 && loginModal && loginCloseBtn) {
+        if (loginOpenBtn && loginModal && loginCloseBtn) {
             function openLoginModal(){
                 loginModal.classList.remove('hidden-custom');
             }
             function closeLoginModal(){
                 loginModal.classList.add('hidden-custom');
             }
-            loginOpenBtns.forEach(btn => {
-                btn.addEventListener('click', openLoginModal);
-            });
+            loginOpenBtn.addEventListener('click', openLoginModal);
             loginCloseBtn.addEventListener('click', closeLoginModal);
             loginModal.addEventListener('click', (e) => { if(e.target === loginModal) closeLoginModal(); });
             document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeLoginModal(); });

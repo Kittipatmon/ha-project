@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.hrrequest.app')
+
 @section('content')
-<div class="container mx-auto px-4 py-3">
+<div class="max-w-8xl mx-auto px-4 py-3">
     <div class="breadcrumbs text-sm">
         <ul>
             <li><a>Home</a></li>
@@ -18,8 +19,8 @@
                             เลขที่รายการ</th>
                         <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300">ชื่อ-สกุล
                         </th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300">
-                            หัวข้อคำร้อง</th>
+                        <!-- <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300">
+                            หัวข้อคำร้อง</th> -->
                         <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300">
                             หมวดหมู่คำร้อง</th>
                         <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300">
@@ -37,7 +38,7 @@
                     <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="text-sm text-gray-700 dark:text-gray-300">{{ $request->request_code }}</td>
                         <td class="text-sm text-gray-700 dark:text-gray-300">{{ $request->user->fullname }}</td>
-                        <td class="text-sm text-gray-700 dark:text-gray-300">{{ $request->title }}</td>
+                        <!-- <td class="text-sm text-gray-700 dark:text-gray-300">{{ $request->title }}</td> -->
 
                         <td class="text-sm text-gray-700 dark:text-gray-300">{{ $request->category->name_th ?? '-' }}
                         </td>

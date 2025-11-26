@@ -51,7 +51,7 @@
             </div>
 
             <!-- Action Buttons Area -->
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex justify-center items-center gap-2">
 
                 <a href="{{ route('requesthr.index') }}">
                     <button
@@ -61,7 +61,9 @@
                         <span class="font-semibold tracking-wide">สร้างคำขอใหม่</span>
                     </button>
                 </a>
-
+            </div>
+            <div class="flex justify-center items-center gap-2 mt-6">
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                 <div class="dropdown dropdown-bottom">
                     <div tabindex="0" role="button"
                         class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl  border border-gray-200 hover:border-red-200 hover:bg-red-50/30 transition-all duration-200 shadow-sm">
@@ -75,7 +77,9 @@
 
                         <div class="flex items-center gap-1.5 pl-3 border-l border-gray-200">
                             <span class="flex items-center justify-center badge badge-outline badge-info rounded-md"
-                                title="รออนุมัติ">0</span>
+                                title="รออนุมัติ">
+                                {{ $hrrequestapprovehrcount }}
+                            </span>
                         </div>
 
                         <i
@@ -83,16 +87,17 @@
                     </div>
 
                     <ul tabindex="-1"
-                        class="dropdown-content menu p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl w-60 mt-2 border border-gray-100 z-50">
+                        class="dropdown-content menu p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl w-80 mt-2 border border-gray-100 z-50">
                         <li class="menu-title px-4 py-2 text-xs font-bold text-gray-400 uppercase">เลือกประเภทคำร้อง
                         </li>
                         <li>
-                            <a href="{{ route('requesthr.list') }}"
+                            <a href="{{ route('approve.approvehrlist') }}"
                                 class="rounded-xl py-3 hover:bg-red-50 hover:text-red-600 group active:bg-red-100">
                                 <i class="fa-regular fa-file-lines w-5 text-gray-400 group-hover:text-red-500"></i>
                                 รายการที่รอตรวจสอบ
                                  <span class="flex items-center justify-center badge badge-outline badge-info rounded-md"
-                                    title="จำนวนรอตรวจสอบ">0
+                                    title="จำนวนรอตรวจสอบ">
+                                    {{ $hrrequestapprovehrcount }}
                                 </span>
                             </a>
                             <a href="{{ route('approve.approvehrlistall') }}"
@@ -101,17 +106,19 @@
                                 รายการคำร้องขอทั้งหมด
                                  <span class="flex items-center justify-center badge badge-outline badge-primary rounded-md"
                                     title="จำนวนคำร้องขอทั้งหมด">
-                                    @php 
-                                        use App\Models\hrrequest\HrRequests;
-                                        $totalRequests = HrRequests::count();
-                                        echo $totalRequests;
-                                    @endphp
+                                    {{ $hrrequestCounts }}
                                 </span>
                             </a>
                         </li>
                     </ul>
                 </div>
+                @endif
 
+                @php 
+                use App\Models\hrrequest\HrRequests;
+                @endphp
+
+                @if(HrRequests::where('approver_manager_id', Auth::id())->count() > 0)
                 <div class="dropdown dropdown-bottom">
                     <div tabindex="0" role="button"
                         class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl  border border-gray-200 hover:border-red-200 hover:bg-red-50/30 transition-all duration-200 shadow-sm">
@@ -125,7 +132,8 @@
 
                         <div class="flex items-center gap-1.5 pl-3 border-l border-gray-200">
                             <span class="flex items-center justify-center badge badge-outline badge-info rounded-md"
-                                title="รออนุมัติ">0</span>
+                                title="รออนุมัติ">
+                            {{ $hrrequestapprovemanacount }}</span>
                         </div>
 
                         <i
@@ -137,17 +145,19 @@
                         <li class="menu-title px-4 py-2 text-xs font-bold text-gray-400 uppercase">เลือกประเภทคำร้อง
                         </li>
                         <li>
-                            <a href="{{ route('requesthr.list') }}"
+                            <a href="{{ route('approve.approvemanalist') }}"
                                 class="rounded-xl py-3 hover:bg-red-50 hover:text-red-600 group active:bg-red-100">
                                 <i class="fa-regular fa-file-lines w-5 text-gray-400 group-hover:text-red-500"></i>
                                 รายการที่รออนุมัติ
                                 <span class="flex items-center justify-center badge badge-outline badge-info rounded-md"
-                                    title="จำนวนรออนุมัติ">0
+                                    title="จำนวนรออนุมัติ">
+                                    {{ $hrrequestapprovemanacount }}
                                 </span>
                             </a>
                         </li>
                     </ul>
                 </div>
+                @endif
 
                 <div class="dropdown dropdown-bottom">
                     <div tabindex="0" role="button"
@@ -163,11 +173,7 @@
                         <div class="flex items-center gap-1.5 pl-3 border-l border-gray-200">
                             <span class="flex items-center justify-center badge badge-outline badge-warning rounded-md"
                                 title="ดำเนินการ">
-                                @php
-                                    use App\Models\hrrequest\HrRequests;
-                                    $pendingRequests = HrRequests::where('status', HrRequests::STATUS_PENDING)->count();
-                                    echo $pendingRequests;
-                                @endphp
+                                {{ $hrrequests }}
                             </span>
                             <!-- <span class="flex items-center justify-center badge badge-outline badge-success rounded-md"
                                 title="เสร็จสิ้น">
@@ -189,7 +195,8 @@
                                 <i class="fa-regular fa-file-lines w-5 text-gray-400 group-hover:text-red-500"></i>
                                 รายการที่รอดำเนินการ
                                 <span class="flex items-center justify-center badge badge-outline badge-warning rounded-md"
-                                    title="จำนวนรอดำเนินการ">0
+                                    title="จำนวนรอดำเนินการ">
+                                    {{ $hrrequests }}
                                 </span>
                             </a>
                         </li>
@@ -198,7 +205,8 @@
                                 <i class="fa-solid fa-clock-rotate-left w-5 text-gray-400 group-hover:text-red-500"></i>
                                 รายการทั้งหมด
                                 <span class="flex items-center justify-center badge badge-outline badge-primary rounded-md"
-                                    title="จำนวนรายการทั้งหมด">0
+                                    title="จำนวนรายการทั้งหมด">
+                                    {{ $hrrequestsCount }}
                                 </span>
                             </a>
                         </li>

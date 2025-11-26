@@ -20,4 +20,10 @@ class RequestWelfare extends Model
         'welfare_date',
         'created_at',
     ];
+
+
+    public function hrRequest()
+    {
+        return $this->belongsTo(HrRequests::class, 'request_id', 'hr_request_id');
+    }
 }

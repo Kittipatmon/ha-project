@@ -1,4 +1,5 @@
-@extends('layouts.app')
+@extends('layouts.hrrequest.app')
+
 @section('content')
 <div class="container mx-auto px-4 py-3">
     <div class="breadcrumbs text-sm">
