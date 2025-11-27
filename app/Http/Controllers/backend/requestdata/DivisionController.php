@@ -15,7 +15,12 @@ class DivisionController extends Controller
 
     public function index()
     {
-        $divisions = Division::all();
-        return view('backend.division.index', compact('divisions'));
+        try {
+            $divisions = Division::all();
+            return view('backend.division.index', compact('divisions'));
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return response()->json(['error' => 'An error occurred while fetching data.'], 500);
+        }
     }
 }

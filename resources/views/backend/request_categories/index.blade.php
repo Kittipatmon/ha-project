@@ -1,7 +1,7 @@
 @extends('layouts.sidebar')
 @section('title', 'ประเภทคำร้อง')
 @section('content')
-<div class="container mx-auto px-4 py-3">
+<div class="max-w-8xl mx-auto px-4 py-3">
     <div class="flex flex-col sm:flex-row justify-between items-center mb-3 gap-4">
         <!-- <h1 class="text-2xl font-bold text-gray-800 dark:text-white">จัดการประเภทคำร้อง</h1> -->
         <button type="button" id="openCreateModal" class="btn btn-success text-white shadow-md">

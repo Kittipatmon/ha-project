@@ -8,9 +8,9 @@ use App\Http\Controllers\frontend\SystemController;
 
 use App\Http\Controllers\backend\RequestHRController;
 use App\Http\Controllers\backend\requestdata\RequestDataController;
-use App\Http\Controllers\backend\requestdata\SectionController;
-use App\Http\Controllers\backend\requestdata\DivisionController;
-use App\Http\Controllers\backend\requestdata\DepartmentController;
+use App\Http\Controllers\backend\users\SectionController;
+use App\Http\Controllers\backend\users\DivisionController;
+use App\Http\Controllers\backend\users\DepartmentController;
 
 use App\Http\Controllers\backend\hrrequest\RequestCategoriesController;
 use App\Http\Controllers\backend\hrrequest\RequestTypeController;
@@ -20,10 +20,21 @@ use App\Http\Controllers\backend\ApproveController;
 
 
 use App\Http\Controllers\backend\NewsController;
-use App\Http\Controllers\backend\UserController;
+use App\Http\Controllers\backend\users\UserController;
 use App\Models\datacenter\News;
 use App\Models\hrrequest\HrRequests;
 
+Route::get('/api/departments', [DepartmentController::class, 'apiDepartments']);
+Route::resource('departments', DepartmentController::class);
+
+Route::get('/api/sections', [SectionController::class, 'apiSections']);
+Route::resource('sections', SectionController::class);
+
+Route::get('/api/divisions', [DivisionController::class, 'apiDivisions']);
+Route::resource('division', DivisionController::class);
+
+Route::get('/api/users', [UserController::class, 'apiUsers']);
+Route::resource('users', UserController::class);
 
 Route::get('/', function () {
     $newsItems = News::where('is_active', true)
@@ -81,6 +92,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('sections', SectionController::class);
     Route::resource('divisions', DivisionController::class);
     Route::resource('departments', DepartmentController::class);
+    Route::resource('users', UserController::class);
+    Route::post('users/storeUser', [UserController::class, 'storeUser'])->name('users.storeUser');
 
 
     Route::resource('request-categories', RequestCategoriesController::class);

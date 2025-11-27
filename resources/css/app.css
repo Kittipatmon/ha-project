@@ -8,6 +8,7 @@
 /* DaisyUI theme config is now handled in tailwind.config.js */
 @plugin "daisyui";
 
+
 :where(:root),
 :root:has(input.theme-controller[value=light]:checked),
 [data-theme=light] {

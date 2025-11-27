@@ -175,10 +175,10 @@
                     </button>
 
                     <div id="dropdown-hr" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลพนักงาน</a>
-                        <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลสายงาน</a>
-                        <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลแผนก</a>
-                        <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลฝ่าย</a>
+                        <a href="{{ route('users.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลพนักงาน</a>
+                        <a href="{{ route('sections.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลสายงาน</a>
+                        <a href="{{ route('divisions.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลฝ่าย</a>
+                        <a href="{{ route('departments.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลแผนก</a>
                     </div>
                      <div class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
                         HR Settings
@@ -223,7 +223,7 @@
 
         <main class="flex-1 bg-gray-50 dark:bg-kumwell-dark text-gray-900 dark:text-gray-100 overflow-y-auto relative">
             <div class="p-4">
-                <div class="flex justify-between items-center mb-8">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-300/30 pb-3">
                     <h1 class="text-xl font-bold text-gray-800 dark:text-white">
                         @yield('title', 'Dashboard')
                     </h1>
@@ -268,11 +268,9 @@
                 sidebar.classList.remove('w-20');
                 sidebar.classList.add('w-62');
 
-                // Show Icons
                 iconBars.classList.add('hidden');
                 iconChevron.classList.remove('hidden');
 
-                // Show Text Elements
                 sidebarLogo.classList.remove('opacity-0', 'w-0');
                 sidebarLogo.classList.add('opacity-100');
                 
@@ -280,65 +278,49 @@
 
                 // Adjust Icons Margins
                 dashboardIcon.classList.add('mr-3');
-                requestIcon.classList.add('mr-3'); // Add margin back
-                requestIcon.classList.remove('text-kumwell-red'); // Remove red accent
+                requestIcon.classList.add('mr-3');
+                requestIcon.classList.remove('text-kumwell-red'); 
                 hrIcon.classList.add('mr-3');
                 hrIcon.classList.remove('text-kumwell-red');
                 datapublicIcon.classList.add('mr-3');
                 datapublicIcon.classList.remove('text-kumwell-red');
-
-                // Hide Tooltips (CSS group-hover will rely on parent class if needed, strictly hide here)
                 tooltips.forEach(t => t.classList.add('hidden'));
                 
-                // User Profile Alignment
                 userProfile.classList.remove('justify-center');
 
             } else {
-                // Collapse Sidebar
                 sidebar.classList.remove('w-62');
                 sidebar.classList.add('w-20');
 
-                // Swap Icons
                 iconBars.classList.remove('hidden');
                 iconChevron.classList.add('hidden');
 
-                // Hide Text Elements
                 sidebarLogo.classList.remove('opacity-100');
                 sidebarLogo.classList.add('opacity-0', 'w-0');
 
                 sidebarTexts.forEach(el => el.classList.add('hidden'));
 
-                // Adjust Icons for Center View
                 dashboardIcon.classList.remove('mr-3');
                 requestIcon.classList.remove('mr-3');
-                requestIcon.classList.add('text-kumwell-red'); // Add color accent when collapsed
+                requestIcon.classList.add('text-kumwell-red'); 
                 hrIcon.classList.remove('mr-3');
                 hrIcon.classList.add('text-kumwell-red');
                 datapublicIcon.classList.remove('mr-3');
                 datapublicIcon.classList.add('text-kumwell-red');
 
-                // Close all open dropdowns when collapsing sidebar
                 dropdownSubmenus.forEach(d => d.classList.add('hidden'));
                 document.querySelectorAll('.fa-chevron-down').forEach(i => i.classList.remove('rotate-180'));
 
-                // Enable Tooltips logic (allow hover)
                 tooltips.forEach(t => t.classList.remove('hidden'));
-                // Note: The 'hidden' class on tooltips effectively disables them. 
-                // Removing it allows the CSS opacity/hover transition to work.
 
-                 // User Profile Alignment
                  userProfile.classList.add('justify-center');
             }
         }
 
-        // === 2. Dropdown Logic ===
         function toggleDropdown(dropdownId) {
-            // If sidebar is closed, open it first to show the menu
             if (!isSidebarOpen) {
                 isSidebarOpen = true;
                 updateSidebarState();
-                
-                // Small delay to let sidebar expand before opening menu
                 setTimeout(() => {
                     performToggle(dropdownId);
                 }, 150);
@@ -349,10 +331,9 @@
 
         function performToggle(dropdownId) {
             const content = document.getElementById(dropdownId);
-            const btn = content.previousElementSibling; // The button trigger
+            const btn = content.previousElementSibling; 
             const arrow = btn.querySelector('.fa-chevron-down');
 
-            // Toggle Hidden Class
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
                 arrow.classList.add('rotate-180');
@@ -364,10 +345,8 @@
             }
         }
 
-        // === 3. Dark Mode Logic ===
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         
-        // Check local storage on load
         if (localStorage.getItem('theme') === 'dark' || 
            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -377,7 +356,6 @@
             darkModeToggle.checked = false;
         }
 
-        // Event Listener
         darkModeToggle.addEventListener('change', function() {
             if (this.checked) {
                 document.documentElement.classList.add('dark');
@@ -388,17 +366,26 @@
             }
         });
 
-        // === 4. Date Logic (Optional) ===
         const dateElement = document.getElementById('current-date');
         if(dateElement) {
             const now = new Date();
             dateElement.textContent = now.toDateString(); 
         }
 
+        
+
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ',
+                text: @json(session('success')),
+                timer: 2500,
+                showConfirmButton: false
+            });
+        @endif
     </script>
-    
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    @yield('scripts')
+    @stack('scripts')
     
 </body>
 </html>

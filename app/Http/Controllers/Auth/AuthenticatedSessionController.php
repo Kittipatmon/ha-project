@@ -19,6 +19,7 @@ class AuthenticatedSessionController extends Controller
     public function create(): View
     {
         $employees = User::where('status', '1')->orderBy('employee_code')->get();
+        // return view('auth.login', compact('employees'));
         return view('auth.login', compact('employees'));
     }
 

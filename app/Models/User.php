@@ -48,6 +48,14 @@ class User extends Authenticatable
         'endwork_date' => 'datetime',
     ];
 
+    protected $appends = [
+        'fullname',
+        'level_user_label',
+        'level_user_color',
+        'hr_status_label',
+        'hr_status_color',
+    ];
+
     public function usertype()
     {
         return $this->belongsTo(UserType::class, 'level_user', 'id');

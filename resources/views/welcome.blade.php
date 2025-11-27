@@ -414,7 +414,7 @@ body {
             @endphp
 
             @if($highlight)
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
 
                 <div
                     class="lg:col-span-7 relative h-[350px] lg:h-[420px] rounded-2xl overflow-hidden group cursor-pointer shadow-lg shadow-black/50 border border-gray-800">
@@ -457,7 +457,7 @@ body {
                     <div
                         class="bg-[#1E2129] hover:bg-[#252933] p-4 rounded-xl flex gap-4 transition duration-300 cursor-pointer border border-gray-800/50 group shrink-0">
                         <div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
-                            <img src="{{ $item->image_path ? asset($item->image_path) : 'https://placehold.co/200x200/252933/FFF?text=News' }}"
+                            <img src="{{ $item->image_path ? asset(is_array($item->image_path) ? $item->image_path[0] : $item->image_path) : 'https://placehold.co/200x200/252933/FFF?text=News' }}"
                                 class="w-full h-full object-cover group-hover:scale-110 transition"
                                 alt="{{ $item->title }}">
                         </div>
@@ -486,7 +486,7 @@ body {
                 @foreach($otherNews->skip(3)->take(6) as $item)
                 <div class="min-w-[180px] w-[180px] cursor-pointer group">
                     <div class="h-[120px] rounded-xl overflow-hidden mb-2 border border-gray-800 relative">
-                        <img src="{{ $item->image_path ? asset($item->image_path) : 'https://placehold.co/300x200/252933/FFF?text=News' }}"
+                        <img src="{{ $item->image_path ? asset(is_array($item->image_path) ? $item->image_path[0] : $item->image_path) : 'https://placehold.co/300x200/252933/FFF?text=News' }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition"
                             alt="{{ $item->title }}">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
@@ -502,6 +502,17 @@ body {
                 </div>
                 @endif
             </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto flex gap-4 overflow-x-auto no-scrollbar pb-4 mb-4">
+            @for ($i = 1; $i <= 6; $i++)
+            <div class="min-w-[200px] cursor-pointer group">
+                <div class="h-[120px] rounded-xl overflow-hidden mb-2 border border-gray-800 relative">
+                    <img src="https://source.unsplash.com/random/300x200?tech,office&sig={{ $i }}" class="w-full h-full object-cover transition group-hover:scale-110 opacity-70 group-hover:opacity-100">
+                </div>
+                <p class="text-gray-400 text-xs group-hover:text-white transition">Update News Item {{ $i }}...</p>
+            </div>
+            @endfor
         </div>
     </div>
 </div>

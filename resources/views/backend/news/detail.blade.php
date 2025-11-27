@@ -9,31 +9,16 @@
     // ส่วนที่ 1: จัดการรูปภาพ (Gallery Logic)
     // ==========================================
     $galleryImages = [];
-    
-    // ดึงค่า path ออกมาก่อน และเช็คว่าเป็น array หรือไม่
-    $rawPath = $news->image_path;
-    if (is_array($rawPath)) {
-        $rawPath = !empty($rawPath) ? $rawPath[0] : null;
-    }
 
-    $mainImage = $rawPath ? asset($rawPath) : null;
-    $imageDir = $rawPath ? public_path(dirname($rawPath)) : null;
-
-    // ค้นหารูปอื่นๆ ในโฟลเดอร์เดียวกัน
-    if ($imageDir && is_dir($imageDir)) {
-        $files = glob($imageDir . '/*.{jpg,jpeg,png,gif,webp}', GLOB_BRACE);
-        if ($files) {
-            foreach ($files as $file) {
-                $rel = Str::after($file, public_path());
-                $rel = str_replace('\\', '/', $rel); // แก้ Path สำหรับ Windows
-                $galleryImages[] = asset($rel);
+    // $news->image_path is an array from the model's $casts.
+    // Iterate over it to build the gallery, ensuring only this news item's images are used.
+    if (is_array($news->image_path)) {
+        foreach ($news->image_path as $path) {
+            if (!empty($path)) {
+                // Ensure path uses forward slashes for the asset helper
+                $galleryImages[] = asset(str_replace('\\', '/', $path));
             }
         }
-    }
-    
-    // เอารูปหลักไว้รูปแรกเสมอ
-    if ($mainImage && !in_array($mainImage, $galleryImages)) {
-        array_unshift($galleryImages, $mainImage);
     }
 
     // ==========================================
