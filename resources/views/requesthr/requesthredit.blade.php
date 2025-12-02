@@ -1,6 +1,6 @@
 @extends('layouts.hrrequest.app')
 @section('content')
-<div class="container mx-auto px-4 py-6 font-prompt">
+<div class="max-w-8xl mx-auto px-4 py-6 font-prompt">
     <div class="breadcrumbs text-sm">
         <ul>
             <li><a href="{{ route('welcome') }}">Home</a></li>

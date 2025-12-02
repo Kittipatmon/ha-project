@@ -1,7 +1,7 @@
 @extends('layouts.hrrequest.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-3">
+<div class="max-w-8xl mx-auto px-4 py-3">
     <div class="breadcrumbs text-sm">
         <ul>
             <li><a>Home</a></li>
@@ -11,6 +11,7 @@
     </div>
 
     <div class=" dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
+
         <div class="overflow-x-auto">
             <table class="table table-sm">
                 <thead>

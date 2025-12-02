@@ -133,49 +133,6 @@ class User extends Authenticatable
         return $query; // no-op when no known column exists
     }
 
-    // const LEVEL_USER_ADMIN = '0';
-    // const LEVEL_USER_CEO = '1';
-    // const LEVEL_USER_HEADDIVISION = '2';
-    // const LEVEL_USER_MANAGER = '3';
-    // const LEVEL_USER_USER = '4'; // พนักงาน
-    // const LEVEL_USER_SECSTIONS = '5'; // หัวหน้าสายงาน
-
-    // public static function getLevelUserOptions()
-    // {
-    //     return [
-    //         self::LEVEL_USER_ADMIN => [
-    //             'label' => 'ผู้ดูแลระบบ',
-    //             'color' => 'error', // daisyUI: btn-primary, badge-primary
-    //             'icon' => 'mdi mdi-shield-account', // Example: Material Design Icons
-    //         ],
-    //         self::LEVEL_USER_CEO => [
-    //             'label' => 'CEO',
-    //             'color' => 'success', // daisyUI: btn-error, badge-error
-    //             'icon' => 'mdi mdi-account-tie',
-    //         ],
-    //         self::LEVEL_USER_HEADDIVISION => [
-    //             'label' => 'หัวหน้าฝ่าย',
-    //             'color' => 'accent', // daisyUI: btn-warning, badge-warning
-    //             'icon' => 'mdi mdi-account-tie',
-    //         ],
-    //         self::LEVEL_USER_MANAGER => [
-    //             'label' => 'หัวหน้าแผนก',
-    //             'color' => 'warning', // daisyUI: btn-success, badge-success
-    //             'icon' => 'mdi mdi-account-cog',
-    //         ],
-    //         self::LEVEL_USER_USER => [
-    //             'label' => 'พนักงาน',
-    //             'color' => 'info', // daisyUI: btn-secondary, badge-secondary
-    //             'icon' => 'mdi mdi-account',
-    //         ],
-    //         self::LEVEL_USER_SECSTIONS => [
-    //             'label' => 'หัวหน้าสายงาน',
-    //             'color' => 'primary', // daisyUI: btn-secondary, badge-secondary
-    //             'icon' => 'mdi mdi-account',
-    //         ],
-    //     ];
-    // }
-
     // ระดับผู้ใช้งาน
     const LEVEL_USER_SYSTEM_ADMIN = '0'; // System Administrator
     const LEVEL_USER_OPERATION_STAFF = '1'; // พนักงานปฏิบัติการ
@@ -243,20 +200,6 @@ class User extends Authenticatable
             ],
         ];
     }
-
-    // public static function getLevelUserOptions()
-    // {
-    //     $usertypes = UserType::all();
-    //     $options = [];
-    //     foreach ($usertypes as $ut) {
-    //         $options[$ut->id] = [
-    //             'label' => $ut->type_name,
-    //             'color' => 'primary', // You can customize colors based on your needs
-    //             'icon' => 'mdi mdi-account', // You can customize icons based on your needs
-    //         ];
-    //     }
-    //     return $options;
-    // }
 
     public function getLevelUserLabelAttribute()
     {

@@ -27,6 +27,82 @@ use App\Models\Section;
 
 class RequestHRController extends Controller
 {
+    public function dashboard()
+    {
+    // 1. Chart by request status
+    $statusData = HrRequests::select('status', DB::raw('count(*) as total'))
+        ->whereNotNull('status') // Ensure we don't group null statuses
+        ->groupBy('status')
+        ->get();
+
+    $statusOptions = HrRequests::getStatusOptions();
+    $allStatuses = collect($statusOptions)->map(fn() => 0);
+
+    foreach ($statusData as $data) {
+        $allStatuses[$data->status] = $data->total;
+    }
+
+    $statusLabels = collect($statusOptions)->pluck('label');
+    $statusCounts = $allStatuses->values();
+    $statusColors = collect($statusOptions)->pluck('color');
+    $totalRequests = HrRequests::count();
+    $statusCompleted = HrRequests::where('status', HrRequests::STATUS_COMPLETED)->count();
+    $statusPending = HrRequests::where('status', HrRequests::STATUS_PENDING)->count();
+    $statusAPPROVEDHR = HrRequests::where('status', HrRequests::STATUS_APPROVED_HR)->count();
+    $statusCancelled = HrRequests::where('status', HrRequests::STATUS_CANCELLED)
+    ->orWhere('status', HrRequests::STATUS_REJECTED)
+    ->count();
+
+    // 2. Chart by division
+    // แก้ไข: เปลี่ยน userkml2025 เป็น userkmlsystem
+    $divisionData = HrRequests::join('userkmlsystem.userskml', 'hr_requests.employee_id', '=', 'userkmlsystem.userskml.id')
+        ->join('sections', 'userkmlsystem.userskml.section_id', '=', 'sections.section_id')
+        ->select('sections.section_code as section_code', DB::raw('count(*) as total'))
+        ->groupBy('sections.section_code')
+        ->get();
+    $divisionLabels = $divisionData->pluck('section_code');
+    $divisionCounts = $divisionData->pluck('total');
+
+    // 3. Chart by category
+    $categoryData = HrRequests::join('request_categories', 'hr_requests.category_id', '=', 'request_categories.id')
+        ->select('request_categories.name_th as name_th', DB::raw('count(*) as total'))
+        ->groupBy('request_categories.name_th')
+        ->get();
+    $categoryLabels = $categoryData->pluck('name_th');
+    $categoryCounts = $categoryData->pluck('total');
+
+    // 4. Chart by department
+    // แก้ไข: เปลี่ยน userkml2025 เป็น userkmlsystem
+    $departmentData = HrRequests::join('userkmlsystem.userskml', 'hr_requests.employee_id', '=', 'userkmlsystem.userskml.id')
+        ->join('department', 'userkmlsystem.userskml.department_id', '=', 'department.department_id')
+        ->select('department.department_name as department_name', DB::raw('count(*) as total'))
+        ->groupBy('department.department_name')
+        ->get();
+    $departmentLabels = $departmentData->pluck('department_name');
+    $departmentCounts = $departmentData->pluck('total');
+
+    // 5. Monthly trend chart
+    $monthlyData = HrRequests::select(DB::raw('YEAR(created_at) as year, MONTH(created_at) as month'), DB::raw('count(*) as total'))
+        ->groupBy('year', 'month')
+        ->orderBy('year', 'asc')
+        ->orderBy('month', 'asc')
+        ->get();
+
+    $monthlyLabels = $monthlyData->map(function ($item) {
+        return date('M Y', mktime(0, 0, 0, $item->month, 1, $item->year));
+    });
+    $monthlyCounts = $monthlyData->pluck('total');
+
+    return view('requesthr.dashboard', compact(
+        'statusLabels', 'statusCounts', 'statusColors',
+        'divisionLabels', 'divisionCounts',
+        'categoryLabels', 'categoryCounts',
+        'departmentLabels', 'departmentCounts',
+        'monthlyLabels', 'monthlyCounts',
+        'statusCompleted', 'statusPending', 'statusCancelled', 'totalRequests' , 'statusAPPROVEDHR'
+    ));
+    }
+
     public function welcomeRequest()
     {
         $breadcrumbs = [

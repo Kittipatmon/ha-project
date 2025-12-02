@@ -21,6 +21,7 @@ use App\Http\Controllers\backend\ApproveController;
 
 use App\Http\Controllers\backend\NewsController;
 use App\Http\Controllers\backend\users\UserController;
+use App\Http\Controllers\backend\users\UserTypeController;
 use App\Models\datacenter\News;
 use App\Models\hrrequest\HrRequests;
 
@@ -57,7 +58,7 @@ Route::get('/dashboard', function () {
 
 // welcomeSystem
 Route::get('/welcome-system', [SystemController::class, 'welcomeSystem'])->name('welcome.system');
-
+Route::get('/requestHR/dashboard', [RequestHRController::class, 'dashboard'])->name('requesthr.dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -78,6 +79,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/hrCheck/{id}', [ApproveController::class, 'hrCheck'])->name('approve.hrCheck');
     //hrlistall
     Route::get('/approvehrlistall', [ApproveController::class, 'approvehrlistall'])->name('approve.approvehrlistall');
+    Route::get('/approvehrlistall/export', [ApproveController::class, 'approvehrlistallExport'])->name('approve.approvehrlistall.export');
+    Route::get('/approvehrlistall/data', [ApproveController::class, 'approvehrlistallData'])->name('approve.approvehrlistall.data');
+    Route::get('/approvehrlistall/pdf', [ApproveController::class, 'approvehrlistallPdf'])->name('approve.approvehrlistall.pdf');
 
     //manager
     Route::get('/approvemanalist', [ApproveController::class, 'approvemanalist'])->name('approve.approvemanalist');
@@ -93,7 +97,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('divisions', DivisionController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('users', UserController::class);
-    Route::post('users/storeUser', [UserController::class, 'storeUser'])->name('users.storeUser');
+    Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::resource('usertypes', UserTypeController::class);
+    // Route::post('users/storeUser', [UserController::class, 'store'])->name('users.storeUser');
 
 
     Route::resource('request-categories', RequestCategoriesController::class);

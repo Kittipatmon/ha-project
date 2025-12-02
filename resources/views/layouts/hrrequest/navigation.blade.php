@@ -97,48 +97,8 @@
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('welcome') }}">หน้าหลัก</a>
                         </li>
                         <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="#">Dashboard</a>
+                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('requesthr.dashboard') }}">Dashboard</a>
                         </li>
-                        <!-- <li>
-
-                        </li> -->
-
-
-
-                        <!-- <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">HA Guide Book</a>
-                        </li>
-                        <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">Calendar</a>
-                        </li> -->
-                        <!-- <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">รับสมัครงาน</a>
-                        </li>
-                        <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">อบรม / สัมมนา</a>
-                        </li> -->
-                        
-                        <!-- <li class="relative group">
-                            <button type="button" id="about-btn"
-                                class="navbar-link px-4 py-1 text-base text-black rounded-xl shadow flex items-center transition dropdown-toggle mr-1">
-                                Reports
-                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <ul id="about-menu"
-                                class="py-2 dropdown-menu absolute left-0 top-full mt-2 w-60 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 opacity-0 invisible transition-all duration-200">
-                                <li><a class="block px-4 py-2 text-red-700 hover:bg-red-100 rounded-lg" href="#">
-                                    <i class="fa-solid fa-newspaper mr-1"></i> นโยบาย/การดำเนินงาน</a>
-                                </li>
-                                <li><a class="block px-4 py-2 text-red-700 hover:bg-red-100 rounded-lg" href="#">
-                                    <i class="fa fa-phone mr-2"></i>เบอร์ติดต่อภายใน</a>
-                                </li>
-                                <li><a class="block px-4 py-2 text-red-700 hover:bg-red-100 rounded-b-lg" href="#">
-                                    <i class="fa fa-comment mr-2"></i>แสดงความคิดเห็น</a>
-                                </li>
-                            </ul>
-                        </li> -->
                     </ul>
                 </div>
 
@@ -294,7 +254,6 @@
 @endguest
 
 <script>
-    // Load jQuery & Select2 via CDN if not already loaded
     (function injectSelect2(){
         const hasJQuery = typeof window.jQuery !== 'undefined';
         function addScript(src, cb){ const s=document.createElement('script'); s.src=src; s.onload=cb; document.head.appendChild(s); }

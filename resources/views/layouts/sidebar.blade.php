@@ -176,6 +176,7 @@
 
                     <div id="dropdown-hr" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
                         <a href="{{ route('users.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลพนักงาน</a>
+                        <a href="{{ route('usertypes.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลประเภทพนักงาน</a>
                         <a href="{{ route('sections.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลสายงาน</a>
                         <a href="{{ route('divisions.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลฝ่าย</a>
                         <a href="{{ route('departments.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลแผนก</a>

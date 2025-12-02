@@ -131,10 +131,10 @@ class HrRequests extends Model
                 'label' => 'รอตรวจสอบโดยผู้จัดการ',
                 'color' => 'badge-warning'
             ],
-            self::STATUS_APPROVED_MANAGER => [
-                'label' => 'รออนุมัติโดยผู้จัดการ',
-                'color' => 'badge-warning'
-            ],
+            // self::STATUS_APPROVED_MANAGER => [
+            //     'label' => 'รออนุมัติโดยผู้จัดการ',
+            //     'color' => 'badge-warning'
+            // ],
             self::STATUS_APPROVED_HR => [
                 'label' => 'รอตรวจสอบโดยฝ่ายบุคคล',
                 'color' => 'badge-info'

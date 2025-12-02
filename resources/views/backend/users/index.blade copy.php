@@ -22,10 +22,7 @@
 
     @if ($errors->any())
     <div class="alert alert-error mb-4 shadow-lg">
-        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         <ul class="list-disc list-inside text-sm">
             @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
@@ -36,40 +33,36 @@
 
     <form id="filter-form" method="GET" action="{{ route('users.index') }}"
         class="mb-6 border border-gray-200 rounded-xl p-5 bg-white dark:bg-gray-800 dark:border-gray-700 shadow-sm hidden transition-all duration-300">
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end mb-4">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <div class="form-control">
                 <span class="label-text mb-1 text-xs text-gray-500 dark:text-gray-400">รหัสพนักงาน</span>
-                <input type="text" name="employee_code" placeholder="ค้นหารหัส..."
-                    value="{{ request('employee_code') }}"
-                    class="input input-bordered input-sm w-full dark:bg-gray-700" />
+                <input type="text" name="employee_code" placeholder="ค้นหารหัส..." value="{{ request('employee_code') }}"
+                class="input input-bordered input-sm w-full dark:bg-gray-700" />
             </div>
 
             <div class="form-control">
                 <span class="label-text mb-1 text-xs text-gray-500 dark:text-gray-400">ชื่อ-นามสกุล</span>
                 <input type="text" name="fullname" placeholder="ค้นหาชื่อ..." value="{{ request('fullname') }}"
-                    class="input input-bordered input-sm w-full dark:bg-gray-700" />
+                class="input input-bordered input-sm w-full dark:bg-gray-700" />
             </div>
 
             <div class="form-control">
                 <span class="label-text mb-1 text-xs text-gray-500 dark:text-gray-400">ตำแหน่ง</span>
                 <input type="text" name="position" placeholder="ค้นหาตำแหน่ง..." value="{{ request('position') }}"
-                    class="input input-bordered input-sm w-full dark:bg-gray-700" />
+                class="input input-bordered input-sm w-full dark:bg-gray-700" />
             </div>
 
             <div class="form-control">
                 <span class="label-text mb-1 text-xs text-gray-500 dark:text-gray-400">ระดับพนักงาน</span>
                 <input type="text" name="level_user" placeholder="ค้นหาระดับ..." value="{{ request('level_user') }}"
-                    class="input input-bordered input-sm w-full dark:bg-gray-700" />
+                class="input input-bordered input-sm w-full dark:bg-gray-700" />
             </div>
-        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
             <select name="department" class="select select-bordered select-sm w-full dark:bg-gray-700">
                 <option value="">แผนก (ทั้งหมด)</option>
                 @foreach($departments as $dept)
-                <option value="{{ $dept->department_id }}"
-                    {{ (string)request('department') === (string)$dept->department_id ? 'selected' : '' }}>
+                <option value="{{ $dept->department_id }}" {{ (string)request('department') === (string)$dept->department_id ? 'selected' : '' }}>
                     {{ $dept->department_name }}
                 </option>
                 @endforeach
@@ -78,8 +71,7 @@
             <select name="division" class="select select-bordered select-sm w-full dark:bg-gray-700">
                 <option value="">ฝ่าย (ทั้งหมด)</option>
                 @foreach($divisions as $div)
-                <option value="{{ $div->division_id }}"
-                    {{ (string)request('division') === (string)$div->division_id ? 'selected' : '' }}>
+                <option value="{{ $div->division_id }}" {{ (string)request('division') === (string)$div->division_id ? 'selected' : '' }}>
                     {{ $div->division_name }}
                 </option>
                 @endforeach
@@ -88,8 +80,7 @@
             <select name="section" class="select select-bordered select-sm w-full dark:bg-gray-700">
                 <option value="">สายงาน (ทั้งหมด)</option>
                 @foreach($sections as $sect)
-                <option value="{{ $sect->section_id }}"
-                    {{ (string)request('section') === (string)$sect->section_id ? 'selected' : '' }}>
+                <option value="{{ $sect->section_id }}" {{ (string)request('section') === (string)$sect->section_id ? 'selected' : '' }}>
                     {{ $sect->section_code }}
                 </option>
                 @endforeach
@@ -107,28 +98,8 @@
                 </option>
                 @endforeach
             </select>
-
-            @php
-            $hrStatusOptions = \App\Models\User::getHrStatusOptions();
-            $selectedHrStatus = request('hr_status');
-            @endphp
-
-            <select name="hr_status" class="select select-bordered select-sm w-full dark:bg-gray-700">
-                <option value="">สถานะ HR (ทั้งหมด)</option>
-                @foreach($hrStatusOptions as $value => $option)
-                @php
-                // รองรับทั้งกรณีเป็น string ตรง ๆ หรือเป็น array ที่มี key 'label'
-                $label = is_array($option) ? ($option['label'] ?? '') : $option;
-                @endphp
-                <option value="{{ $value }}" {{ (string)$selectedHrStatus === (string)$value ? 'selected' : '' }}>
-                    {{ $label }}
-                </option>
-                @endforeach
-            </select>
-
-
         </div>
-
+        
         <div class="flex justify-end mt-4">
             <a href="{{ route('users.index') }}" class="btn btn-ghost btn-sm text-gray-500">
                 <i class="fa-solid fa-rotate-left mr-1"></i> ล้างค่า
@@ -136,25 +107,18 @@
         </div>
     </form>
 
-    <div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700 relative"
-        id="table-wrap" data-show-pattern="{{ url('users') }}/:id" data-edit-pattern="{{ url('users') }}/:id/edit"
+    <div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700 relative" id="table-wrap" 
+        data-show-pattern="{{ url('users') }}/:id"
+        data-edit-pattern="{{ url('users') }}/:id/edit" 
         data-destroy-pattern="{{ url('users') }}/:id">
-
-        <div id="loader"
-            class="hidden absolute inset-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm flex items-center justify-center z-20">
+        
+        <div id="loader" class="hidden absolute inset-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm flex items-center justify-center z-20">
             <span class="loading loading-spinner loading-lg text-primary"></span>
-        </div>
-        <div>
-            <div class="p-4 text-sm text-gray-500">
-                แสดงผล {{ $users->firstItem() ?? 0 }} - {{ $users->lastItem() ?? 0 }} จาก
-                ทั้งหมด {{ $users->total() }} รายการ
-            </div>
         </div>
 
         <div class="overflow-x-auto">
             <table class="table table-sm w-full">
-                <thead
-                    class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-200 uppercase text-xs font-semibold">
+                <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-200 uppercase text-xs font-semibold">
                     <tr>
                         <th class="py-3">รหัสพนักงาน</th>
                         <th>ชื่อ-นามสกุล</th>
@@ -168,8 +132,7 @@
                         <th class="w-24 text-center">จัดการ</th>
                     </tr>
                 </thead>
-                <tbody id="users-body"
-                    class="text-gray-700 dark:text-gray-300 divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody id="users-body" class="text-gray-700 dark:text-gray-300 divide-y divide-gray-100 dark:divide-gray-700">
                     @forelse($users as $user)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="font-medium">{{ $user->employee_code }}</td>
@@ -180,9 +143,7 @@
                         <td>{{ $user->division->division_name ?? '-' }}</td>
                         <td>{{ $user->section->section_code ?? '-' }}</td>
                         <td>{{ $user->position }}</td>
-                        <td class="whitespace-nowrap">
-                            {{ $user->startwork_date ? \Carbon\Carbon::parse($user->startwork_date)->format('d M Y') : '-' }}
-                        </td>
+                        <td class="whitespace-nowrap">{{ $user->startwork_date ? \Carbon\Carbon::parse($user->startwork_date)->format('d M Y') : '-' }}</td>
                         <td>
                             <span class="badge badge-{{ $user->level_user_color }} badge-outline badge-sm font-medium">
                                 {{ $user->level_user_label }}
@@ -198,19 +159,16 @@
                                 <a href="#" class="btn btn-square btn-xs btn-info text-white" title="ดูข้อมูล">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="{{ route('users.edit', $user->id) }}"
-                                    class="btn btn-square btn-xs btn-warning text-white" title="แก้ไข">
+                                <a href="#" class="btn btn-square btn-xs btn-warning text-white" title="แก้ไข">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                    class="inline form-delete">
+                                <form action="#" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-square btn-xs btn-error text-white" title="ลบ">
+                                    <button type="submit" class="btn btn-square btn-xs btn-error text-white" onclick="return confirm('ยืนยันการลบ?')" title="ลบ">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
-
                             </div>
                         </td>
                     </tr>
@@ -233,32 +191,144 @@
         {{ $users->links() }}
     </div>
 </div>
+
+<dialog id="add_user_modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box w-11/12 max-w-5xl bg-white dark:bg-gray-800 p-0 overflow-hidden shadow-2xl">
+        
+        <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
+            <h3 class="font-bold text-lg text-gray-800 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-success"></i> เพิ่มพนักงานใหม่
+            </h3>
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+            </form>
+        </div>
+
+        <form method="POST" action="{{ route('users.store') }}" id="add_user_form" class="p-6">
+            @csrf
+            
+            <div id="modal_errors" class="alert alert-error mb-6 hidden text-sm"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-2">
+                
+                <div class="col-span-1 md:col-span-2 lg:col-span-4 pb-2 mb-2 border-b border-gray-100 dark:border-gray-700">
+                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">ข้อมูลส่วนตัว</span>
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">รหัสพนักงาน <span class="text-red-500">*</span></span></label>
+                    <input type="text" name="employee_code" class="input input-bordered w-full dark:bg-gray-700" required />
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">เพศ <span class="text-red-500">*</span></span></label>
+                    <select name="sex" class="select select-bordered w-full dark:bg-gray-700" required>
+                        <option disabled selected>เลือกเพศ</option>
+                        <option value="ชาย">ชาย</option>
+                        <option value="หญิง">หญิง</option>
+                    </select>
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">คำนำหน้า <span class="text-red-500">*</span></span></label>
+                    <input type="text" name="prefix" class="input input-bordered w-full dark:bg-gray-700" required />
+                </div>
+
+                <div class="hidden lg:block"></div> 
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">ชื่อ <span class="text-red-500">*</span></span></label>
+                    <input type="text" name="first_name" class="input input-bordered w-full dark:bg-gray-700" required />
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">นามสกุล <span class="text-red-500">*</span></span></label>
+                    <input type="text" name="last_name" class="input input-bordered w-full dark:bg-gray-700" required />
+                </div>
+
+                <div class="col-span-1 md:col-span-2 lg:col-span-4 pb-2 mb-2 mt-4 border-b border-gray-100 dark:border-gray-700">
+                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">ตำแหน่งและสังกัด</span>
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">ตำแหน่ง <span class="text-red-500">*</span></span></label>
+                    <input type="text" name="position" class="input input-bordered w-full dark:bg-gray-700" />
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">แผนก <span class="text-red-500">*</span></span></label>
+                    <select name="department_id" class="select select-bordered w-full dark:bg-gray-700">
+                        <option disabled selected>เลือกแผนก</option>
+                        @foreach($departments as $dept)
+                        <option value="{{ $dept->department_id }}">{{ $dept->department_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">ฝ่าย <span class="text-red-500">*</span></span></label>
+                    <select name="division_id" class="select select-bordered w-full dark:bg-gray-700">
+                        <option disabled selected>เลือกฝ่าย</option>
+                        @foreach($divisions as $div)
+                        <option value="{{ $div->division_id }}">{{ $div->division_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">สายงาน <span class="text-red-500">*</span></span></label>
+                    <select name="section_id" class="select select-bordered w-full dark:bg-gray-700">
+                        <option disabled selected>เลือกสายงาน</option>
+                        @foreach($sections as $sect)
+                        <option value="{{ $sect->section_id }}">{{ $sect->section_code }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 lg:col-span-4 pb-2 mb-2 mt-4 border-b border-gray-100 dark:border-gray-700">
+                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">สิทธิ์การใช้งาน</span>
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">ระดับพนักงาน <span class="text-red-500">*</span></span></label>
+                    <select name="level_user" class="select select-bordered w-full dark:bg-gray-700">
+                        <option disabled selected>เลือกระดับ</option>
+                        @foreach($levelOptions as $value => $meta)
+                        <option value="{{ $value }}">{{ $meta['label'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text font-medium">สถานะ HR <span class="text-red-500">*</span></span></label>
+                    <select name="hr_status" class="select select-bordered w-full dark:bg-gray-700">
+                        <option disabled selected>เลือกสถานะ</option>
+                        @php
+                        $hrStatusOptions = \App\Models\User::getHrStatusOptions();
+                        @endphp
+                        @foreach($hrStatusOptions as $value => $meta)
+                        <option value="{{ $value }}">{{ $meta['label'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-action mt-8 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <button type="button" class="btn" onclick="add_user_modal.close()">ยกเลิก</button>
+                <button type="button" id="confirm-add-user" class="btn btn-success text-white px-8">
+                    <i class="fa-solid fa-save mr-2"></i> บันทึกข้อมูล
+                </button>
+            </div>
+        </form>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteForms = document.querySelectorAll('.form-delete');
-
-    deleteForms.forEach(function(form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // กันไม่ให้ submit ทันที
-
-            Swal.fire({
-                title: 'ยืนยันการลบ?',
-                text: 'เมื่อลบแล้วจะไม่สามารถกู้คืนได้',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'ใช่, ลบเลย',
-                cancelButtonText: 'ยกเลิก',
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit(); // ยืนยันแล้วค่อย submit ฟอร์ม
-                }
-            });
-        });
-    });
-});
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Modal & Form Handling ---
     const addUserForm = document.getElementById('add_user_form');
     const addUserModal = document.getElementById('add_user_modal');
     const modalErrors = document.getElementById('modal_errors');
@@ -267,7 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirmAddUserBtn && addUserForm) {
         confirmAddUserBtn.addEventListener('click', function(e) {
             e.preventDefault();
-
+            
+            // 1. ปิด Modal ก่อนเรียก SweetAlert เพื่อป้องกัน Z-Index Conflict
             if (addUserModal && typeof addUserModal.close === 'function') {
                 addUserModal.close();
             }
@@ -282,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     confirmButtonText: 'บันทึก',
                     cancelButtonText: 'ยกเลิก',
                     confirmButtonColor: '#10b981', // Tailwind green-500 hex
-                    cancelButtonColor: '#6b7280', // Tailwind gray-500 hex
+                    cancelButtonColor: '#6b7280',  // Tailwind gray-500 hex
                     allowOutsideClick: false,
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -311,10 +382,10 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             // ถ้า User submit เอง (กด enter) ให้ปิด modal ก่อนเล็กน้อยหรือโชว์ Loading
             // แต่ใน flow นี้เราใช้ปุ่มแยก ดังนั้นโค้ดนี้จะทำงานตอน requestSubmit()
-
+            
             modalErrors.classList.add('hidden');
             modalErrors.innerHTML = '';
-
+            
             // Re-open modal ถ้าเป็นการ submit แบบปกติเพื่อให้เห็น loading หรือ error (กรณีไม่ได้ผ่าน swal logic)
             // แต่เนื่องจาก requestSubmit() มาจาก logic ข้างบน เราอาจจะต้องเปิด Modal มารับ Error
             // หากเป็นการ submit success โค้ดด้านล่างจะจัดการเอง
@@ -347,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     errorHtml += '</ul>';
                     modalErrors.innerHTML = errorHtml;
                     modalErrors.classList.remove('hidden');
-
+                    
                     // Scroll to top of modal
                     addUserModal.querySelector('.modal-box').scrollTop = 0;
 
@@ -357,10 +428,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Success
                     this.reset();
                     // Modal ปิดอยู่แล้วจาก step ก่อนหน้า หรือถ้าเปิดอยู่ก็ปิดเลย
-                    if (addUserModal.open) addUserModal.close();
-
+                    if(addUserModal.open) addUserModal.close();
+                    
                     await fetchUsers(); // Refresh Table
-
+                    
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
                             icon: 'success',
@@ -430,9 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
             params = overrideSearchParams;
         } else {
             params = new URLSearchParams();
-            new FormData(form).forEach((v, k) => {
-                if (v) params.set(k, v);
-            });
+            new FormData(form).forEach((v, k) => { if (v) params.set(k, v); });
             const cur = new URLSearchParams(window.location.search);
             if (cur.get('per_page')) params.set('per_page', cur.get('per_page'));
             if (cur.get('page')) params.set('page', cur.get('page'));
@@ -440,29 +509,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!params.get('per_page')) params.set('per_page', 20);
 
         try {
-            const res = await fetch(`/api/users?${params.toString()}`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+            const res = await fetch(`/api/users?${params.toString()}`, { headers: { 'Accept': 'application/json' } });
             const data = await res.json();
             renderRows(data.data || []);
             renderPagination(data);
             const sync = new URLSearchParams(params);
             sync.set('page', data.current_page || 1);
             history.replaceState({}, '', `${window.location.pathname}?${sync.toString()}`);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            loader.classList.add('hidden');
-        }
+        } catch (err) { console.error(err); } 
+        finally { loader.classList.add('hidden'); }
     }
 
     function renderRows(items) {
         const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         if (!Array.isArray(items) || items.length === 0) {
-            tbody.innerHTML =
-                `<tr><td colspan="10" class="text-center text-gray-500 py-10">ไม่พบข้อมูลตามเงื่อนไข</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center text-gray-500 py-10">ไม่พบข้อมูลตามเงื่อนไข</td></tr>`;
             return;
         }
         tbody.innerHTML = items.map(u => {
@@ -470,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const editUrl = editPattern.replace(':id', u.id);
             const destroyUrl = destroyPattern.replace(':id', u.id);
             // ... (Logic การสร้าง HTML Row เหมือนเดิม แต่ปรับ class เล็กน้อยให้เข้ากับ Tailwind) ...
-            return `
+             return `
             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                 <td class="font-medium">${safe(u.employee_code)}</td>
                 <td><div class="font-bold">${safe(u.fullname)}</div></td>
@@ -497,32 +558,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Helper functions (debounce, safe, etc.) ... keep as is
-    function debounce(fn, wait = 300) {
-        let t;
-        return (...args) => {
-            clearTimeout(t);
-            t = setTimeout(() => fn.apply(this, args), wait);
-        };
-    }
-
-    function formatDate(iso) {
-        if (!iso) return '-';
-        const d = new Date(iso);
-        return isNaN(d) ? '-' : d.toLocaleDateString('th-TH', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-        });
-    }
-
-    function safe(v) {
-        return (v ?? '-').toString().replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-    }
-
-    function levelBadge(u) {
-        return `<span class="badge badge-${safe(u.level_user_color ?? 'neutral')} badge-outline badge-sm font-medium">${safe(u.level_user_label ?? u.level_user)}</span>`;
-    }
-
+    function debounce(fn, wait = 300) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); }; }
+    function formatDate(iso) { if (!iso) return '-'; const d = new Date(iso); return isNaN(d) ? '-' : d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }); }
+    function safe(v) { return (v ?? '-').toString().replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'); }
+    function levelBadge(u) { return `<span class="badge badge-${safe(u.level_user_color ?? 'neutral')} badge-outline badge-sm font-medium">${safe(u.level_user_label ?? u.level_user)}</span>`; }
+    
     // ... renderPagination logic (keep mostly same, just check classes) ...
     function renderPagination(pag) {
         // ... (Logic เดิม) ...
@@ -532,8 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const prev = pag.prev_page_url;
         const next = pag.next_page_url;
 
-        let html =
-            `<div class="join shadow-sm">
+        let html = `<div class="join shadow-sm">
             <a class="join-item btn btn-sm ${!prev ? 'btn-disabled opacity-50' : ''}" ${prev ? `href="${prev}"` : ''}>«</a>`;
 
         const pages = calcWindow(cur, last);
@@ -541,16 +580,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (p === '...') html += `<button class="join-item btn btn-sm btn-disabled">...</button>`;
             else {
                 const url = new URL(pag.path + '?page=' + p, window.location.origin);
-                new URLSearchParams(window.location.search).forEach((v, k) => {
-                    if (k !== 'page') url.searchParams.set(k, v);
-                });
-                html +=
-                    `<a class="join-item btn btn-sm ${p === cur ? 'btn-active btn-primary text-white' : ''}" href="${url}">${p}</a>`;
+                new URLSearchParams(window.location.search).forEach((v, k) => { if (k !== 'page') url.searchParams.set(k, v); });
+                html += `<a class="join-item btn btn-sm ${p === cur ? 'btn-active btn-primary text-white' : ''}" href="${url}">${p}</a>`;
             }
         });
-        html +=
-            `<a class="join-item btn btn-sm ${!next ? 'btn-disabled opacity-50' : ''}" ${next ? `href="${next}"` : ''}>»</a></div>`;
-
+        html += `<a class="join-item btn btn-sm ${!next ? 'btn-disabled opacity-50' : ''}" ${next ? `href="${next}"` : ''}>»</a></div>`;
+        
         // Per page dropdown
         const currentPer = new URLSearchParams(window.location.search).get('per_page') || 20;
         html += `
@@ -574,13 +609,10 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchUsers(sp);
         });
     }
-
+    
     function calcWindow(cur, last) {
         const arr = [];
-        if (last <= 7) {
-            for (let i = 1; i <= last; i++) arr.push(i);
-            return arr;
-        }
+        if (last <= 7) { for (let i = 1; i <= last; i++) arr.push(i); return arr; }
         arr.push(1);
         if (cur > 3) arr.push('...');
         const start = Math.max(2, cur - 1);
