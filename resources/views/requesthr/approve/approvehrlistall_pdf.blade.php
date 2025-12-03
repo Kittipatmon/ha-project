@@ -100,6 +100,10 @@
         color: #666;
         margin-right: 4px;
     }
+
+    .colorred {
+        color: red;
+    }
     </style>
 </head>
 

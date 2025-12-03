@@ -158,7 +158,8 @@ class RequestHRController extends Controller
 
             // Generate Request Code
             $date = now();
-            $prefix = 'HR-' . $date->format('ymd') . '-';
+            $prefix = 'HR-';
+            // $prefix = 'HR-' . $date->format('ymd') . '-';
             $lastRequest = HrRequests::where('request_code', 'like', $prefix . '%')
                 ->orderBy('request_code', 'desc')
                 ->first();
@@ -351,7 +352,7 @@ class RequestHRController extends Controller
     public function requesthrlistall()
     {
         $user = Auth::user();
-        $hrrequests = HrRequests::where('employee_id', $user->id)->get();
+        $hrrequests = HrRequests::where('employee_id', $user->id)->orderBy('created_at', 'desc')->get();
         return view('requesthr.requesthrlistall', compact('hrrequests'));
     }
 

@@ -53,6 +53,8 @@ class ApproveController extends Controller
 
         if ($status === 1) {
             $hrrequest->status = HrRequests::STATUS_APPROVED_HR;
+            $hrrequest->approver_hr_id = null;
+            $hrrequest->approver_hr_status = 0; 
             $flashType = 'success';
             $flashMsg  = 'คำขอได้รับการอนุมัติแล้ว';
         } elseif ($status === 2) {
@@ -275,6 +277,7 @@ class ApproveController extends Controller
 
         $columns = [
             'เลขที่รายการ',
+            'รหัสพนักงาน',
             'ชื่อ-สกุล',
             'หมวดหมู่คำร้อง',
             'ประเภทคำร้อง',
@@ -294,6 +297,7 @@ class ApproveController extends Controller
             foreach ($hrrequests as $req) {
                 fputcsv($output, [
                     $req->request_code,
+                    optional($req->user)->employee_code,
                     optional($req->user)->fullname,
                     optional($req->category)->name_th,
                     optional($req->type)->name_th,

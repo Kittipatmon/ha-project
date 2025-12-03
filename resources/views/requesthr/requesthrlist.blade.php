@@ -51,9 +51,13 @@
                             <span class="px-2 py-1 rounded-full badge {{ $request->status_color }}">
                                 {{ $request->status_label }}
                             </span>
+                            @if($request->approver_hr_status == 3)
+                            <span class="text-orange-600 ml-1">(ส่งกลับโดยฝ่ายบุคคล)</span>
+                            @endif
                         </td>
                         <td class="text-sm text-gray-700 dark:text-gray-300">
-                            <a href="{{ route('requesthr.detailUser', $request->hr_request_id ) }}" class="btn btn-info btn-xs text-white hover:underline">
+                            <a href="{{ route('requesthr.detailUser', $request->hr_request_id ) }}"
+                                class="btn btn-info btn-xs text-white hover:underline">
                                 <i class="fas fa-eye"></i>
                             </a>
                             <a href="#" class="btn btn-error btn-xs text-white hover:underline">
