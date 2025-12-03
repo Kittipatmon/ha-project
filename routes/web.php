@@ -17,6 +17,7 @@ use App\Http\Controllers\backend\hrrequest\RequestTypeController;
 use App\Http\Controllers\backend\hrrequest\RequestSubtypeController;
 
 use App\Http\Controllers\backend\ApproveController;
+use App\Http\Controllers\backend\LeaveReportsController;
 
 
 use App\Http\Controllers\backend\NewsController;
@@ -119,6 +120,9 @@ Route::middleware('auth')->group(function () {
 
     //profile user
     Route::get('users/profile/{id}', [UserController::class, 'profileUser'])->name('users.profile');
+
+    //Leave Reports
+    Route::get('/leavereports/dashboard', [LeaveReportsController::class, 'dashboard'])->name('leavereports.dashboard');
 
 });
 // 

@@ -199,17 +199,60 @@
             });
         });
 
-        // Delete News
+        // Delete News with SweetAlert2 confirmation
         $('body').on('click', '.delete-btn', function() {
             var newsId = $(this).data('id');
-            if (confirm('คุณแน่ใจหรือว่าต้องการลบข่าวสารนี้?')) {
+
+            function doDelete() {
                 $.ajax({
                     url: '/news/' + newsId,
                     type: 'DELETE',
                     success: function(result) {
                         $('#news-' + newsId).remove();
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'ลบสำเร็จ',
+                                text: 'รายการถูกลบเรียบร้อยแล้ว',
+                                timer: 1800,
+                                showConfirmButton: false
+                            });
+                        }
+                    },
+                    error: function(xhr){
+                        let msg = 'เกิดข้อผิดพลาดในการลบข้อมูล';
+                        try {
+                            const res = JSON.parse(xhr.responseText);
+                            if (res && res.message) msg = res.message;
+                        } catch(e) {}
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({ icon: 'error', title: 'ลบไม่สำเร็จ', text: msg });
+                        } else {
+                            alert(msg);
+                        }
                     }
                 });
+            }
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'ยืนยันการลบ',
+                    text: 'คุณแน่ใจหรือว่าต้องการลบข่าวสารนี้?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'ลบ',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        doDelete();
+                    }
+                });
+            } else {
+                if (confirm('คุณแน่ใจหรือว่าต้องการลบข่าวสารนี้?')) {
+                    doDelete();
+                }
             }
         });
     });

@@ -105,14 +105,39 @@
 
                 <div class="sidebar-text px-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Main Menu</div>
 
-                <a href="#" class="group relative flex items-center px-3 py-1 rounded-xl text-gray-400 hover:bg-gradient-to-r hover:from-kumwell-red hover:to-red-700 hover:text-white hover:shadow-lg hover:shadow-red-900/30 transition-all duration-200">
+                <!-- <a href="#" class="group relative flex items-center px-3 py-1 rounded-xl text-gray-400 hover:bg-gradient-to-r hover:from-kumwell-red hover:to-red-700 hover:text-white hover:shadow-lg hover:shadow-red-900/30 transition-all duration-200">
                     <i id="dashboard-icon" class="fa-solid fa-chart-pie text-sm w-6 text-center group-hover:text-white transition-colors mr-3"></i>
                     <span class="sidebar-text">Dashboard</span>
                     
                     <div class="tooltip absolute left-14 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
                         Dashboard
                     </div>
-                </a>
+                </a> -->
+
+                <div class="relative group">
+                    <button onclick="toggleDropdown('dropdown-dashboard')" 
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            id="btn-dashboard">
+                        <div class="flex items-center">
+                            <i id="dashboard-icon" class="fa-solid fa-chart-pie text-sm w-6 text-center group-hover:text-white transition-colors mr-3"></i>
+                            <span class="sidebar-text">Dashboard</span>
+                        </div>
+                        <i id="arrow-dashboard" class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                    </button>
+
+                    <div id="dropdown-dashboard" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <!-- <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            Request HR
+                        </a> -->
+                        <a href="{{ route('leavereports.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            ขาด ลา
+                        </a>
+                    </div>
+
+                    <div class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                        Dashboard
+                    </div>
+                </div>
 
                 <div class="relative group">
                     <button onclick="toggleDropdown('dropdown-datapublic')" 
@@ -255,6 +280,9 @@
         const requestIcon = document.getElementById('icon-request');
         const hrIcon = document.getElementById('icon-hr');
         const datapublicIcon = document.getElementById('icon-datapublic');
+        const hrrequestIcon = document.getElementById('icon-hrrequest');
+        const leaveReportsIcon = document.getElementById('icon-leavereports');
+        
         
 
         let isSidebarOpen = true;
