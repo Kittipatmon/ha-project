@@ -11,6 +11,12 @@ use App\Models\hrrequest\RequestType;
 use App\Models\hrrequest\HrRequests;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use Illuminate\Support\Facades\DB;
+
+use App\Models\Section;
+use App\Models\Department;
+use App\Models\Division;
+
 class ApproveController extends Controller
 {
 
@@ -91,6 +97,11 @@ class ApproveController extends Controller
         $categories = RequestCategories::all();
         $types      = RequestType::all();
         $subtypes   = RequestSubtypes::all();
+
+        $sections    = Section::orderBy('section_name')->get();
+        $departments = Department::orderBy('department_name')->get();
+        $divisions   = Division::orderBy('division_name')->get();
+
         $statuses = [
             ['id' => HrRequests::STATUS_PENDING, 'name' => 'อนุมัติโดยผู้จัดการ'],
             // ['id' => HrRequests::STATUS_APPROVED_MANAGER, 'name' => 'อนุมัติโดยผู้จัดการ'],
@@ -132,6 +143,27 @@ class ApproveController extends Controller
             $query->where('subtype_id', $request->subtype);
         }
 
+        // Filter by organization hierarchy via user IDs (cross-connection safe)
+        if ($request->filled('section') || $request->filled('division') || $request->filled('department')) {
+            $userOrgQuery = User::query();
+            if ($request->filled('section')) {
+                $userOrgQuery->where('section_id', $request->section);
+            }
+            if ($request->filled('division')) {
+                $userOrgQuery->where('division_id', $request->division);
+            }
+            if ($request->filled('department')) {
+                $userOrgQuery->where('department_id', $request->department);
+            }
+            $userIdsByOrg = $userOrgQuery->pluck('id');
+            // If no users match, ensure empty result
+            if ($userIdsByOrg->isEmpty()) {
+                $query->whereRaw('1 = 0');
+            } else {
+                $query->whereIn('employee_id', $userIdsByOrg->all());
+            }
+        }
+
         // Clone before applying status to compute consistent counts using all other filters
         $baseQuery = clone $query;
 
@@ -156,7 +188,7 @@ class ApproveController extends Controller
 
 
         $hrrequests = $query->get();
-    return view('requesthr.approve.approvehrlistall', compact('hrrequests', 'categories', 'types', 'subtypes', 'statuses', 'statusCompleted', 'statusPending', 'statusAPPROVEDHR', 'statusCancelled', 'totalCount'));
+    return view('requesthr.approve.approvehrlistall', compact('hrrequests', 'categories', 'types', 'subtypes', 'statuses', 'statusCompleted', 'statusPending', 'statusAPPROVEDHR', 'statusCancelled', 'totalCount' ,'sections','departments','divisions'));
     }
 
     /**
@@ -192,6 +224,26 @@ class ApproveController extends Controller
 
         if ($request->filled('subtype')) {
             $query->where('subtype_id', $request->subtype);
+        }
+
+        // Filter by organization hierarchy via user IDs (cross-connection safe)
+        if ($request->filled('section') || $request->filled('division') || $request->filled('department')) {
+            $userOrgQuery = User::query();
+            if ($request->filled('section')) {
+                $userOrgQuery->where('section_id', $request->section);
+            }
+            if ($request->filled('division')) {
+                $userOrgQuery->where('division_id', $request->division);
+            }
+            if ($request->filled('department')) {
+                $userOrgQuery->where('department_id', $request->department);
+            }
+            $userIdsByOrg = $userOrgQuery->pluck('id');
+            if ($userIdsByOrg->isEmpty()) {
+                $query->whereRaw('1 = 0');
+            } else {
+                $query->whereIn('employee_id', $userIdsByOrg->all());
+            }
         }
 
         // Clone before applying status to compute consistent counts using all other filters
@@ -254,6 +306,26 @@ class ApproveController extends Controller
             $query->where('subtype_id', $request->subtype);
         }
 
+        // Filter by organization hierarchy via user IDs (cross-connection safe)
+        if ($request->filled('section') || $request->filled('division') || $request->filled('department')) {
+            $userOrgQuery = User::query();
+            if ($request->filled('section')) {
+                $userOrgQuery->where('section_id', $request->section);
+            }
+            if ($request->filled('division')) {
+                $userOrgQuery->where('division_id', $request->division);
+            }
+            if ($request->filled('department')) {
+                $userOrgQuery->where('department_id', $request->department);
+            }
+            $userIdsByOrg = $userOrgQuery->pluck('id');
+            if ($userIdsByOrg->isEmpty()) {
+                $query->whereRaw('1 = 0');
+            } else {
+                $query->whereIn('employee_id', $userIdsByOrg->all());
+            }
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -265,6 +337,15 @@ class ApproveController extends Controller
         if ($request->filled('end_date')) {
             $query->whereDate('created_at', '<=', $request->end_date);
         }
+
+        // Clone before applying status/date to compute consistent counts (same as PDF)
+        $baseQuery = clone $query;
+
+        $totalCount       = (clone $baseQuery)->count();
+        $statusCompleted  = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
+        $statusPending    = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
+        $statusAPPROVEDHR = (clone $baseQuery)->where('status', HrRequests::STATUS_APPROVED_HR)->count();
+        $statusCancelled  = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
 
         $hrrequests = $query->get();
 
@@ -279,6 +360,9 @@ class ApproveController extends Controller
             'เลขที่รายการ',
             'รหัสพนักงาน',
             'ชื่อ-สกุล',
+            'สายงาน',
+            'ฝ่าย',
+            'แผนก',
             'หมวดหมู่คำร้อง',
             'ประเภทคำร้อง',
             'ประเภทย่อย',
@@ -286,12 +370,24 @@ class ApproveController extends Controller
             'สถานะ',
         ];
 
-        $callback = function () use ($hrrequests, $columns) {
+        $callback = function () use ($hrrequests, $columns, $totalCount, $statusCompleted, $statusPending, $statusAPPROVEDHR, $statusCancelled) {
             $output = fopen('php://output', 'w');
 
             // BOM for Excel UTF-8
             fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
 
+            // Summary rows (Thai labels) before the data header
+            fputcsv($output, ['รายการคำขอทั้งหมด', $totalCount]);
+            fputcsv($output, ['รอตรวจสอบโดยผู้จัดการ', $statusPending]);
+            fputcsv($output, ['รอตรวจสอบโดยฝ่ายบุคคล', $statusAPPROVEDHR]);
+            fputcsv($output, ['ยกเลิก/ปฏิเสธ', $statusCancelled]);
+            // Optional: completed count if needed
+            // fputcsv($output, ['ดำเนินการเสร็จสิ้น', $statusCompleted]);
+
+            // Blank line before table header
+            fputcsv($output, []);
+            
+            // Header columns
             fputcsv($output, $columns);
 
             foreach ($hrrequests as $req) {
@@ -299,6 +395,9 @@ class ApproveController extends Controller
                     $req->request_code,
                     optional($req->user)->employee_code,
                     optional($req->user)->fullname,
+                    optional($req->user->section)->section_code ?? '-',
+                    optional($req->user->department->division)->division_name ?? '-',
+                    optional($req->user->department)->department_name ?? '-',
                     optional($req->category)->name_th,
                     optional($req->type)->name_th,
                     optional($req->subtype)->name_th,
@@ -343,6 +442,26 @@ class ApproveController extends Controller
 
         if ($request->filled('subtype')) {
             $query->where('subtype_id', $request->subtype);
+        }
+
+        // Filter by organization hierarchy via user IDs (cross-connection safe)
+        if ($request->filled('section') || $request->filled('division') || $request->filled('department')) {
+            $userOrgQuery = User::query();
+            if ($request->filled('section')) {
+                $userOrgQuery->where('section_id', $request->section);
+            }
+            if ($request->filled('division')) {
+                $userOrgQuery->where('division_id', $request->division);
+            }
+            if ($request->filled('department')) {
+                $userOrgQuery->where('department_id', $request->department);
+            }
+            $userIdsByOrg = $userOrgQuery->pluck('id');
+            if ($userIdsByOrg->isEmpty()) {
+                $query->whereRaw('1 = 0');
+            } else {
+                $query->whereIn('employee_id', $userIdsByOrg->all());
+            }
         }
 
         // Clone before applying status/date to compute consistent counts

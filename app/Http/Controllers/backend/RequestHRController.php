@@ -29,11 +29,15 @@ class RequestHRController extends Controller
 {
     public function dashboard()
     {
-    // 1. Chart by request status
-    $statusData = HrRequests::select('status', DB::raw('count(*) as total'))
-        ->whereNotNull('status') // Ensure we don't group null statuses
-        ->groupBy('status')
-        ->get();
+        $departments = Department::all();
+        $sections = Section::all();
+        $divisions = Division::all();
+        
+        // 1. Chart by request status
+        $statusData = HrRequests::select('status', DB::raw('count(*) as total'))
+            ->whereNotNull('status') // Ensure we don't group null statuses
+            ->groupBy('status')
+            ->get();
 
     $statusOptions = HrRequests::getStatusOptions();
     $allStatuses = collect($statusOptions)->map(fn() => 0);
@@ -52,6 +56,15 @@ class RequestHRController extends Controller
     $statusCancelled = HrRequests::where('status', HrRequests::STATUS_CANCELLED)
     ->orWhere('status', HrRequests::STATUS_REJECTED)
     ->count();
+
+    $statuses = [
+            ['id' => HrRequests::STATUS_PENDING, 'name' => 'อนุมัติโดยผู้จัดการ'],
+            // ['id' => HrRequests::STATUS_APPROVED_MANAGER, 'name' => 'อนุมัติโดยผู้จัดการ'],
+            ['id' => HrRequests::STATUS_APPROVED_HR, 'name' => 'อนุมัติโดย HR'],
+            ['id' => HrRequests::STATUS_COMPLETED, 'name' => 'ดำเนินการเสร็จสิ้น'],
+            ['id' => HrRequests::STATUS_REJECTED, 'name' => 'ปฏิเสธ'],
+            ['id' => HrRequests::STATUS_CANCELLED, 'name' => 'ยกเลิก'],
+        ];
 
     // 2. Chart by division
     // แก้ไข: เปลี่ยน userkml2025 เป็น userkmlsystem
@@ -94,13 +107,155 @@ class RequestHRController extends Controller
     $monthlyCounts = $monthlyData->pluck('total');
 
     return view('requesthr.dashboard', compact(
+        'departments',
+        'sections',
+        'divisions',
         'statusLabels', 'statusCounts', 'statusColors',
         'divisionLabels', 'divisionCounts',
         'categoryLabels', 'categoryCounts',
         'departmentLabels', 'departmentCounts',
         'monthlyLabels', 'monthlyCounts',
-        'statusCompleted', 'statusPending', 'statusCancelled', 'totalRequests' , 'statusAPPROVEDHR'
+        'statusCompleted', 'statusPending', 'statusCancelled', 'totalRequests' , 'statusAPPROVEDHR',
+        'statuses'
     ));
+    }
+
+    public function dashboardFilter(Request $request)
+    {
+        // Base query builder
+        $baseQuery = HrRequests::query();
+
+        // Apply Date Filter
+        if ($request->start_date) {
+            $baseQuery->whereDate('hr_requests.created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $baseQuery->whereDate('hr_requests.created_at', '<=', $request->end_date);
+        }
+
+        $joinedUsers = false;
+        if ($request->section_id || $request->division_id || $request->department_id) {
+            $baseQuery->join('userkmlsystem.userskml', 'hr_requests.employee_id', '=', 'userkmlsystem.userskml.id');
+            $joinedUsers = true;
+        }
+
+        if($request->section_id){
+            $baseQuery->where('userkmlsystem.userskml.section_id', $request->section_id);
+        }
+
+        if($request->division_id){
+            $baseQuery->where('userkmlsystem.userskml.division_id', $request->division_id);
+        }
+
+        // Apply Department Filter
+        if ($request->department_id) {
+            $baseQuery->where('userkmlsystem.userskml.department_id', $request->department_id);
+        }
+        
+        // Apply Status Filter
+        if ($request->status) {
+            $baseQuery->where('hr_requests.status', $request->status);
+        }
+
+        // 1. Status Data
+        $q1 = clone $baseQuery;
+        $statusData = $q1->select('hr_requests.status', DB::raw('count(*) as total'))
+            ->whereNotNull('hr_requests.status')
+            ->groupBy('hr_requests.status')
+            ->get();
+
+        $statusOptions = HrRequests::getStatusOptions();
+        $allStatuses = collect($statusOptions)->map(fn() => 0);
+        foreach ($statusData as $data) {
+            $allStatuses[$data->status] = $data->total;
+        }
+        $statusLabels = collect($statusOptions)->pluck('label');
+        $statusCounts = $allStatuses->values();
+        
+        // Counts
+        $qCount = clone $baseQuery;
+        $totalRequests = $qCount->count();
+        
+        $qCount = clone $baseQuery;
+        $statusCompleted = $qCount->where('hr_requests.status', HrRequests::STATUS_COMPLETED)->count();
+        
+        $qCount = clone $baseQuery;
+        $statusPending = $qCount->where('hr_requests.status', HrRequests::STATUS_PENDING)->count();
+        
+        $qCount = clone $baseQuery;
+        $statusAPPROVEDHR = $qCount->where('hr_requests.status', HrRequests::STATUS_APPROVED_HR)->count();
+        
+        $qCount = clone $baseQuery;
+        $statusCancelled = $qCount->where(function($q) {
+            $q->where('hr_requests.status', HrRequests::STATUS_CANCELLED)
+              ->orWhere('hr_requests.status', HrRequests::STATUS_REJECTED);
+        })->count();
+
+
+        // 2. Chart by division
+        $q2 = clone $baseQuery;
+        // Check if already joined users
+        if (!$joinedUsers) {
+             $q2->join('userkmlsystem.userskml', 'hr_requests.employee_id', '=', 'userkmlsystem.userskml.id');
+        }
+        $divisionData = $q2->join('sections', 'userkmlsystem.userskml.section_id', '=', 'sections.section_id')
+            ->select('sections.section_code as section_code', DB::raw('count(*) as total'))
+            ->groupBy('sections.section_code')
+            ->get();
+        $divisionLabels = $divisionData->pluck('section_code');
+        $divisionCounts = $divisionData->pluck('total');
+
+        // 3. Chart by category
+        $q3 = clone $baseQuery;
+        $categoryData = $q3->join('request_categories', 'hr_requests.category_id', '=', 'request_categories.id')
+            ->select('request_categories.name_th as name_th', DB::raw('count(*) as total'))
+            ->groupBy('request_categories.name_th')
+            ->get();
+        $categoryLabels = $categoryData->pluck('name_th');
+        $categoryCounts = $categoryData->pluck('total');
+
+        // 4. Chart by department
+        $q4 = clone $baseQuery;
+        if (!$joinedUsers) {
+             $q4->join('userkmlsystem.userskml', 'hr_requests.employee_id', '=', 'userkmlsystem.userskml.id');
+        }
+        $departmentData = $q4->join('department', 'userkmlsystem.userskml.department_id', '=', 'department.department_id')
+            ->select('department.department_name as department_name', DB::raw('count(*) as total'))
+            ->groupBy('department.department_name')
+            ->get();
+        $departmentLabels = $departmentData->pluck('department_name');
+        $departmentCounts = $departmentData->pluck('total');
+
+        // 5. Monthly trend chart
+        $q5 = clone $baseQuery;
+        $monthlyData = $q5->select(DB::raw('YEAR(hr_requests.created_at) as year, MONTH(hr_requests.created_at) as month'), DB::raw('count(*) as total'))
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        $monthlyLabels = $monthlyData->map(function ($item) {
+            return date('M Y', mktime(0, 0, 0, $item->month, 1, $item->year));
+        });
+        $monthlyCounts = $monthlyData->pluck('total');
+
+        return response()->json([
+            'statusLabels' => $statusLabels,
+            'statusCounts' => $statusCounts,
+            'divisionLabels' => $divisionLabels,
+            'divisionCounts' => $divisionCounts,
+            'categoryLabels' => $categoryLabels,
+            'categoryCounts' => $categoryCounts,
+            'departmentLabels' => $departmentLabels,
+            'departmentCounts' => $departmentCounts,
+            'monthlyLabels' => $monthlyLabels,
+            'monthlyCounts' => $monthlyCounts,
+            'totalRequests' => $totalRequests,
+            'statusCompleted' => $statusCompleted,
+            'statusPending' => $statusPending,
+            'statusAPPROVEDHR' => $statusAPPROVEDHR,
+            'statusCancelled' => $statusCancelled,
+        ]);
     }
 
     public function welcomeRequest()
@@ -158,8 +313,8 @@ class RequestHRController extends Controller
 
             // Generate Request Code
             $date = now();
-            $prefix = 'HR-';
-            // $prefix = 'HR-' . $date->format('ymd') . '-';
+            // $prefix = 'HR-';
+            $prefix = 'HR-' . $date->format('ymd') . '-';
             $lastRequest = HrRequests::where('request_code', 'like', $prefix . '%')
                 ->orderBy('request_code', 'desc')
                 ->first();
@@ -169,7 +324,7 @@ class RequestHRController extends Controller
                 $lastNumber = (int) substr($lastRequest->request_code, -4);
                 $nextNumber = $lastNumber + 1;
             }
-            $requestCode = $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+            $requestCode = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
             // Create Main Request
             $hrRequest = new HrRequests();

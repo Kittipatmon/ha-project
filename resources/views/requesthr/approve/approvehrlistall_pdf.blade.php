@@ -116,7 +116,7 @@
         <div class="info-cell"><span class="info-label">ยกเลิก/ปฏิเสธ:</span> {{ $statusCancelled }}</div>
     </div>
 
-    <div class="meta">พิมพ์เมื่อ: {{ $generated_at->format('d/m/Y H:i') }}</div>
+    <!-- <div class="meta">พิมพ์เมื่อ: {{ $generated_at->format('d/m/Y H:i') }}</div> -->
 
     <table>
         <thead>
@@ -124,6 +124,9 @@
                 <th style="width: 14%">เลขที่รายการ</th>
                 <th style="width: 14%">รหัสพนักงาน</th>
                 <th style="width: 15%">ชื่อ-สกุล</th>
+                <!-- <th style="width: 15%">สายงาน</th> -->
+                <th style="width: 15%">ฝ่าย</th>
+                <th style="width: 15%">แผนก</th>
                 <th style="width: 16%">หมวดหมู่คำร้อง</th>
                 <th style="width: 16%">ประเภทคำร้อง</th>
                 <th style="width: 16%">ประเภทย่อย</th>
@@ -137,6 +140,9 @@
                 <td class="small">{{ $req->request_code }}</td>
                 <td class="small">{{ optional($req->user)->employee_code }}</td>
                 <td class="small">{{ optional($req->user)->fullname }}</td>
+                <!-- <td class="small">{{ optional($req->user->department->section)->section_code ?? '-' }}</td> -->
+                <td class="small">{{ optional($req->user->department->division)->division_name ?? '-' }}</td>
+                <td class="small">{{ optional($req->user->department)->department_name ?? '-' }}</td>
                 <td class="small">{{ optional($req->category)->name_th ?? '-' }}</td>
                 <td class="small">{{ optional($req->type)->name_th ?? '-' }}</td>
                 <td class="small">{{ optional($req->subtype)->name_th ?? '-' }}</td>

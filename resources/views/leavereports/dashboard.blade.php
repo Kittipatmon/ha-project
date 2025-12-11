@@ -7,13 +7,23 @@
     {{-- Header Section --}}
     <div class="md:flex md:items-center md:justify-between mb-4">
         <div class="flex-1 min-w-0">
+            <form action="{{ route('leavereports.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 bg-white dark:bg-slate-800 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    @csrf
+                    <input type="file" name="file" accept=".xlsx,.xls,.csv" 
+                        class="block w-full text-sm text-slate-500
+                        file:mr-4 file:py-1.5 file:px-4
+                        file:rounded-lg file:border-0
+                        file:text-xs file:font-semibold
+                        file:bg-red-50 file:text-red-700
+                        hover:file:bg-red-100 dark:file:bg-red-900 dark:file:text-white
+                        cursor-pointer" required>
+                    <button type="submit"
+                        class="inline-flex items-center justify-center p-2 rounded-lg text-green-600 hover:bg-green-50 transition-colors tooltip" title="นำเข้า Excel">
+                        <i class="fas fa-file-import text-lg"></i>
+                    </button>
+                </form>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
-            <button type="button"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 transition-colors">
-                <i class="fas fa-file-excel mr-2 text-green-600"></i>
-                Import Excel
-            </button>
             <span class="h-8 w-px bg-gray-300 dark:bg-gray-600 self-center hidden md:block"></span>
             <button type="button"
                 class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">

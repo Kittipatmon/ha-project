@@ -60,6 +60,7 @@ Route::get('/dashboard', function () {
 // welcomeSystem
 Route::get('/welcome-system', [SystemController::class, 'welcomeSystem'])->name('welcome.system');
 Route::get('/requestHR/dashboard', [RequestHRController::class, 'dashboard'])->name('requesthr.dashboard');
+Route::get('/requestHR/dashboard/filter', [RequestHRController::class, 'dashboardFilter'])->name('requesthr.dashboard.filter');
 
 Route::middleware('auth')->group(function () {
 
@@ -123,6 +124,7 @@ Route::middleware('auth')->group(function () {
 
     //Leave Reports
     Route::get('/leavereports/dashboard', [LeaveReportsController::class, 'dashboard'])->name('leavereports.dashboard');
+    Route::post('/leavereports/import', [LeaveReportsController::class, 'import'])->name('leavereports.import');
 
 });
 // 

@@ -1,6 +1,7 @@
 @foreach ($hrrequests as $request)
 <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
     <td class="text-sm text-gray-700 dark:text-gray-300">{{ $request->request_code }}</td>
+    <td class="text-sm text-gray-700 dark:text-gray-300">{{ optional($request->user)->employee_code }}</td>
     <td class="text-sm text-gray-700 dark:text-gray-300">{{ optional($request->user)->fullname }}</td>
     <td class="text-sm text-gray-700 dark:text-gray-300">{{ optional($request->category)->name_th ?? '-' }}</td>
     <td class="text-sm text-gray-700 dark:text-gray-300">{{ optional($request->type)->name_th ?? '-' }}</td>
