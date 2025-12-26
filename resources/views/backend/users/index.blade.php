@@ -37,7 +37,7 @@
     <form id="filter-form" method="GET" action="{{ route('users.index') }}"
         class="mb-6 border border-gray-200 rounded-xl p-5 bg-white dark:bg-gray-800 dark:border-gray-700 shadow-sm hidden transition-all duration-300">
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end mb-4">
             <div class="form-control">
                 <span class="label-text mb-1 text-xs text-gray-500 dark:text-gray-400">รหัสพนักงาน</span>
                 <input type="text" name="employee_code" placeholder="ค้นหารหัส..."
@@ -56,11 +56,31 @@
                 <input type="text" name="position" placeholder="ค้นหาตำแหน่ง..." value="{{ request('position') }}"
                     class="input input-bordered input-sm w-full dark:bg-gray-700" />
             </div>
-
             <div class="form-control">
-                <span class="label-text mb-1 text-xs text-gray-500 dark:text-gray-400">ระดับพนักงาน</span>
-                <input type="text" name="level_user" placeholder="ค้นหาระดับ..." value="{{ request('level_user') }}"
-                    class="input input-bordered input-sm w-full dark:bg-gray-700" />
+                <span class="label-text mb-1 text-xs text-gray-500 dark:text-gray-400">ประเภทพนักงาน</span>
+                <select name="employee_type" class="select select-bordered select-sm w-full dark:bg-gray-700">
+                    <option value="">ทั้งหมด</option>
+                    <option value="รายเดือน"
+                        {{ request('employee_type') === 'รายเดือน' ? 'selected' : '' }}>รายเดือน</option>
+                    <option value="รายวัน"
+                        {{ request('employee_type') === 'รายวัน' ? 'selected' : '' }}>รายวัน</option>
+                </select>
+            </div>
+            <div>
+                <span class="label-text mb-1 text-xs text-gray-500 dark:text-gray-400">สถานะ Active</span>
+                @php $statusOptions = \App\Models\User::getStatusOptions(); @endphp
+                <select name="status" class="select select-bordered select-sm w-full dark:bg-gray-700">
+                    <option value="">ทั้งหมด</option>
+                    @foreach($statusOptions as $value => $option)
+                    @php
+                        $label = is_array($option) ? ($option['label'] ?? '') : $option;
+                    @endphp
+                    <option value="{{ $value }}"
+                        {{ (string)request('status') === (string)$value ? 'selected' : '' }}>
+                        {{ $label }}
+                    </option>
+                    @endforeach
+                </select>
             </div>
         </div>
 
@@ -162,9 +182,11 @@
                         <th>ฝ่าย</th>
                         <th>สายงาน</th>
                         <th>ตำแหน่ง</th>
-                        <th>เริ่มงาน</th>
+                        <th>ประเภทพนักงาน</th>
+                        <!-- <th>เริ่มงาน</th> -->
                         <th>ระดับ</th>
                         <th>สถานะ HR</th>
+                        <th>สถานะ Active</th>
                         <th class="w-24 text-center">จัดการ</th>
                     </tr>
                 </thead>
@@ -181,8 +203,11 @@
                         <td>{{ $user->section->section_code ?? '-' }}</td>
                         <td>{{ $user->position }}</td>
                         <td class="whitespace-nowrap">
-                            {{ $user->startwork_date ? \Carbon\Carbon::parse($user->startwork_date)->format('d M Y') : '-' }}
+                            {{ $user->employee_type ?? '-' }}
                         </td>
+                        <!-- <td class="whitespace-nowrap">
+                            {{ $user->startwork_date ? \Carbon\Carbon::parse($user->startwork_date)->format('d M Y') : '-' }}
+                        </td> -->
                         <td>
                             <span class="badge badge-{{ $user->level_user_color }} badge-outline badge-sm font-medium">
                                 {{ $user->level_user_label }}
@@ -194,8 +219,13 @@
                             </span>
                         </td>
                         <td>
+                            <span class="badge badge-{{ $user->status_color }} badge-sm text-xs text-white">
+                                {{ $user->status_label }}
+                            </span>
+                        </td>
+                        <td>
                             <div class="flex justify-center gap-1">
-                                <a href="#" class="btn btn-square btn-xs btn-info text-white" title="ดูข้อมูล">
+                                <a href="{{ route('users.show', $user->id) }}" class="btn btn-square btn-xs btn-info text-white" title="ดูข้อมูล">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
                                 <a href="{{ route('users.edit', $user->id) }}"
@@ -216,7 +246,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="10" class="text-center text-gray-500 py-10">
+                        <td colspan="11" class="text-center text-gray-500 py-10">
                             <div class="flex flex-col items-center justify-center">
                                 <i class="fa-solid fa-inbox text-4xl mb-2 text-gray-300"></i>
                                 <span>ไม่พบข้อมูลตามเงื่อนไข</span>
@@ -234,13 +264,26 @@
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteForms = document.querySelectorAll('.form-delete');
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Delete confirmation (works for server + dynamically rendered rows) ---
+    document.addEventListener('submit', (e) => {
+        const formEl = e.target?.closest?.('form.form-delete');
+        if (!formEl) return;
 
-    deleteForms.forEach(function(form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // กันไม่ให้ submit ทันที
+        // prevent infinite loop when we call form.submit() after confirmation
+        if (formEl.dataset.confirmed === '1') {
+            delete formEl.dataset.confirmed;
+            return;
+        }
 
+        e.preventDefault();
+
+        const proceed = () => {
+            formEl.dataset.confirmed = '1';
+            formEl.submit();
+        };
+
+        if (typeof Swal !== 'undefined') {
             Swal.fire({
                 title: 'ยืนยันการลบ?',
                 text: 'เมื่อลบแล้วจะไม่สามารถกู้คืนได้',
@@ -251,14 +294,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
             }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit(); // ยืนยันแล้วค่อย submit ฟอร์ม
-                }
+                if (result.isConfirmed) proceed();
             });
-        });
+        } else {
+            if (confirm('ยืนยันการลบ?')) proceed();
+        }
     });
-});
-document.addEventListener('DOMContentLoaded', () => {
+
     const addUserForm = document.getElementById('add_user_form');
     const addUserModal = document.getElementById('add_user_modal');
     const modalErrors = document.getElementById('modal_errors');
@@ -312,8 +354,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // ถ้า User submit เอง (กด enter) ให้ปิด modal ก่อนเล็กน้อยหรือโชว์ Loading
             // แต่ใน flow นี้เราใช้ปุ่มแยก ดังนั้นโค้ดนี้จะทำงานตอน requestSubmit()
 
-            modalErrors.classList.add('hidden');
-            modalErrors.innerHTML = '';
+            if (modalErrors) {
+                modalErrors.classList.add('hidden');
+                modalErrors.innerHTML = '';
+            }
 
             // Re-open modal ถ้าเป็นการ submit แบบปกติเพื่อให้เห็น loading หรือ error (กรณีไม่ได้ผ่าน swal logic)
             // แต่เนื่องจาก requestSubmit() มาจาก logic ข้างบน เราอาจจะต้องเปิด Modal มารับ Error
@@ -335,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.status === 422) {
                     // Validation Errors: ต้องเปิด Modal กลับมาแสดง Error
-                    if (!addUserModal.open) addUserModal.showModal();
+                    if (addUserModal && !addUserModal.open) addUserModal.showModal();
 
                     const errorData = await response.json();
                     let errorHtml = '<ul class="list-disc list-inside">';
@@ -345,11 +389,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
                     errorHtml += '</ul>';
-                    modalErrors.innerHTML = errorHtml;
-                    modalErrors.classList.remove('hidden');
+                    if (modalErrors) {
+                        modalErrors.innerHTML = errorHtml;
+                        modalErrors.classList.remove('hidden');
+                    }
 
                     // Scroll to top of modal
-                    addUserModal.querySelector('.modal-box').scrollTop = 0;
+                    const modalBox = addUserModal?.querySelector?.('.modal-box');
+                    if (modalBox) modalBox.scrollTop = 0;
 
                 } else if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -357,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Success
                     this.reset();
                     // Modal ปิดอยู่แล้วจาก step ก่อนหน้า หรือถ้าเปิดอยู่ก็ปิดเลย
-                    if (addUserModal.open) addUserModal.close();
+                    if (addUserModal && addUserModal.open) addUserModal.close();
 
                     await fetchUsers(); // Refresh Table
 
@@ -375,9 +422,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Error:', error);
-                if (!addUserModal.open) addUserModal.showModal();
-                modalErrors.innerHTML = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล โปรดลองใหม่อีกครั้ง';
-                modalErrors.classList.remove('hidden');
+                if (addUserModal && !addUserModal.open) addUserModal.showModal();
+                if (modalErrors) {
+                    modalErrors.innerHTML = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล โปรดลองใหม่อีกครั้ง';
+                    modalErrors.classList.remove('hidden');
+                }
             }
         });
     }
@@ -399,6 +448,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const pagWrap = document.getElementById('pagination');
     const loader = document.getElementById('loader');
     const tableWrap = document.getElementById('table-wrap');
+
+    if (!form || !tbody || !pagWrap || !loader || !tableWrap) {
+        return;
+    }
 
     const showPattern = tableWrap.dataset.showPattern || '/users/:id';
     const editPattern = tableWrap.dataset.editPattern || '/users/:id/edit';
@@ -435,9 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const cur = new URLSearchParams(window.location.search);
             if (cur.get('per_page')) params.set('per_page', cur.get('per_page'));
-            if (cur.get('page')) params.set('page', cur.get('page'));
         }
-        if (!params.get('per_page')) params.set('per_page', 20);
+        if (!params.get('per_page')) params.set('per_page', 50);
+        if (!params.get('include')) params.set('include', 'department,division,section');
 
         try {
             const res = await fetch(`/api/users?${params.toString()}`, {
@@ -462,33 +515,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         if (!Array.isArray(items) || items.length === 0) {
             tbody.innerHTML =
-                `<tr><td colspan="10" class="text-center text-gray-500 py-10">ไม่พบข้อมูลตามเงื่อนไข</td></tr>`;
+                `<tr><td colspan="11" class="text-center text-gray-500 py-10">ไม่พบข้อมูลตามเงื่อนไข</td></tr>`;
             return;
         }
         tbody.innerHTML = items.map(u => {
             const showUrl = showPattern.replace(':id', u.id);
             const editUrl = editPattern.replace(':id', u.id);
             const destroyUrl = destroyPattern.replace(':id', u.id);
+
+            const hasHrStatus = u.hr_status !== null && u.hr_status !== undefined && u.hr_status !== '';
+            const hasStatus = u.status !== null && u.status !== undefined && u.status !== '';
             // ... (Logic การสร้าง HTML Row เหมือนเดิม แต่ปรับ class เล็กน้อยให้เข้ากับ Tailwind) ...
             return `
             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                 <td class="font-medium">${safe(u.employee_code)}</td>
                 <td><div class="font-bold">${safe(u.fullname)}</div></td>
-                <td>${safe(u.department?.department_name)}</td>
-                <td>${safe(u.division?.division_name)}</td>
-                <td>${safe(u.section?.section_code)}</td>
+                <td>${safe(u.department?.department_name ?? u.department?.name)}</td>
+                <td>${safe(u.division?.division_name ?? u.division?.name)}</td>
+                <td>${safe(u.section?.section_code ?? u.section?.code)}</td>
                 <td>${safe(u.position)}</td>
-                <td class="whitespace-nowrap">${formatDate(u.startwork_date)}</td>
+                <td class="whitespace-nowrap">${safe(u.employee_type)}</td>
                 <td>${levelBadge(u)}</td>
-                <td>${u.hr_status ? `<span class="badge badge-${u.hr_status_color} badge-sm text-xs">${u.hr_status_label}</span>` : ''}</td>
+                <td>${hasHrStatus ? `<span class="badge badge-${safe(u.hr_status_color ?? 'neutral')} badge-sm text-xs">${safe(u.hr_status_label ?? u.hr_status)}</span>` : '-'}</td>
+                <td>${hasStatus ? `<span class="badge badge-${safe(u.status_color ?? 'neutral')} badge-sm text-xs text-white">${safe(u.status_label ?? u.status)}</span>` : '-'}</td>
                 <td>
                     <div class="flex justify-center gap-1">
                         <a href="${showUrl}" class="btn btn-square btn-xs btn-info text-white"><i class="fa-solid fa-eye"></i></a>
                         <a href="${editUrl}" class="btn btn-square btn-xs btn-warning text-white"><i class="fa-solid fa-pen-to-square"></i></a>
-                        <form action="${destroyUrl}" method="POST" class="inline">
+                        <form action="${destroyUrl}" method="POST" class="inline form-delete">
                             <input type="hidden" name="_token" value="${csrf}">
                             <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-square btn-xs btn-error text-white" onclick="return confirm('ยืนยันการลบ?')"><i class="fa-solid fa-trash"></i></button>
+                            <button type="submit" class="btn btn-square btn-xs btn-error text-white" title="ลบ"><i class="fa-solid fa-trash"></i></button>
                         </form>
                     </div>
                 </td>
@@ -552,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `<a class="join-item btn btn-sm ${!next ? 'btn-disabled opacity-50' : ''}" ${next ? `href="${next}"` : ''}>»</a></div>`;
 
         // Per page dropdown
-        const currentPer = new URLSearchParams(window.location.search).get('per_page') || 20;
+        const currentPer = new URLSearchParams(window.location.search).get('per_page') || 50;
         html += `
         <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
             <span>แสดง</span>

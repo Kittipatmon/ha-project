@@ -15,6 +15,15 @@ class NewsController extends Controller
         return view('backend.news.index', compact('newsItems'));
     }
 
+    public function newsAll()
+    {
+        $newsItems = News::where('is_active', true)
+            ->orderBy('published_date', 'desc')
+            ->get();
+
+        return view('backend.news.newsall', compact('newsItems'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([

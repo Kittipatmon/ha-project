@@ -69,28 +69,36 @@
             <div class="hidden sm:flex sm:items-center sm:ms-6">
 
                 <div class="hidden space-x-2 sm:-my-px sm:ms-10 sm:flex">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" id="theme-toggle" data-theme-toggle class="toggle theme-controller" />
+                   <div class="relative">
+                        <button id="theme-toggle-btn" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                        </button>
                         
-                        <span class="text-sm" id="icon-sun">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-icon lucide-sun">
-                                <circle cx="12" cy="12" r="4" />
-                                <path d="M12 2v2" />
-                                <path d="M12 20v2" />
-                                <path d="m4.93 4.93 1.41 1.41" />
-                                <path d="m17.66 17.66 1.41 1.41" />
-                                <path d="M2 12h2" />
-                                <path d="M20 12h2" />
-                                <path d="m6.34 17.66-1.41 1.41" />
-                                <path d="m19.07 4.93-1.41 1.41" />
-                            </svg>
-                        </span>
-                        <span class="text-sm hidden-custom" id="icon-moon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon">
-                                <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
-                            </svg>
-                        </span>
-                    </label>
+                        <!-- Dropdown menu -->
+                        <div id="theme-dropdown" class="z-50 hidden-custom absolute right-0 mt-2 w-32 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700">
+                            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="theme-toggle-btn">
+                                <li>
+                                    <button type="button" class="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-theme-value="light">
+                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                                        Light
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-theme-value="dark">
+                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                                        Dark
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-theme-value="auto">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                        System
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
                     <ul class="hidden lg:flex space-x-1 items-center">
                         <li>
@@ -285,16 +293,77 @@
     })();
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Theme icons sync (global script already handles persistence)
-        const themeToggle = document.getElementById('theme-toggle');
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
-        function syncIcons(isDark){
-            iconSun.classList.toggle('hidden-custom', isDark);
-            iconMoon.classList.toggle('hidden-custom', !isDark);
+        // Theme Toggle Logic (match manpower)
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const themeDropdown = document.getElementById('theme-dropdown');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        const root = document.documentElement;
+
+        function applyTheme(theme) {
+            let resolvedTheme = theme;
+            if (theme === 'auto') {
+                try { localStorage.removeItem('theme'); } catch (_) {}
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                resolvedTheme = prefersDark ? 'dark' : 'light';
+            } else {
+                try { localStorage.setItem('theme', theme); } catch (_) {}
+            }
+
+            const isDark = resolvedTheme === 'dark';
+            root.classList.toggle('dark', isDark);
+            root.setAttribute('data-theme', resolvedTheme);
+
+            // Sync any other theme toggles in the page (if present)
+            document.querySelectorAll('[data-theme-toggle]')
+                .forEach(el => { if ('checked' in el) el.checked = isDark; });
         }
-        syncIcons(document.documentElement.classList.contains('dark'));
-        themeToggle.addEventListener('change', () => syncIcons(themeToggle.checked));
+
+        function updateThemeIcons() {
+            if (!themeToggleDarkIcon || !themeToggleLightIcon) return;
+            const isDark = root.classList.contains('dark');
+            if (isDark) {
+                themeToggleDarkIcon.classList.add('hidden');
+                themeToggleLightIcon.classList.remove('hidden');
+            } else {
+                themeToggleDarkIcon.classList.remove('hidden');
+                themeToggleLightIcon.classList.add('hidden');
+            }
+        }
+
+        // Initial icon update
+        updateThemeIcons();
+
+        // Toggle dropdown
+        if (themeToggleBtn && themeDropdown) {
+            themeToggleBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                themeDropdown.classList.toggle('hidden-custom');
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            if (themeToggleBtn && themeDropdown && !themeToggleBtn.contains(e.target) && !themeDropdown.contains(e.target)) {
+                themeDropdown.classList.add('hidden-custom');
+            }
+        });
+
+        // Handle theme selection
+        const themeButtons = document.querySelectorAll('[data-theme-value]');
+        themeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const theme = this.getAttribute('data-theme-value');
+
+                if (theme === 'dark' || theme === 'light' || theme === 'auto') {
+                    applyTheme(theme);
+                }
+
+                updateThemeIcons();
+                if (themeDropdown) themeDropdown.classList.add('hidden-custom');
+            });
+        });
 
         // --- Mobile Menu Logic ---
         const mobileBtn = document.getElementById('mobile-menu-btn');

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class UserController extends Controller
 {
@@ -25,7 +26,7 @@ class UserController extends Controller
     public function apiUsers(Request $request)
     {
         // ส่งกลับเป็นรูปแบบ paginate เพื่อให้ frontend ใช้ข้อมูลหน้า/ลิงก์ได้
-        $perPage = (int) $request->input('per_page', 20);
+        $perPage = (int) $request->input('per_page', 50);
         // กันค่าแปลกๆ
         $perPage = max(1, min($perPage, 100));
 
@@ -53,7 +54,7 @@ class UserController extends Controller
     // หน้าเว็บ: แสดงผลแบบ paginate + ส่งค่ากลับไปเติมในฟอร์ม
     public function index(Request $request)
     {
-        $users = $this->filteredUsers($request)->paginate(20)->withQueryString();
+        $users = $this->filteredUsers($request)->paginate(50)->withQueryString();
         
         $departments = Department::all();
         $divisions = Division::all();
@@ -77,6 +78,9 @@ class UserController extends Controller
             'position'      => 'like',
             'level_user'    => '=',
             'hr_status'     => '=',
+            'status'        => '=',
+            'employee_type' => 'like',
+            'workplace'     => 'like',
         ];
 
         foreach ($simpleFilters as $field => $operator) {
@@ -129,105 +133,12 @@ class UserController extends Controller
             $query->whereDate('startwork_date', '<=', Carbon::parse($to));
         }
 
-        // เรียงล่าสุดเข้าเริ่มงานก่อน (ปรับได้ตามต้องการ)
-        $query->orderByDesc('startwork_date')->orderBy('employee_code');
+        // เรียงรหัสพนักงานจากน้อยไปมาก
+        $query->orderBy('employee_code', 'asc');
 
         return $query;
     }
 
-// public function store(Request $request){
-//     // 1. กำหนดกฎการตรวจสอบข้อมูล (Validation Rules)
-//     $validator = Validator::make($request->all(), [
-//         // ใช้ตารางและคอนเนกชันที่ถูกต้องตาม Model: userkml2025.userskml
-//         'employee_code' => 'required|unique:userkml2025.userskml,employee_code|max:50',
-//         'sex'           => 'required|string|max:20',
-//         'prefix'        => 'required|string|max:50',
-//         'first_name'    => 'required|string|max:255',
-//         'last_name'     => 'required|string|max:255',
-//         'position'      => 'nullable|string|max:255',
-//         // ระบุคอนเนกชันให้ตรง (ในกรณีที่ตารางอยู่ในคอนเนกชันเดียวกันกับ userskml)
-//         'department_id' => 'nullable|exists:userkml2025.departments,department_id',
-//         'division_id'   => 'nullable|exists:userkml2025.divisions,division_id',
-//         'section_id'    => 'nullable|exists:userkml2025.sections,section_id',
-//         'level_user'    => 'required|string',
-//         'hr_status'     => 'required|string',
-//         // 'startwork_date' => 'nullable|date', // หากมีการเปิดใช้ input นี้
-//     ], [
-//         // กำหนดข้อความ Error ภาษาไทย (Optional)
-//         'employee_code.unique' => 'รหัสพนักงานนี้มีอยู่ในระบบแล้ว',
-//         'employee_code.required' => 'กรุณาระบุรหัสพนักงาน',
-//         'first_name.required' => 'กรุณาระบุชื่อจริง',
-//         // ... เพิ่มตามต้องการ
-//     ]);
-
-//     // ถ้า Validation ไม่ผ่าน ให้ส่ง Error กลับไปเป็น JSON (Status 422)
-//     if ($validator->fails()) {
-//         return response()->json(['errors' => $validator->errors()], 422);
-//     }
-
-//     // 2. เริ่มต้น Transaction เพื่อความปลอดภัยของข้อมูล
-//     DB::beginTransaction();
-
-//     try {
-//         // เตรียมข้อมูล Fullname
-//         // $fullname = trim($request->prefix . ' ' . $request->first_name . ' ' . $request->last_name);
-
-//         // สร้าง User ใหม่
-//         $user = new User();
-//         $user->employee_code = $request->employee_code;
-//         $user->sex = $request->sex;
-//         $user->prefix = $request->prefix;
-//         $user->first_name = $request->first_name;
-//         $user->last_name = $request->last_name;
-//         // $user->fullname = $fullname; // บันทึกชื่อเต็ม
-        
-//         $user->position = $request->position;
-//         $user->department_id = $request->department_id;
-//         $user->division_id = $request->division_id;
-//         $user->section_id = $request->section_id;
-        
-//         $user->level_user = $request->level_user;
-//         $user->hr_status = $request->hr_status;
-        
-//         // จัดการวันที่ (ถ้ามี)
-//         if ($request->has('startwork_date')) {
-//             $user->startwork_date = $request->startwork_date;
-//         } else {
-//             // Default วันปัจจุบัน หรือ null ตาม business logic
-//             $user->startwork_date = now(); 
-//         }
-
-//         // --- ส่วนจัดการ Auth (Email/Password) ---
-//         // กรณีตาราง Users บังคับ Email แต่ใน Form ไม่มี -> สร้าง Dummy Email
-//         // $user->email = $request->employee_code . '@example.com'; 
-        
-//         // ตั้งรหัสผ่านเริ่มต้น (Default Password) 
-//         // เช่นใช้รหัสพนักงาน หรือ '12345678'
-//         // $user->password = Hash::make($request->employee_code); // หรือ Hash::make('12345678');
-
-//         $user->save();
-
-//         // Commit ข้อมูลลง Database
-//         DB::commit();
-
-//         // ส่ง Response กลับเป็น JSON (Status 200)
-//         return response()->json([
-//             'status' => 'success',
-//             'message' => 'บันทึกข้อมูลพนักงานเรียบร้อยแล้ว',
-//             'data' => $user
-//         ], 200);
-
-//     } catch (\Exception $e) {
-//         // ถ้ามี Error ให้ Rollback ข้อมูล
-//         DB::rollBack();
-
-//         // ส่ง Error กลับเป็น JSON (Status 500)
-//         return response()->json([
-//             'status' => 'error',
-//             'message' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()
-//         ], 500);
-//     }
-// }
 
 public function create()
 {
@@ -254,6 +165,8 @@ public function store(Request $request)
             'first_name'    => 'required|string|max:255',
             'last_name'     => 'required|string|max:255',
             'position'      => 'nullable|string|max:255',
+            'employee_type' => 'nullable|string|max:255',
+            'workplace'    => 'nullable|string|max:255',
             'department_id' => 'nullable|integer|exists:userkml2025.department,department_id',
             'division_id'   => 'nullable|integer|exists:userkml2025.divisions,division_id',
             'section_id'    => 'nullable|integer|exists:userkml2025.sections,section_id',
@@ -286,6 +199,8 @@ public function store(Request $request)
         // $user->fullname      = $fullname;         // ถ้ามีคอลัมน์นี้ในตาราง
 
         $user->position      = $validated['position'] ?? null;
+        $user->workplace     = $validated['workplace'] ?? null;
+        $user->employee_type = $validated['employee_type'] ?? null;
         $user->department_id = $validated['department_id'] ?? null;
         $user->division_id   = $validated['division_id'] ?? null;
         $user->section_id    = $validated['section_id'] ?? null;
@@ -300,6 +215,11 @@ public function store(Request $request)
     return redirect()->route('users.index')->with('success', 'บันทึกข้อมูลพนักงานเรียบร้อยแล้ว');
 }
 
+public function show($id)
+{
+    $user = User::with(['department', 'division', 'section'])->findOrFail($id);
+    return view('backend.users.detail', compact('user'));
+}
 
 public function edit($id)
 {
@@ -326,12 +246,17 @@ public function update(Request $request, $id)
             'first_name'    => 'required|string|max:255',
             'last_name'     => 'required|string|max:255',
             'position'      => 'nullable|string|max:255',
+            'employee_type' => 'nullable|string|max:255',
+            'workplace'    => 'nullable|string|max:255',
             'department_id' => 'nullable|integer|exists:userkml2025.department,department_id',
             'division_id'   => 'nullable|integer|exists:userkml2025.divisions,division_id',
             'section_id'    => 'nullable|integer|exists:userkml2025.sections,section_id',
             'level_user'    => 'required|integer',
             'hr_status'     => 'required|integer',
+            'status'        => 'required|integer',
             'startwork_date' => 'nullable|date',
+            'endwork_date' => 'nullable|date|required_if:status,' . User::STATUS_INACTIVE,
+            'endwork_comment' => 'nullable|string|max:1000|required_if:status,' . User::STATUS_INACTIVE,
         ],
         [
             'employee_code.required' => 'กรุณาระบุรหัสพนักงาน',
@@ -342,6 +267,9 @@ public function update(Request $request, $id)
             'prefix.required'        => 'กรุณาระบุคำนำหน้า',
             'level_user.required'    => 'กรุณาเลือกระดับพนักงาน',
             'hr_status.required'     => 'กรุณาเลือกสถานะ HR',
+            'status.required'        => 'กรุณาเลือกสถานะพนักงาน',
+            'endwork_date.required_if' => 'กรุณาเลือกวันที่สิ้นสุดการทำงานกรณีไม่ใช้งาน',
+            'endwork_comment.required_if' => 'กรุณาระบุเหตุผลกรณีไม่ใช้งาน',
         ]
     );
 
@@ -356,12 +284,26 @@ public function update(Request $request, $id)
         $user->last_name     = $validated['last_name'];
         // $user->fullname      = $fullname;         // ถ้ามีคอลัม
         $user->position      = $validated['position'] ?? null;
+        $user->employee_type = $validated['employee_type'] ?? null;
+        $user->workplace     = $validated['workplace'] ?? null;
         $user->department_id = $validated['department_id'] ?? null;
         $user->division_id   = $validated['division_id'] ?? null;
         $user->section_id    = $validated['section_id'] ?? null;
         $user->level_user    = $validated['level_user'];
         $user->hr_status     = $validated['hr_status'];
+        $user->status        = $validated['status'];
         $user->startwork_date = $validated['startwork_date'] ?? null;
+
+        $isInactive = (string)($validated['status'] ?? '') === (string)User::STATUS_INACTIVE;
+
+        // รองรับทั้งกรณีมี/ยังไม่มีคอลัมน์ในฐานข้อมูล เพื่อกัน error ระหว่างรอ migrate
+        $schema = Schema::connection($user->getConnectionName());
+        if ($schema->hasColumn($user->getTable(), 'endwork_date')) {
+            $user->endwork_date = $isInactive ? ($validated['endwork_date'] ?? null) : null;
+        }
+        if ($schema->hasColumn($user->getTable(), 'endwork_comment')) {
+            $user->endwork_comment = $isInactive ? ($validated['endwork_comment'] ?? null) : null;
+        }
         $user->save();
     });
 

@@ -23,6 +23,9 @@ use App\Http\Controllers\backend\LeaveReportsController;
 use App\Http\Controllers\backend\NewsController;
 use App\Http\Controllers\backend\users\UserController;
 use App\Http\Controllers\backend\users\UserTypeController;
+
+use App\Http\Controllers\backend\manpower\ManpowerController;
+
 use App\Models\datacenter\News;
 use App\Models\hrrequest\HrRequests;
 
@@ -61,6 +64,13 @@ Route::get('/dashboard', function () {
 Route::get('/welcome-system', [SystemController::class, 'welcomeSystem'])->name('welcome.system');
 Route::get('/requestHR/dashboard', [RequestHRController::class, 'dashboard'])->name('requesthr.dashboard');
 Route::get('/requestHR/dashboard/filter', [RequestHRController::class, 'dashboardFilter'])->name('requesthr.dashboard.filter');
+
+
+Route::get('/manpower/dashboard', [ManpowerController::class, 'dashboard'])->name('manpower.dashboard');
+Route::get('/manpower/index', [ManpowerController::class, 'index'])->name('manpower.index');
+    
+Route::get('news/detail/{id}', [NewsController::class, 'detail'])->name('news.detail');
+Route::get('news-all', [NewsController::class, 'newsAll'])->name('news.newsAll');
 
 Route::middleware('auth')->group(function () {
 
@@ -117,7 +127,6 @@ Route::middleware('auth')->group(function () {
 
     //News
     Route::resource('news', NewsController::class);
-    Route::get('news/detail/{id}', [NewsController::class, 'detail'])->name('news.detail');
 
     //profile user
     Route::get('users/profile/{id}', [UserController::class, 'profileUser'])->name('users.profile');

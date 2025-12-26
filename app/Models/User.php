@@ -28,6 +28,7 @@ class User extends Authenticatable
         'employee_type',
         'startwork_date',
         'endwork_date',
+        'endwork_comment',
         'workplace',
         'section_id',
         'division_id',
@@ -54,6 +55,8 @@ class User extends Authenticatable
         'level_user_color',
         'hr_status_label',
         'hr_status_color',
+        'status_label',
+        'status_color',
     ];
 
     public function usertype()

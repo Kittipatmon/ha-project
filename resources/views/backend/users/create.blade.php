@@ -53,6 +53,19 @@
                 @enderror
             </div>
             <div>
+                <label for="sex" class="block font-medium mb-1">เพศ <span class="text-red-500">*</span></label>
+                <select name="sex" id="sex"
+                    class="select select-bordered w-full dark:bg-gray-700 @error('sex') select-error @enderror"
+                    required>
+                    <option value="">-- เลือก --</option>
+                    <option value="ชาย" @if(old('sex')=='ชาย' ) selected @endif>ชาย</option>
+                    <option value="หญิง" @if(old('sex')=='หญิง' ) selected @endif>หญิง</option>
+                </select>
+                @error('sex')
+                <span class="text-sm text-red-500">{{ $message }}</span>
+                @enderror
+            </div>
+            <div>
                 <label for="first_name" class="block font-medium mb-1">ชื่อจริง <span
                         class="text-red-500">*</span></label>
                 <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}"
@@ -69,19 +82,6 @@
                     class="input input-bordered w-full dark:bg-gray-700 px-3 py-2 @error('last_name') input-error @enderror"
                     required>
                 @error('last_name')
-                <span class="text-sm text-red-500">{{ $message }}</span>
-                @enderror
-            </div>
-            <div>
-                <label for="sex" class="block font-medium mb-1">เพศ <span class="text-red-500">*</span></label>
-                <select name="sex" id="sex"
-                    class="select select-bordered w-full dark:bg-gray-700 @error('sex') select-error @enderror"
-                    required>
-                    <option value="">-- เลือก --</option>
-                    <option value="ชาย" @if(old('sex')=='ชาย' ) selected @endif>ชาย</option>
-                    <option value="หญิง" @if(old('sex')=='หญิง' ) selected @endif>หญิง</option>
-                </select>
-                @error('sex')
                 <span class="text-sm text-red-500">{{ $message }}</span>
                 @enderror
             </div>
@@ -143,7 +143,39 @@
                 @enderror
             </div>
         </div>
-
+<!-- workplace -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+            <div>
+                <label for="workplace" class="block font-medium mb-1">สถานที่ทำงาน</label>
+                <select name="workplace" id="workplace"
+                    class="input input-bordered w-full dark:bg-gray-700 px-3 py-2 @error('workplace') input-error @enderror">
+                    <option value="">-- เลือกสถานที่ทำงาน --</option>
+                    <option value="สนง.ใหญ่" @if(old('workplace')=='สนง.ใหญ่' ) selected @endif>สนง.ใหญ่
+                    </option>
+                    <option value="บางเลน" @if(old('workplace')=='บางเลน' ) selected
+                        @endif>โรงงานบางเลน</option>
+                    <option value="ไทรใหญ่" @if(old('workplace')=='ไทรใหญ่' ) selected @endif>โรงงานไทรใหญ่
+                    </option>
+                </select>
+                @error('workplace')
+                <span class="text-sm text-red-500">{{ $message }}</span>
+                @enderror
+            </div>
+            <div>
+                <label for="employee_type" class="block font-medium mb-1">ประเภทพนักงาน</label>
+                <select name="employee_type" id="employee_type"
+                    class="input input-bordered w-full dark:bg-gray-700 px-3 py-2 @error('employee_type') input-error @enderror">
+                    <option value="">-- เลือกประเภทพนักงาน --</option>
+                    <option value="รายเดือน" @if(old('employee_type')=='รายเดือน' ) selected
+                        @endif>รายเดือน</option>
+                    <option value="รายวัน" @if(old('employee_type')=='รายวัน' ) selected
+                        @endif>รายวัน</option>
+                </select>
+                @error('employee_type')
+                <span class="text-sm text-red-500">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
         <div
             class="col-span-1 md:col-span-2 lg:col-span-4 pb-2 mb-2 mt-4 border-b border-gray-100 dark:border-gray-700">
             <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">สิทธิ์การใช้งาน</span>

@@ -53,35 +53,18 @@
     }
     /* Dropdown z-index so it appears above modal */
     .select2-container .select2-dropdown { z-index: 100000; }
-
-    /* Custom Select2 Dropdown Item Colors */
-    .select2-container--default .select2-results__option--highlighted[aria-selected] {
-        background: linear-gradient(90deg, rgb(220,38,38) 0%, rgb(168,12,12) 100%) !important;
-        color: #000 !important;
-    }
-    .select2-dropdown {
-        border: 1px solid #dc2626 !important;
-    }
-    /* Fix search input text color */
-    .select2-search__field {
-        color: #000 !important;
-    }
 </style>
 <!-- bg-white dark:bg-gray-800 -->
 <nav class="border-b border-gray-100  dark:border-gray-700 shadow-xl">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-             <div class="flex">
-                <div class="shrink-0 flex items-center gap-3">
-                    <a href="{{ route('welcome') }}" class="flex items-center gap-2 group">
-                        <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform duration-300">
-                            K
-                        </div>
-                        <span class="text-red-500 dark:text-white font-bold text-2xl tracking-tight group-hover:text-red-600 transition-colors duration-300">Kumwell</span>
+            <div class="flex">
+                <div class="shrink-0 flex items-center">
+                    <a href="{{ route('welcome') }}">
+                        <span class="text-red-600 font-bold text-lg sm:text-xl lg:text-3xl ml-2">Kumwell</span>
                     </a>
                 </div>
             </div>
-
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
 
@@ -91,7 +74,8 @@
                             <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                             <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                         </button>
-
+                        
+                        <!-- Dropdown menu -->
                         <div id="theme-dropdown" class="z-50 hidden-custom absolute right-0 mt-2 w-32 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700">
                             <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="theme-toggle-btn">
                                 <li>
@@ -121,56 +105,17 @@
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('welcome') }}">หน้าหลัก</a>
                         </li>
                         <!-- <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('welcome.system') }}">บริการ</a>
+                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('manpower.index') }}">จัดการข้อมูล</a>
                         </li> -->
                         <li>
-                            @auth
-                                <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">HA Guide Book</a>
-                            @else
-                                <button type="button" class="login-open-btn navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition">HA Guide Book</button>
-                            @endauth
+                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('manpower.dashboard') }}">Dashboard</a>
                         </li>
-                        <li>
-                            @auth
-                                <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">Calendar</a>
-                            @else
-                                <button type="button" class="login-open-btn navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition">Calendar</button>
-                            @endauth
-                        </li>
-                        <!-- <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">รับสมัครงาน</a>
-                        </li>
-                        <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('dashboard') }}">อบรม / สัมมนา</a>
-                        </li> -->
-                        
-                        <!-- <li class="relative group">
-                            <button type="button" id="about-btn"
-                                class="navbar-link px-4 py-1 text-base text-black rounded-xl shadow flex items-center transition dropdown-toggle mr-1">
-                                เกี่ยวกับเรา
-                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <ul id="about-menu"
-                                class="py-2 dropdown-menu absolute left-0 top-full mt-2 w-60 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 opacity-0 invisible transition-all duration-200">
-                                <li><a class="block px-4 py-2 text-red-700 hover:bg-red-100 rounded-lg" href="#">
-                                    <i class="fa-solid fa-newspaper mr-1"></i> นโยบาย/การดำเนินงาน</a>
-                                </li>
-                                <li><a class="block px-4 py-2 text-red-700 hover:bg-red-100 rounded-lg" href="#">
-                                    <i class="fa fa-phone mr-2"></i>เบอร์ติดต่อภายใน</a>
-                                </li>
-                                <li><a class="block px-4 py-2 text-red-700 hover:bg-red-100 rounded-b-lg" href="#">
-                                    <i class="fa fa-comment mr-2"></i>แสดงความคิดเห็น</a>
-                                </li>
-                            </ul>
-                        </li> -->
                     </ul>
                 </div>
 
                 <div class="relative ml-1">
                     @guest
-                    <button type="button" class="login-open-btn navbar-link px-4 py-1.5 text-base text-black rounded-xl shadow transition">
+                    <button type="button" id="login-open-btn" class="navbar-link px-4 py-2 text-base text-black rounded-xl shadow transition">
                         <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Login
                     </button>
                     @endguest
@@ -252,7 +197,7 @@
         @guest
         <div class="pt-4 pb-4 border-t border-gray-200">
             <div class="px-4">
-                <button type="button" class="login-open-btn w-full navbar-link px-4 py-2 text-base rounded-xl shadow transition">
+                <button type="button" id="login-open-btn" class="w-full navbar-link px-4 py-2 text-base rounded-xl shadow transition">
                     <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Login
                 </button>
             </div>
@@ -277,7 +222,7 @@
             <div>
                 <label for="employee_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300">รหัสพนักงาน</label>
                 <select id="employee_code" name="employee_code" required
-                       class="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500">
+                       class="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500">
                     <option value="" disabled selected>-- เลือกรหัสพนักงาน --</option>
                     @isset($employees)
                         @foreach($employees as $employee)
@@ -320,7 +265,6 @@
 @endguest
 
 <script>
-    // Load jQuery & Select2 via CDN if not already loaded
     (function injectSelect2(){
         const hasJQuery = typeof window.jQuery !== 'undefined';
         function addScript(src, cb){ const s=document.createElement('script'); s.src=src; s.onload=cb; document.head.appendChild(s); }
@@ -352,7 +296,7 @@
     })();
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Theme Toggle Logic (match manpower)
+        // Theme Toggle Logic
         const themeToggleBtn = document.getElementById('theme-toggle-btn');
         const themeDropdown = document.getElementById('theme-dropdown');
         const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
@@ -379,12 +323,8 @@
                 .forEach(el => { if ('checked' in el) el.checked = isDark; });
         }
 
-        // Initialize theme on load
-        const savedTheme = localStorage.getItem('theme') || 'auto';
-        applyTheme(savedTheme);
-
+        // Function to update icons based on current theme
         function updateThemeIcons() {
-            if (!themeToggleDarkIcon || !themeToggleLightIcon) return;
             const isDark = root.classList.contains('dark');
             if (isDark) {
                 themeToggleDarkIcon.classList.add('hidden');
@@ -422,9 +362,9 @@
                 if (theme === 'dark' || theme === 'light' || theme === 'auto') {
                     applyTheme(theme);
                 }
-
+                
                 updateThemeIcons();
-                if (themeDropdown) themeDropdown.classList.add('hidden-custom');
+                themeDropdown.classList.add('hidden-custom');
             });
         });
 
@@ -483,19 +423,17 @@
         });
 
         // --- Login Modal Logic (Guest only) ---
-        const loginOpenBtns = document.querySelectorAll('.login-open-btn');
+        const loginOpenBtn = document.getElementById('login-open-btn');
         const loginModal = document.getElementById('login-modal');
         const loginCloseBtn = document.getElementById('login-close-btn');
-        if (loginOpenBtns.length > 0 && loginModal && loginCloseBtn) {
+        if (loginOpenBtn && loginModal && loginCloseBtn) {
             function openLoginModal(){
                 loginModal.classList.remove('hidden-custom');
             }
             function closeLoginModal(){
                 loginModal.classList.add('hidden-custom');
             }
-            loginOpenBtns.forEach(btn => {
-                btn.addEventListener('click', openLoginModal);
-            });
+            loginOpenBtn.addEventListener('click', openLoginModal);
             loginCloseBtn.addEventListener('click', closeLoginModal);
             loginModal.addEventListener('click', (e) => { if(e.target === loginModal) closeLoginModal(); });
             document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeLoginModal(); });

@@ -181,7 +181,7 @@
                 @endauth
 
                 <!-- 2. Manpower -->
-                <div class="{{ $cardClass }} opacity-80">
+                <a href="{{ route('manpower.dashboard') }}" class="{{ $cardClass }} opacity-80">
                      <div class="{{ $imgWrapperClass }}">
                          <img src="/images/welcome/manpower.jpg" onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=600'" class="{{ $imgClass }}" alt="Manpower">
                     </div>
@@ -194,7 +194,7 @@
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Manpower</h3>
                     <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ระบบจัดการอัตรากำลังพล</p>
                     <span class="{{ $btnDisabled }}">Coming Soon</span>
-                </div>
+</a>
 
                 <!-- 3. Training -->
                 <div class="{{ $cardClass }} opacity-80">
@@ -307,7 +307,7 @@
                     <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">ข่าวสาร & ประชาสัมพันธ์</h2>
                     <p class="text-slate-500 dark:text-slate-400 text-sm">ติดตามความเคลื่อนไหวล่าสุดขององค์กร</p>
                 </div>
-                <a href="{{ route('news.index') }}" class="hidden md:flex items-center gap-2 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 transition-colors">
+                <a href="{{ route('news.newsAll') }}" class="hidden md:flex items-center gap-2 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 transition-colors">
                     ดูทั้งหมด <i class="fas fa-arrow-right"></i>
                 </a>
             </div>

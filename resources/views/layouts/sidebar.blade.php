@@ -57,7 +57,7 @@
                         }
                     },
                     width: {
-                        '62': '15.5rem', // Define w-62 to match original code
+                        '68': '17rem', 
                     }
                 }
             }
@@ -82,21 +82,23 @@
 
         <aside id="sidebar" class="w-62 flex-shrink-0 flex flex-col h-full bg-[#150f0f] text-white border-r border-gray-800 shadow-xl z-20 relative">
 
-            <div class="h-20 flex items-center justify-between px-6 border-b border-gray-800 bg-gradient-to-r from-[#0F1115] to-[#1a1d24]">
+            <!-- Header -->
+            <div class="h-20 flex items-center justify-between px-6 border-b border-gray-800/50 bg-[#0B1120]">
                 
-                <div id="sidebar-logo" class="flex items-center gap-3 overflow-hidden whitespace-nowrap transition-opacity duration-300 opacity-100">
-                    <div class="w-8 h-8 rounded-lg bg-kumwell-red flex items-center justify-center shadow-lg shadow-red-900/50 flex-shrink-0">
-                        <span class="font-bold text-white text-sm">H</span>
+                <div id="sidebar-logo" class="flex items-center gap-3 overflow-hidden whitespace-nowrap transition-all duration-300 opacity-100">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-kumwell-red to-red-700 flex items-center justify-center shadow-lg shadow-red-900/20 flex-shrink-0">
+                        <span class="font-bold text-white text-lg">H</span>
                     </div>
-                    <a href="{{ route('welcome') }}"> <div class="flex flex-col leading-none">
+                    <a href="{{ route('welcome') }}"> 
+                        <div class="flex flex-col leading-none">
                             <span class="text-lg font-bold tracking-wide text-white">Kumwell</span>
-                            <span class="text-[10px] text-kumwell-red font-bold uppercase tracking-widest">HA System</span>
+                            <span class="text-[10px] text-kumwell-red font-bold uppercase tracking-[0.2em]">HA System</span>
                         </div>
                     </a>
                 </div>
 
-                <button id="sidebar-toggle-btn" class="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition focus:outline-none">
-                    <i id="icon-bars" class="fa-solid fa-bars text-sm hidden"></i>
+                <button id="sidebar-toggle-btn" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all focus:outline-none">
+                    <i id="icon-bars" class="fa-solid fa-bars-staggered text-sm hidden"></i>
                     <i id="icon-chevron" class="fa-solid fa-chevron-left text-sm"></i>
                 </button>
             </div>
@@ -275,16 +277,6 @@
         const dropdownSubmenus = document.querySelectorAll('[id^="dropdown-"]');
         const userProfile = document.getElementById('user-profile');
         
-        // Icons that need margin adjustments
-        const dashboardIcon = document.getElementById('dashboard-icon');
-        const requestIcon = document.getElementById('icon-request');
-        const hrIcon = document.getElementById('icon-hr');
-        const datapublicIcon = document.getElementById('icon-datapublic');
-        const hrrequestIcon = document.getElementById('icon-hrrequest');
-        const leaveReportsIcon = document.getElementById('icon-leavereports');
-        
-        
-
         let isSidebarOpen = true;
 
         toggleBtn.addEventListener('click', () => {
@@ -296,7 +288,7 @@
             if (isSidebarOpen) {
                 // Expand Sidebar
                 sidebar.classList.remove('w-20');
-                sidebar.classList.add('w-62');
+                sidebar.classList.add('w-68');
 
                 iconBars.classList.add('hidden');
                 iconChevron.classList.remove('hidden');
@@ -306,20 +298,12 @@
                 
                 sidebarTexts.forEach(el => el.classList.remove('hidden'));
 
-                // Adjust Icons Margins
-                dashboardIcon.classList.add('mr-3');
-                requestIcon.classList.add('mr-3');
-                requestIcon.classList.remove('text-kumwell-red'); 
-                hrIcon.classList.add('mr-3');
-                hrIcon.classList.remove('text-kumwell-red');
-                datapublicIcon.classList.add('mr-3');
-                datapublicIcon.classList.remove('text-kumwell-red');
                 tooltips.forEach(t => t.classList.add('hidden'));
                 
                 userProfile.classList.remove('justify-center');
 
             } else {
-                sidebar.classList.remove('w-62');
+                sidebar.classList.remove('w-68');
                 sidebar.classList.add('w-20');
 
                 iconBars.classList.remove('hidden');
@@ -329,14 +313,6 @@
                 sidebarLogo.classList.add('opacity-0', 'w-0');
 
                 sidebarTexts.forEach(el => el.classList.add('hidden'));
-
-                dashboardIcon.classList.remove('mr-3');
-                requestIcon.classList.remove('mr-3');
-                requestIcon.classList.add('text-kumwell-red'); 
-                hrIcon.classList.remove('mr-3');
-                hrIcon.classList.add('text-kumwell-red');
-                datapublicIcon.classList.remove('mr-3');
-                datapublicIcon.classList.add('text-kumwell-red');
 
                 dropdownSubmenus.forEach(d => d.classList.add('hidden'));
                 document.querySelectorAll('.fa-chevron-down').forEach(i => i.classList.remove('rotate-180'));
@@ -367,11 +343,11 @@
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
                 arrow.classList.add('rotate-180');
-                btn.classList.add('bg-gray-800/50', 'text-white');
+                btn.classList.add('bg-white/5', 'text-white');
             } else {
                 content.classList.add('hidden');
                 arrow.classList.remove('rotate-180');
-                btn.classList.remove('bg-gray-800/50', 'text-white');
+                btn.classList.remove('bg-white/5', 'text-white');
             }
         }
 
