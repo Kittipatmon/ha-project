@@ -1,10 +1,10 @@
-@extends('layouts.sidebar')
+@extends('layouts.recruitment.app')
 
 @section('title', 'Recruitment Dashboard')
 
 @section('content')
     <div class="space-y-8">
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center mt-6">
             <h2 class="text-2xl font-bold dark:text-white text-gray-800">Recruitment Overview</h2>
         </div>
 
@@ -138,9 +138,9 @@
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase 
-                                                            @if($req->status == 'approved') bg-green-100 text-green-700
-                                                            @elseif($req->status == 'pending') bg-yellow-100 text-yellow-700
-                                                            @else bg-gray-100 text-gray-500 @endif">
+                                                                            @if($req->status == 'approved') bg-green-100 text-green-700
+                                                                            @elseif($req->status == 'pending') bg-yellow-100 text-yellow-700
+                                                                            @else bg-gray-100 text-gray-500 @endif">
                                             {{ $req->status }}
                                         </span>
                                     </td>

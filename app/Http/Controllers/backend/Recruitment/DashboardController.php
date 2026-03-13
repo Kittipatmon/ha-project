@@ -12,6 +12,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (!(auth()->check() && (auth()->user()->hr_status == 0 || auth()->user()->employee_code == '11648'))) {
+            abort(403);
+        }
         $stats = [
             'pending_requests' => RecruitmentRequest::where('status', 'pending')->count(),
             'active_posts' => JobPost::where('publish_status', 'published')->count(),

@@ -68,6 +68,10 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-3 text-center space-x-2 whitespace-nowrap">
+                                    <a href="{{ route('backend.training.course.applicants', $training->id) }}"
+                                        class="btn btn-info btn-sm btn-square text-white shadow-sm" title="รายชื่อคนสมัคร">
+                                        <i class="fa-solid fa-users"></i>
+                                    </a>
                                     <a href="{{ route('backend.training.edit', $training->id) }}"
                                         class="btn btn-warning btn-sm btn-square text-white shadow-sm" title="แก้ไข">
                                         <i class="fa-solid fa-pen-to-square"></i>

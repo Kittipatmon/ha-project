@@ -13,4 +13,13 @@ class TrainingApply extends Model
         'training_id',
         'employee_code',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'employee_code', 'employee_code');
+    }
+
+    public function training()
+    {
+        return $this->belongsTo(Training::class);
+    }
 }

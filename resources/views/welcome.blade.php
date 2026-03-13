@@ -157,60 +157,171 @@
                     </div>
                 </div>
 
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                @php
+                    $cardClass = "group relative flex flex-col p-5 bg-gray-50 dark:bg-[#1E2129] border border-slate-200 dark:border-white/5 rounded-2xl hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-black/40 hover:-translate-y-1 transition-all duration-300 overflow-hidden";
+                    $imgWrapperClass = "w-full aspect-video rounded-xl overflow-hidden mb-4 bg-gray-200 dark:bg-gray-800 relative";
+                    $imgClass = "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110";
+                    $badgeOpen = "px-2.5 py-1 rounded-md bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 text-[10px] font-bold uppercase tracking-wide";
+                    $badgeSoon = "px-2.5 py-1 rounded-md bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400 text-[10px] font-bold uppercase tracking-wide";
+                    $btnActive = "mt-auto inline-flex items-center gap-2 text-sm font-semibold text-red-600 dark:text-red-400 group-hover:gap-3 transition-all";
+                    $btnDisabled = "mt-auto inline-flex items-center gap-2 text-sm font-semibold text-gray-400 cursor-not-allowed";
+                @endphp
 
-                    <!-- Card Style Template -->
-                    @php
-                        $cardClass = "group relative flex flex-col p-5 bg-gray-50 dark:bg-[#1E2129] border border-slate-200 dark:border-white/5 rounded-2xl hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-black/40 hover:-translate-y-1 transition-all duration-300 overflow-hidden";
-                        $imgWrapperClass = "w-full aspect-video rounded-xl overflow-hidden mb-4 bg-gray-200 dark:bg-gray-800 relative";
-                        $imgClass = "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110";
-                        $badgeOpen = "px-2.5 py-1 rounded-md bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 text-[10px] font-bold uppercase tracking-wide";
-                        $badgeSoon = "px-2.5 py-1 rounded-md bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400 text-[10px] font-bold uppercase tracking-wide";
-                        $btnActive = "mt-auto inline-flex items-center gap-2 text-sm font-semibold text-red-600 dark:text-red-400 group-hover:gap-3 transition-all";
-                        $btnDisabled = "mt-auto inline-flex items-center gap-2 text-sm font-semibold text-gray-400 cursor-not-allowed";
-                    @endphp
+                <!-- Section 1: Employee Services -->
+                <div class="mb-12">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-8 w-1 bg-red-600 rounded-full"></div>
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-white">ระบบบริการผู้ใช้งาน <span class="text-slate-400 font-medium text-sm ml-2">Employee Services</span></h3>
+                    </div>
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                        <!-- 1. HR Requests -->
+                        @auth
+                            <a href="{{ route('request.hr') }}" class="{{ $cardClass }}">
+                                <div class="{{ $imgWrapperClass }}">
+                                    <img src="/images/welcome/reporting.jpg"
+                                        onerror="this.src='https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=600'"
+                                        class="{{ $imgClass }}" alt="HR Request">
+                                </div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="p-2 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400">
+                                        <i class="fa-regular fa-file-lines text-lg"></i>
+                                    </div>
+                                    <span class="{{ $badgeOpen }}">Open</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">HR Request</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">คำร้องทุกประเภท แก้ไขเวลา
+                                    ใบรับรอง ฯลฯ</p>
+                                <span class="{{ $btnActive }}">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        @else
+                            <div class="{{ $cardClass }} cursor-pointer login-open-btn">
+                                <div class="{{ $imgWrapperClass }}">
+                                    <img src="/images/welcome/reporting.jpg"
+                                        onerror="this.src='https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=600'"
+                                        class="{{ $imgClass }}" alt="HR Request">
+                                </div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="p-2 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400">
+                                        <i class="fa-regular fa-file-lines text-lg"></i>
+                                    </div>
+                                    <span class="{{ $badgeOpen }}">Login</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">HR Request</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
+                                    เข้าสู่ระบบเพื่อใช้งานคำร้องต่างๆ</p>
+                                <span class="{{ $btnActive }}">Login to Open <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        @endauth
 
-                    <!-- 1. HR Requests -->
-                    @auth
-                        <a href="{{ route('request.hr') }}" class="{{ $cardClass }}">
+                        <!-- 3. Training -->
+                        @auth
+                            <a href="{{ route('training.index') }}" class="{{ $cardClass }}">
+                                <div class="{{ $imgWrapperClass }}">
+                                    <img src="/images/welcome/training.jpg"
+                                        onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600'"
+                                        class="{{ $imgClass }}" alt="Training">
+                                </div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <div
+                                        class="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400">
+                                        <i class="fa-solid fa-chalkboard-user text-lg"></i>
+                                    </div>
+                                    <span class="{{ $badgeOpen }}">Open</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Training</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ระบบฝึกอบรมและพัฒนาทักษะ</p>
+                                <span class="{{ $btnActive }}">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        @else
+                            <div class="{{ $cardClass }} cursor-pointer login-open-btn">
+                                <div class="{{ $imgWrapperClass }}">
+                                    <img src="/images/welcome/training.jpg"
+                                        onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600'"
+                                        class="{{ $imgClass }}" alt="Training">
+                                </div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <div
+                                        class="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400">
+                                        <i class="fa-solid fa-chalkboard-user text-lg"></i>
+                                    </div>
+                                    <span class="{{ $badgeOpen }}">Login</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Training</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ระบบฝึกอบรมและพัฒนาทักษะ</p>
+                                <span class="{{ $btnActive }}">Login to Open <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        @endauth
+
+                        <!-- 4. Recruitment -->
+                        <a href="{{ route('recruitment.index') }}" class="{{ $cardClass }}">
                             <div class="{{ $imgWrapperClass }}">
-                                <img src="/images/welcome/reporting.jpg"
-                                    onerror="this.src='https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=600'"
-                                    class="{{ $imgClass }}" alt="HR Request">
+                                <img src="/images/welcome/job-hiring.jpg"
+                                    onerror="this.src='https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600'"
+                                    class="{{ $imgClass }}" alt="Hiring">
                             </div>
                             <div class="flex justify-between items-start mb-2">
-                                <div class="p-2 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400">
-                                    <i class="fa-regular fa-file-lines text-lg"></i>
+                                <div
+                                    class="p-2 rounded-lg bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                                    <i class="fa-solid fa-briefcase text-lg"></i>
                                 </div>
                                 <span class="{{ $badgeOpen }}">Open</span>
                             </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">HR Request</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">คำร้องทุกประเภท แก้ไขเวลา
-                                ใบรับรอง ฯลฯ</p>
-                            <span class="{{ $btnActive }}">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></span>
+                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Recruitment</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ตำแหน่งงานว่างและการรับสมัคร
+                            </p>
+                            <span class="{{ $btnActive }}">ดูงานที่เปิดรับ <i class="fa-solid fa-arrow-right"></i></span>
                         </a>
-                    @else
-                        <div class="{{ $cardClass }} cursor-pointer login-open-btn">
-                            <div class="{{ $imgWrapperClass }}">
-                                <img src="/images/welcome/reporting.jpg"
-                                    onerror="this.src='https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=600'"
-                                    class="{{ $imgClass }}" alt="HR Request">
-                            </div>
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="p-2 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400">
-                                    <i class="fa-regular fa-file-lines text-lg"></i>
-                                </div>
-                                <span class="{{ $badgeOpen }}">Login</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">HR Request</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
-                                เข้าสู่ระบบเพื่อใช้งานคำร้องต่างๆ</p>
-                            <span class="{{ $btnActive }}">Login to Open <i class="fa-solid fa-arrow-right"></i></span>
-                        </div>
-                    @endauth
 
-                    <!-- 2. Manpower -->
-                    @auth
+                        <!-- 6. Suggestion -->
+                        @auth
+                            <a href="{{ route('suggestion.index') }}" class="{{ $cardClass }}">
+                                <div class="{{ $imgWrapperClass }}">
+                                    <img src="/images/welcome/suggestion.png"
+                                        onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600'"
+                                        class="{{ $imgClass }}" alt="Suggestion">
+                                </div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="p-2 rounded-lg bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">
+                                        <i class="fa-regular fa-comment-dots text-lg"></i>
+                                    </div>
+                                    <span class="{{ $badgeOpen }}">Open</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Suggestion</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
+                                    กล่องรับข้อเสนอแนะและร้องเรียน</p>
+                                <span class="{{ $btnActive }}">ร้องเรียน / เสนอแนะ <i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
+                        @else
+                            <div class="{{ $cardClass }} cursor-pointer login-open-btn">
+                                <div class="{{ $imgWrapperClass }}">
+                                    <img src="/images/welcome/suggestion.png"
+                                        onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600'"
+                                        class="{{ $imgClass }}" alt="Suggestion">
+                                </div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="p-2 rounded-lg bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">
+                                        <i class="fa-regular fa-comment-dots text-lg"></i>
+                                    </div>
+                                    <span class="{{ $badgeOpen }}">Login</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Suggestion</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
+                                    กล่องรับข้อเสนอแนะและร้องเรียน</p>
+                                <span class="{{ $btnActive }}">Login to Open <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        @endauth
+                    </div>
+                </div>
+
+                <!-- Section 2: Management Dashboards (HA Only) -->
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
+                <div class="pt-8 border-t border-slate-100 dark:border-white/5">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-8 w-1 bg-blue-600 rounded-full"></div>
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-white">ระบบจัดการและวิเคราะห์ <span class="text-slate-400 font-medium text-sm ml-2">Management Dashboards</span></h3>
+                    </div>
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                        <!-- 2. Manpower -->
                         <a href="{{ route('manpower.dashboard') }}" class="{{ $cardClass }}">
                             <div class="{{ $imgWrapperClass }}">
                                 <img src="/images/welcome/manpower.jpg"
@@ -227,145 +338,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ระบบจัดการอัตรากำลังพล</p>
                             <span class="{{ $btnActive }}">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></span>
                         </a>
-                    @else
-                        <div class="{{ $cardClass }} cursor-pointer login-open-btn">
-                            <div class="{{ $imgWrapperClass }}">
-                                <img src="/images/welcome/manpower.jpg"
-                                    onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=600'"
-                                    class="{{ $imgClass }}" alt="Manpower">
-                            </div>
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="p-2 rounded-lg bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                                    <i class="fa-solid fa-briefcase text-lg"></i>
-                                </div>
-                                <span class="{{ $badgeOpen }}">Login</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Manpower</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ระบบจัดการอัตรากำลังพล</p>
-                            <span class="{{ $btnActive }}">Login to Open <i class="fa-solid fa-arrow-right"></i></span>
-                        </div>
-                    @endauth
 
-                    <!-- 3. Training -->
-                    @auth
-                        <a href="{{ route('training.index') }}" class="{{ $cardClass }}">
-                            <div class="{{ $imgWrapperClass }}">
-                                <img src="/images/welcome/training.jpg"
-                                    onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600'"
-                                    class="{{ $imgClass }}" alt="Training">
-                            </div>
-                            <div class="flex justify-between items-start mb-2">
-                                <div
-                                    class="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400">
-                                    <i class="fa-solid fa-chalkboard-user text-lg"></i>
-                                </div>
-                                <span class="{{ $badgeOpen }}">Open</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Training</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ระบบฝึกอบรมและพัฒนาทักษะ</p>
-                            <span class="{{ $btnActive }}">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></span>
-                        </a>
-                    @else
-                        <div class="{{ $cardClass }} cursor-pointer login-open-btn">
-                            <div class="{{ $imgWrapperClass }}">
-                                <img src="/images/welcome/training.jpg"
-                                    onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600'"
-                                    class="{{ $imgClass }}" alt="Training">
-                            </div>
-                            <div class="flex justify-between items-start mb-2">
-                                <div
-                                    class="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400">
-                                    <i class="fa-solid fa-chalkboard-user text-lg"></i>
-                                </div>
-                                <span class="{{ $badgeOpen }}">Login</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Training</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ระบบฝึกอบรมและพัฒนาทักษะ</p>
-                            <span class="{{ $btnActive }}">Login to Open <i class="fa-solid fa-arrow-right"></i></span>
-                        </div>
-                    @endauth
-
-                    <!-- 4. Job Hiring -->
-                    <a href="{{ route('recruitment.index') }}" class="{{ $cardClass }}">
-                        <div class="{{ $imgWrapperClass }}">
-                            <img src="/images/welcome/job-hiring.jpg"
-                                onerror="this.src='https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600'"
-                                class="{{ $imgClass }}" alt="Hiring">
-                        </div>
-                        <div class="flex justify-between items-start mb-2">
-                            <div
-                                class="p-2 rounded-lg bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400">
-                                <i class="fa-solid fa-briefcase text-lg"></i>
-                            </div>
-                            <span class="{{ $badgeOpen }}">Open</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Recruitment</h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">ตำแหน่งงานว่างและการรับสมัคร
-                        </p>
-                        <span class="{{ $btnActive }}">ดูงานที่เปิดรับ <i class="fa-solid fa-arrow-right"></i></span>
-                    </a>
-
-                    <!-- 5. Safety -->
-                    <!-- <div class="{{ $cardClass }} opacity-80">
-                        <div class="{{ $imgWrapperClass }}">
-                            <img src="/images/welcome/safety.jpg"
-                                onerror="this.src='https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&q=80&w=600'"
-                                class="{{ $imgClass }}" alt="Safety">
-                        </div>
-                        <div class="flex justify-between items-start mb-2">
-                            <div
-                                class="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400">
-                                <i class="fa-solid fa-helmet-safety text-lg"></i>
-                            </div>
-                            <span class="{{ $badgeSoon }}">Soon</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Safety & Env.</h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
-                            บริหารความปลอดภัยและสิ่งแวดล้อม</p>
-                        <span class="{{ $btnDisabled }}">Coming Soon</span>
-                    </div> -->
-
-                    <!-- 6. Suggestion -->
-                    @auth
-                        <a href="{{ route('suggestion.index') }}" class="{{ $cardClass }}">
-                            <div class="{{ $imgWrapperClass }}">
-                                <img src="/images/welcome/suggestion.png"
-                                    onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600'"
-                                    class="{{ $imgClass }}" alt="Suggestion">
-                            </div>
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="p-2 rounded-lg bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">
-                                    <i class="fa-regular fa-comment-dots text-lg"></i>
-                                </div>
-                                <span class="{{ $badgeOpen }}">Open</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Suggestion</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
-                                กล่องรับข้อเสนอแนะและร้องเรียน</p>
-                            <span class="{{ $btnActive }}">ร้องเรียน / เสนอแนะ <i class="fa-solid fa-arrow-right"></i></span>
-                        </a>
-                    @else
-                        <div class="{{ $cardClass }} cursor-pointer login-open-btn">
-                            <div class="{{ $imgWrapperClass }}">
-                                <img src="/images/welcome/suggestion.png"
-                                    onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600'"
-                                    class="{{ $imgClass }}" alt="Suggestion">
-                            </div>
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="p-2 rounded-lg bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">
-                                    <i class="fa-regular fa-comment-dots text-lg"></i>
-                                </div>
-                                <span class="{{ $badgeOpen }}">Login</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Suggestion</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
-                                กล่องรับข้อเสนอแนะและร้องเรียน</p>
-                            <span class="{{ $btnActive }}">Login to Open <i class="fa-solid fa-arrow-right"></i></span>
-                        </div>
-                    @endauth
-
-                    <!-- Admin/HR Only Cards -->
-                    @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                         <!-- 7. Data Management -->
                         <a href="{{ route('request.data') }}" class="{{ $cardClass }}">
                             <div class="{{ $imgWrapperClass }}">
@@ -385,28 +358,9 @@
                                 จัดการข้อมูลพนักงานและฐานข้อมูล</p>
                             <span class="{{ $btnActive }}">จัดการข้อมูล <i class="fa-solid fa-arrow-right"></i></span>
                         </a>
-
-                        <!-- 8. Analytics -->
-                        <!-- <div class="{{ $cardClass }}">
-                            <div class="{{ $imgWrapperClass }}">
-                                <img src="/images/welcome/analytics.png"
-                                    onerror="this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600'"
-                                    class="{{ $imgClass }}" alt="Analytics">
-                            </div>
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="p-2 rounded-lg bg-teal-100 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400">
-                                    <i class="fa-solid fa-chart-line text-lg"></i>
-                                </div>
-                                <span class="{{ $badgeSoon }}">Soon</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Analytics</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">Dashboard สถิติภาพรวมองค์กร
-                            </p>
-                            <span class="{{ $btnDisabled }}">Coming Soon</span>
-                        </div> -->
-                    @endif
-
+                    </div>
                 </div>
+                @endif
             </div>
         </div>
 

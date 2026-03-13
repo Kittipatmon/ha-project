@@ -72,6 +72,9 @@ class TrainingController extends Controller
 
     public function dashboard(Request $request)
     {
+        if (!(auth()->check() && (auth()->user()->hr_status == 0 || auth()->user()->employee_code == '11648'))) {
+            abort(403);
+        }
         $query = Training::query();
 
         // 1. Search Filter (Course Name)
@@ -83,18 +86,18 @@ class TrainingController extends Controller
         $query->withCount([
             'applies' => function ($q) use ($request) {
                 if ($request->filled('year')) {
-                    $q->whereYear('created_at', $request->year);
+                    $q->whereYear('training_applies.created_at', $request->year);
                 }
                 if ($request->filled('month')) {
-                    $q->whereMonth('created_at', $request->month);
+                    $q->whereMonth('training_applies.created_at', $request->month);
                 }
                 if ($request->filled('day')) {
-                    $q->whereDay('created_at', $request->day);
+                    $q->whereDay('training_applies.created_at', $request->day);
                 }
             }
         ]);
 
-        $trainings = $query->get();
+        $trainings = $query->get()->sortByDesc('applies_count')->values();
 
         // Calculate summary metrics based on filtered data
         $totalCourses = $trainings->count();
@@ -102,24 +105,82 @@ class TrainingController extends Controller
         $avgApplies = $totalCourses > 0 ? round($totalApplies / $totalCourses, 1) : 0;
 
         $popularCourse = $trainings->sortByDesc('applies_count')->first();
-        $popularCourseName = $popularCourse ? $popularCourse->branch : '-';
+        $popularCourseName = ($popularCourse && $popularCourse->applies_count > 0) ? $popularCourse->branch : '-';
+        $popularCourseCount = $popularCourse ? $popularCourse->applies_count : 0;
 
-        // Prepare data for the chart
-        $labels = [];
-        $data = [];
+        // Breakdowns
+        $deptLabels = [];
+        $deptData = [];
+        $formatLabels = [];
+        $formatData = [];
 
-        foreach ($trainings as $training) {
-            if ($training->applies_count > 0) {
-                $labels[] = $training->branch;
-                $data[] = $training->applies_count;
+        // Group by Department
+        $byDept = $trainings->groupBy('department');
+        foreach ($byDept as $dept => $items) {
+            $deptLabels[] = $dept;
+            $deptData[] = $items->sum('applies_count');
+        }
+
+        // Group by Format
+        foreach ($trainings->groupBy('format') as $format => $items) {
+            $formatLabels[] = $format;
+            $formatData[] = $items->sum('applies_count');
+        }
+
+        // 3. Yearly Trend Logic
+        $yearlyTrendData = TrainingApply::selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->orderBy('year', 'asc')
+            ->get();
+
+        $yearlyLabels = $yearlyTrendData->pluck('year')->map(fn($y) => "ปี " . ($y + 543))->toArray();
+        $yearlyCounts = $yearlyTrendData->pluck('count')->toArray();
+
+        // 4. Growth Calculation (if year filter is active)
+        $growth = null;
+        if ($request->filled('year')) {
+            $currentYearCount = $totalApplies;
+            $previousYear = $request->year - 1;
+            $previousYearCount = TrainingApply::whereYear('created_at', $previousYear)->count();
+
+            if ($previousYearCount > 0) {
+                $growth = round((($currentYearCount - $previousYearCount) / $previousYearCount) * 100, 1);
             }
         }
+
+        // Prepare data for the main chart (Top 10 Courses by Interest)
+        $labels = [];
+        $data = [];
+        $topCourses = $trainings->sortByDesc('applies_count')->take(10);
+
+        foreach ($topCourses as $training) {
+            if ($training->applies_count > 0) {
+                $labels[] = trim($training->branch);
+                $data[] = (int) $training->applies_count;
+            }
+        }
+
+        \Illuminate\Support\Facades\Log::info('Dashboard Data:', [
+            'labels' => $labels,
+            'data' => $data,
+            'totalApplies' => $totalApplies,
+            'requestYear' => $request->year
+        ]);
 
         // Get available years for the filter dropdown
         $years = TrainingApply::selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderBy('year', 'desc')
             ->pluck('year');
+
+        // Sorting the main collection for potential leaderboard use
+        $trainings = $trainings->sortByDesc('applies_count')->values();
+
+        // Fetch Recent Registrations (Connect with training_applies data)
+        $recentApplies = TrainingApply::with(['training', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
 
         return view('training.dashboard', [
             'labels' => $labels,
@@ -129,7 +190,16 @@ class TrainingController extends Controller
             'totalApplies' => $totalApplies,
             'avgApplies' => $avgApplies,
             'popularCourseName' => $popularCourseName,
+            'popularCourseCount' => $popularCourseCount,
+            'deptLabels' => $deptLabels,
+            'deptData' => $deptData,
+            'formatLabels' => $formatLabels,
+            'formatData' => $formatData,
             'trainings' => $trainings,
+            'recentApplies' => $recentApplies,
+            'yearlyLabels' => $yearlyLabels,
+            'yearlyCounts' => $yearlyCounts,
+            'growth' => $growth,
         ]);
     }
 }

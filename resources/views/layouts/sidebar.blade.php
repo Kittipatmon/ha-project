@@ -124,230 +124,247 @@
                         Dashboard
                     </div>
                 </a> -->
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
+                    <div class="relative group">
+                        <button onclick="toggleDropdown('dropdown-dashboard')"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            id="btn-dashboard">
+                            <div class="flex items-center">
+                                <i id="dashboard-icon"
+                                    class="fa-solid fa-chart-pie text-sm w-6 text-center group-hover:text-white transition-colors mr-3"></i>
+                                <span class="sidebar-text">Dashboard</span>
+                            </div>
+                            <i id="arrow-dashboard"
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        </button>
 
-                <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-dashboard')"
-                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                        id="btn-dashboard">
-                        <div class="flex items-center">
-                            <i id="dashboard-icon"
-                                class="fa-solid fa-chart-pie text-sm w-6 text-center group-hover:text-white transition-colors mr-3"></i>
-                            <span class="sidebar-text">Dashboard</span>
+                        <div id="dropdown-dashboard" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                            <!-- <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                Request HR
+                            </a> -->
+                            <a href="{{ route('leavereports.dashboard') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                ขาด ลา
+                            </a>
+
+
                         </div>
-                        <i id="arrow-dashboard"
-                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-                    </button>
 
-                    <div id="dropdown-dashboard" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <!-- <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            Request HR
-                        </a> -->
-                        <a href="{{ route('leavereports.dashboard') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            ขาด ลา
-                        </a>
-                        <a href="{{ route('manpower.dashboard') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            อัตรากำลังพล
-                        </a>
-                    </div>
-
-                    <div
-                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
-                        Dashboard
-                    </div>
-                </div>
-
-                <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-datapublic')"
-                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                        id="btn-datapublic">
-                        <div class="flex items-center">
-                            <i id="icon-datapublic" class="fa-solid fa-database text-sm w-6 text-center mr-3"></i>
-                            <span class="sidebar-text">ข้อมูลทั่วไป</span>
+                        <div
+                            class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                            Dashboard
                         </div>
-                        <i id="arrow-datapublic"
-                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-                    </button>
-
-                    <div id="dropdown-datapublic" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="{{ route('news.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - ข้อมูลข่าวสาร
-                        </a>
                     </div>
 
-                    <div
-                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
-                        ข้อมูลทั่วไป
-                    </div>
-                </div>
+                    <div class="relative group">
+                        <button onclick="toggleDropdown('dropdown-datapublic')"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            id="btn-datapublic">
+                            <div class="flex items-center">
+                                <i id="icon-datapublic" class="fa-solid fa-database text-sm w-6 text-center mr-3"></i>
+                                <span class="sidebar-text">ข้อมูลทั่วไป</span>
+                            </div>
+                            <i id="arrow-datapublic"
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        </button>
 
-                <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-request')"
-                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                        id="btn-request">
-                        <div class="flex items-center">
-                            <i id="icon-request" class="fa-solid fa-file-signature text-sm w-6 text-center mr-3"></i>
-                            <span class="sidebar-text">Request Settings</span>
+                        <div id="dropdown-datapublic" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                            <a href="{{ route('news.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - ข้อมูลข่าวสาร
+                            </a>
                         </div>
-                        <i id="arrow-request"
-                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-                    </button>
 
-                    <div id="dropdown-request" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="{{ route('request-categories.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - ประเภทคำร้อง
-                        </a>
-                        <a href="{{ route('request-types.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - ตัวเลือกการร้องขอ
-                        </a>
-                        <a href="{{ route('request-subtypes.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - ประเภทย่อย
-                        </a>
-                    </div>
-
-                    <div
-                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
-                        Request Settings
-                    </div>
-                </div>
-
-                <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-hr')"
-                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                        id="btn-hr">
-                        <div class="flex items-center">
-                            <i id="icon-hr" class="fa-solid fa-users-gear text-sm w-6 text-center mr-3"></i>
-                            <span class="sidebar-text">HR Settings</span>
+                        <div
+                            class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                            ข้อมูลทั่วไป
                         </div>
-                        <i id="arrow-hr"
-                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-                    </button>
-
-                    <div id="dropdown-hr" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="{{ route('users.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
-                            ข้อมูลพนักงาน</a>
-                        <a href="{{ route('usertypes.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
-                            ข้อมูลประเภทพนักงาน</a>
-                        <a href="{{ route('sections.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
-                            ข้อมูลสายงาน</a>
-                        <a href="{{ route('divisions.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
-                            ข้อมูลฝ่าย</a>
-                        <a href="{{ route('departments.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
-                            ข้อมูลแผนก</a>
                     </div>
-                    <div
-                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
-                        HR Settings
-                    </div>
-                </div>
+                @endif
 
-                <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-suggestion')"
-                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                        id="btn-suggestion">
-                        <div class="flex items-center">
-                            <i id="icon-suggestion" class="fa-solid fa-database text-sm w-6 text-center mr-3"></i>
-                            <span class="sidebar-text">รายการร้องเรียน</span>
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
+                    <div class="relative group">
+                        <button onclick="toggleDropdown('dropdown-request')"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            id="btn-request">
+                            <div class="flex items-center">
+                                <i id="icon-request" class="fa-solid fa-file-signature text-sm w-6 text-center mr-3"></i>
+                                <span class="sidebar-text">Request Settings</span>
+                            </div>
+                            <i id="arrow-request"
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        </button>
+
+                        <div id="dropdown-request" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                            <a href="{{ route('request-categories.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - ประเภทคำร้อง
+                            </a>
+                            <a href="{{ route('request-types.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - ตัวเลือกการร้องขอ
+                            </a>
+                            <a href="{{ route('request-subtypes.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - ประเภทย่อย
+                            </a>
                         </div>
-                        <i id="arrow-suggestion"
-                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-                    </button>
 
-                    <div id="dropdown-suggestion" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <!-- <a href="{{ route('suggestion.dashboard') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - Dashboard
-                        </a> -->
-                        <a href="{{ route('suggestion.list') }}"
-                            class="flex justify-between items-center px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            <span>- รับเรื่องร้องเรียน</span>
-                            @php
-                                $newSuggestionsCount = \App\Models\Suggestion::where('status', 'รอรับเรื่องคำร้อง')->count();
-                            @endphp
-                            @if($newSuggestionsCount > 0)
-                                <span
-                                    class="badge badge-error badge-sm text-white font-bold ml-2">{{ $newSuggestionsCount }}</span>
-                            @endif
-                        </a>
-                    </div>
-
-                    <div
-                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
-                        ข้อมูลทั่วไป
-                    </div>
-                </div>
-
-                <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-training')"
-                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                        id="btn-training">
-                        <div class="flex items-center">
-                            <i id="icon-training" class="fa-solid fa-graduation-cap text-sm w-6 text-center mr-3"></i>
-                            <span class="sidebar-text">ระบบฝึกอบรมและพัฒนาทักษะ</span>
+                        <div
+                            class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                            Request Settings
                         </div>
-                        <i id="arrow-training"
-                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-                    </button>
-
-                    <div id="dropdown-training" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="{{ route('backend.training.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - รายการข้อมูลการฝึกอบรม
-                        </a>
                     </div>
+                @endif
 
-                    <div
-                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
-                        ระบบฝึกอบรมและพัฒนาทักษะ
-                    </div>
-                </div>
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
+                    <div class="relative group">
+                        <button onclick="toggleDropdown('dropdown-hr')"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            id="btn-hr">
+                            <div class="flex items-center">
+                                <i id="icon-hr" class="fa-solid fa-users-gear text-sm w-6 text-center mr-3"></i>
+                                <span class="sidebar-text">HR Settings</span>
+                            </div>
+                            <i id="arrow-hr"
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        </button>
 
-                <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-recruitment')"
-                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                        id="btn-recruitment">
-                        <div class="flex items-center">
-                            <i id="icon-recruitment" class="fa-solid fa-user-plus text-sm w-6 text-center mr-3"></i>
-                            <span class="sidebar-text">ระบบสรรหาบุคลากร</span>
+                        <div id="dropdown-hr" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                            <a href="{{ route('users.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                ข้อมูลพนักงาน</a>
+                            <a href="{{ route('usertypes.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                ข้อมูลประเภทพนักงาน</a>
+                            <a href="{{ route('sections.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                ข้อมูลสายงาน</a>
+                            <a href="{{ route('divisions.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                ข้อมูลฝ่าย</a>
+                            <a href="{{ route('departments.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                ข้อมูลแผนก</a>
                         </div>
-                        <i id="arrow-recruitment"
-                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-                    </button>
-
-                    <div id="dropdown-recruitment" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="{{ route('backend.recruitment.dashboard') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - ภาพรวม (Dashboard)
-                        </a>
-                        <a href="{{ route('backend.recruitment.requests.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - คำขอเปิดรับสมัครพนักงาน
-                        </a>
-                        <a href="{{ route('backend.recruitment.posts.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - ประกาศรับสมัครงาน
-                        </a>
-                        <a href="{{ route('backend.recruitment.applications.index') }}"
-                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                            - รายชื่อผู้สมัคร
-                        </a>
+                        <div
+                            class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                            HR Settings
+                        </div>
                     </div>
+                @endif
 
-                    <div
-                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
-                        ระบบสรรหาบุคลากร
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
+                    <div class="relative group">
+                        <button onclick="toggleDropdown('dropdown-suggestion')"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            id="btn-suggestion">
+                            <div class="flex items-center">
+                                <i id="icon-suggestion" class="fa-solid fa-database text-sm w-6 text-center mr-3"></i>
+                                <span class="sidebar-text">รายการร้องเรียน</span>
+                            </div>
+                            <i id="arrow-suggestion"
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        </button>
+
+                        <div id="dropdown-suggestion" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                            <!-- <a href="{{ route('suggestion.dashboard') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - Dashboard
+                            </a> -->
+                            <a href="{{ route('suggestion.list') }}"
+                                class="flex justify-between items-center px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                <span>- รับเรื่องร้องเรียน</span>
+                                @php
+                                    $newSuggestionsCount = \App\Models\Suggestion::where('status', 'รอรับเรื่องคำร้อง')->count();
+                                @endphp
+                                @if($newSuggestionsCount > 0)
+                                    <span
+                                        class="badge badge-error badge-sm text-white font-bold ml-2">{{ $newSuggestionsCount }}</span>
+                                @endif
+                            </a>
+                        </div>
+
+                        <div
+                            class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                            ข้อมูลทั่วไป
+                        </div>
                     </div>
-                </div>
+                @endif
+
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
+                    <div class="relative group">
+                        <button onclick="toggleDropdown('dropdown-training')"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            id="btn-training">
+                            <div class="flex items-center">
+                                <i id="icon-training" class="fa-solid fa-graduation-cap text-sm w-6 text-center mr-3"></i>
+                                <span class="sidebar-text">ระบบฝึกอบรมและพัฒนาทักษะ</span>
+                            </div>
+                            <i id="arrow-training"
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        </button>
+
+                        <div id="dropdown-training" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                            <a href="{{ route('backend.training.dashboard') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - ภาพรวม (Dashboard)
+                            </a>
+                            <a href="{{ route('backend.training.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - รายการข้อมูลการฝึกอบรม
+                            </a>
+                            <a href="{{ route('backend.training.applicants') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - จัดการผู้สมัคร
+                            </a>
+                        </div>
+
+                        <div
+                            class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                            ระบบฝึกอบรมและพัฒนาทักษะ
+                        </div>
+                    </div>
+                @endif
+
+                @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
+                    <div class="relative group">
+                        <button onclick="toggleDropdown('dropdown-recruitment')"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            id="btn-recruitment">
+                            <div class="flex items-center">
+                                <i id="icon-recruitment" class="fa-solid fa-user-plus text-sm w-6 text-center mr-3"></i>
+                                <span class="sidebar-text">ระบบสรรหาบุคลากร</span>
+                            </div>
+                            <i id="arrow-recruitment"
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        </button>
+
+                        <div id="dropdown-recruitment" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                            <a href="{{ route('backend.recruitment.dashboard') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - ภาพรวม (Dashboard)
+                            </a>
+                            <a href="{{ route('backend.recruitment.requests.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - คำขอเปิดรับสมัครพนักงาน
+                            </a>
+                            <a href="{{ route('backend.recruitment.posts.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - ประกาศรับสมัครงาน
+                            </a>
+                            <a href="{{ route('backend.recruitment.applications.index') }}"
+                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                - รายชื่อผู้สมัคร
+                            </a>
+                        </div>
+
+                        <div
+                            class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                            ระบบสรรหาบุคลากร
+                        </div>
+                    </div>
+                @endif
 
             </nav>
 
@@ -391,7 +408,8 @@
 
         <main class="flex-1 bg-gray-50 dark:bg-kumwell-dark text-gray-900 dark:text-gray-100 overflow-y-auto relative">
             <div class="p-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-gray-300/30 pb-3 gap-4">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-gray-300/30 pb-3 gap-4">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                         <h1 class="text-xl font-bold text-gray-800 dark:text-white">
                             @yield('title', 'Dashboard')

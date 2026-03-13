@@ -11,6 +11,9 @@ class LeaveReportsController extends Controller
 {
     public function dashboard()
     {
+        if (!(auth()->check() && (auth()->user()->hr_status == 0 || auth()->user()->employee_code == '11648'))) {
+            abort(403);
+        }
         $leaveReports = LeaveReports::all();
         return view('leavereports.dashboard', compact('leaveReports'));
     }

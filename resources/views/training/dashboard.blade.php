@@ -3,295 +3,202 @@
 @section('content')
     @php
         $maxCount = count($data) > 0 ? max($data) : 0;
-        $popularCourses = [];
-        if ($maxCount > 0) {
-            foreach ($data as $index => $val) {
-                if ($val == $maxCount) {
-                    $popularCourses[] = $labels[$index];
-                }
-            }
-        }
-        $popularCourseText = count($popularCourses) > 0 ? implode(', ', $popularCourses) : 'ยังไม่มีข้อมูล';
+        $popularCourseCount = $popularCourseCount ?? 0;
     @endphp
 
-    <div
-        class="min-h-screen p-6 pt-8 pb-20 bg-slate-50 dark:bg-[#0f1117] text-slate-800 dark:text-gray-200 selection:bg-red-500/30">
-        <div class="max-w-8xl mx-auto px-4 mb-4">
-            <!-- Breadcrumbs -->
-            <div class="flex items-center text-sm space-x-2">
-                <a href="{{ route('welcome') }}"
-                    class="text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">Home</a>
-                <i class="fas fa-chevron-right text-[10px] text-gray-500"></i>
-                <a href="{{ route('training.index') }}"
-                    class="text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">ลงทะเบียน</a>
-                <i class="fas fa-chevron-right text-[10px] text-gray-500"></i>
-                <span class="text-red-500 font-medium tracking-tight">Dashboard</span>
-            </div>
-        </div>
-
-        <div class="max-w-7xl mx-auto space-y-8">
+    <div class="min-h-screen p-6 pt-8 pb-20 bg-slate-50 dark:bg-[#0f1117] text-slate-800 dark:text-gray-200">
+        <div class="max-w-8xl mx-auto space-y-6">
             <!-- Top Navigation & Header -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1
-                        class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 tracking-tight">
-                        รายงานความสนใจฝึกอบรม
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+                        ฝ่ายฝึกอบรมและพัฒนาทักษะ (Dashboard)
                     </h1>
-                    <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm md:text-base">
+                    <p class="text-slate-500 dark:text-slate-400 text-xs">
                         ภาพรวมและสถิติการสมัครเข้าร่วมกิจกรรมการฝึกอบรมทั้งหมด
                     </p>
                 </div>
 
-                <a href="{{ route('training.index') }}"
-                    class="group inline-flex items-center justify-center gap-2 bg-white dark:bg-[#1E2129] hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 font-medium py-2.5 px-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 w-full md:w-auto">
-                    <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
-                    กลับหน้ารายการ
-                </a>
-            </div>
-
-            <!-- Filter Bar -->
-            <div
-                class="bg-white dark:bg-[#1E2129] rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                <form action="{{ route('training.dashboard') }}" method="GET" class="flex flex-col lg:flex-row gap-4">
-                    <!-- Search Filter -->
-                    <div class="flex-1 relative group">
-                        <div
-                            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-red-500 transition-colors">
-                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                        </div>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="ค้นหาชื่อหลักสูตร..."
-                            class="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-[#15171e] border-none rounded-2xl text-sm focus:ring-2 focus:ring-red-500/20 dark:text-white transition-all placeholder:text-slate-400">
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-3">
-                        <!-- Year Filter -->
-                        <div class="min-w-[120px]">
-                            <select name="year"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-[#15171e] border-none rounded-2xl text-sm focus:ring-2 focus:ring-red-500/20 dark:text-white transition-all appearance-none cursor-pointer">
-                                <option value="">ทุกปี</option>
+                <div class="flex items-center gap-3">
+                    <form action="{{ route('training.dashboard') }}" method="GET" id="dashboardFilterForm" class="flex items-center gap-2">
+                         <div class="relative group">
+                            <select name="year" onchange="this.form.submit()"
+                                class="pl-4 pr-10 py-1.5 bg-white dark:bg-[#1E2129] border border-gray-200 dark:border-gray-700/50 rounded-lg text-xs font-medium focus:ring-2 focus:ring-red-500/20 appearance-none cursor-pointer min-w-[100px]">
+                                <option value="">รายปี</option>
                                 @foreach($years as $year)
-                                    <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>ปี
-                                        {{ $year + 543 }}
-                                    </option>
+                                    <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>ปี {{ $year + 543 }}</option>
                                 @endforeach
                             </select>
+                            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-400">
+                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </div>
                         </div>
+                    </form>
 
-                        <!-- Month Filter -->
-                        <div class="min-w-[140px]">
-                            <select name="month"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-[#15171e] border-none rounded-2xl text-sm focus:ring-2 focus:ring-red-500/20 dark:text-white transition-all appearance-none cursor-pointer">
-                                <option value="">ทุกเดือน</option>
-                                @php
-                                    $months = [
-                                        1 => 'มกราคม',
-                                        2 => 'กุมภาพันธ์',
-                                        3 => 'มีนาคม',
-                                        4 => 'เมษายน',
-                                        5 => 'พฤษภาคม',
-                                        6 => 'มิถุนายน',
-                                        7 => 'กรกฎาคม',
-                                        8 => 'สิงหาคม',
-                                        9 => 'กันยายน',
-                                        10 => 'ตุลาคม',
-                                        11 => 'พฤศจิกายน',
-                                        12 => 'ธันวาคม'
-                                    ];
-                                @endphp
-                                @foreach($months as $num => $name)
-                                    <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>{{ $name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Day Filter -->
-                        <div class="min-w-[100px]">
-                            <select name="day"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-[#15171e] border-none rounded-2xl text-sm focus:ring-2 focus:ring-red-500/20 dark:text-white transition-all appearance-none cursor-pointer">
-                                <option value="">ทุกวัน</option>
-                                @for($i = 1; $i <= 31; $i++)
-                                    <option value="{{ $i }}" {{ request('day') == $i ? 'selected' : '' }}>วันที่ {{ $i }}</option>
-                                @endfor
-                            </select>
-                        </div>
-
-                        <!-- Reset & Submit Button -->
-                        <div class="flex items-center gap-2 pl-2">
-                            @if(request()->anyFilled(['search', 'year', 'month', 'day']))
-                                <a href="{{ route('training.dashboard') }}"
-                                    class="p-3 text-slate-400 hover:text-red-500 transition-colors" title="ล้างตัวกรอง">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </a>
-                            @endif
-                            <button type="submit"
-                                class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-red-500/20 transition-all active:scale-95">
-                                ค้นหา
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                    <a href="{{ route('training.index') }}"
+                        class="inline-flex items-center justify-center gap-2 bg-white dark:bg-[#1E2129] border border-gray-200 dark:border-gray-700/50 text-gray-700 dark:text-slate-300 font-medium py-1.5 px-4 rounded-lg text-xs shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                        กลับหน้ารายการ
+                    </a>
+                </div>
             </div>
 
             <!-- Stats/Summary Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Card 1 -->
-                <div
-                    class="bg-white dark:bg-[#1E2129] rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-slate-100 dark:border-slate-800/60 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 relative overflow-hidden group">
-                    <div
-                        class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/5 dark:bg-blue-500/10 rounded-full group-hover:scale-150 transition-transform duration-500">
-                    </div>
-                    <div class="flex items-center gap-4 relative z-10">
-                        <div
-                            class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 text-white">
-                            <i class="fa-solid fa-book-open border-2 border-white/20 p-2 rounded-xl text-xl"></i>
-                        </div>
+                <div class="bg-white dark:bg-[#1E2129] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all group">
+                    <div class="flex items-center justify-between gap-4">
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">หลักสูตรทั้งหมด</p>
-                            <div class="flex items-baseline gap-2">
-                                <span
-                                    class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">{{ number_format($totalCourses) }}</span>
-                                <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">หลักสูตร</span>
-                            </div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">หลักสูตรทั้งหมด</p>
+                            <p class="text-2xl font-black text-gray-800 dark:text-white">{{ number_format($totalCourses) }}</p>
+                            <p class="text-[10px] text-green-500 font-bold mt-1 flex items-center gap-1">
+                                <i class="fa-solid fa-arrow-trend-up"></i> +0.0% <span class="text-gray-400 font-normal">จากเดือนที่แล้ว</span>
+                            </p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center text-lg shadow-sm">
+                            <i class="fa-solid fa-book-open"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 2 -->
-                <div
-                    class="bg-white dark:bg-[#1E2129] rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-slate-100 dark:border-slate-800/60 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 relative overflow-hidden group">
-                    <div
-                        class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full group-hover:scale-150 transition-transform duration-500">
-                    </div>
-                    <div class="flex items-center gap-4 relative z-10">
-                        <div
-                            class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30 text-white">
-                            <i class="fa-solid fa-users border-2 border-white/20 p-2 rounded-xl text-xl"></i>
-                        </div>
+                <div class="bg-white dark:bg-[#1E2129] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all group">
+                    <div class="flex items-center justify-between gap-4">
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">ผู้สนใจสมัครรวม</p>
-                            <div class="flex items-baseline gap-2">
-                                <span
-                                    class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">{{ number_format($totalApplies) }}</span>
-                                <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">คน</span>
-                            </div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">ยอดผู้สนใจรวม</p>
+                            <p class="text-2xl font-black text-gray-800 dark:text-white">{{ number_format($totalApplies) }}</p>
+                            <p class="text-[10px] text-gray-400 mt-1">สมัครเข้าร่วมใหม่ในวันนี้</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 flex items-center justify-center text-lg shadow-sm">
+                            <i class="fa-solid fa-users"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 3 -->
-                <div
-                    class="bg-white dark:bg-[#1E2129] rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-slate-100 dark:border-slate-800/60 hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 relative overflow-hidden group">
-                    <div
-                        class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/5 dark:bg-amber-500/10 rounded-full group-hover:scale-150 transition-transform duration-500">
-                    </div>
-                    <div class="flex items-center gap-4 relative z-10">
-                        <div
-                            class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30 text-white">
-                            <i class="fa-solid fa-chart-pie border-2 border-white/20 p-2 rounded-xl text-xl"></i>
-                        </div>
+                <div class="bg-white dark:bg-[#1E2129] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all group">
+                    <div class="flex items-center justify-between gap-4">
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">เฉลี่ยต่อหลักสูตร</p>
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">
-                                    {{ $avgApplies }}
-                                </span>
-                                <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">/หลักสูตร</span>
-                            </div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">ความสนใจเฉลี่ย</p>
+                            <p class="text-2xl font-black text-gray-800 dark:text-white">{{ $avgApplies }}%</p>
+                            <p class="text-[10px] text-gray-400 mt-1">อัตราการสมัครต่อหลักสูตร</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 flex items-center justify-center text-lg shadow-sm">
+                            <i class="fa-solid fa-chart-pie"></i>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 4 (Most Popular) -->
-                <div
-                    class="bg-gradient-to-br from-rose-500 via-red-500 to-red-600 rounded-3xl p-6 shadow-lg shadow-red-500/30 border border-red-400/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-300 relative overflow-hidden group text-white">
-                    <div
-                        class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full group-hover:scale-150 transition-transform duration-700">
-                    </div>
-                    <div
-                        class="absolute -left-6 -bottom-6 w-24 h-24 bg-black/10 rounded-full group-hover:scale-150 transition-transform duration-500">
-                    </div>
-                    <div class="flex flex-col h-full justify-between relative z-10">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-red-100 text-sm font-medium tracking-wide flex items-center gap-1.5"><i
-                                    class="fa-solid fa-fire text-yellow-300"></i> สนใจมากที่สุด</p>
-                            @if($totalApplies > 0 && $popularCourseName != '-')
-                                <div
-                                    class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1.5 text-xs font-semibold shadow-sm border border-white/10">
-                                    <span>{{ $trainings->sortByDesc('applies_count')->first()->applies_count ?? 0 }}</span> คน
-                                </div>
-                            @endif
-                        </div>
-                        <div class="mt-auto pt-2">
-                            <h4 class="text-lg font-bold leading-snug line-clamp-2 drop-shadow-sm"
-                                title="{{ $popularCourseName }}">
+                <!-- Card 4 -->
+                <div class="bg-white dark:bg-[#1E2129] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all group">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="flex-1 overflow-hidden">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">สนใจมากที่สุด</p>
+                            <p class="text-lg font-black text-gray-800 dark:text-white truncate" title="{{ $popularCourseName }}">
                                 {{ $popularCourseName }}
-                            </h4>
+                            </p>
+                            <p class="text-[10px] text-red-500 font-bold mt-1">
+                                {{ number_format($popularCourseCount) }} <span class="text-gray-400 font-normal">คน</span>
+                            </p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center text-lg shadow-sm flex-shrink-0">
+                            <i class="fa-solid fa-fire"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Chart Section -->
+            <!-- Charts Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Bar Chart -->
-                <div
-                    class="lg:col-span-2 bg-white dark:bg-[#1E2129] rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-slate-100 dark:border-slate-800/60 p-6 md:p-8 relative overflow-hidden transition-all duration-300 flex flex-col">
-                    <div
-                        class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
-                                <span
-                                    class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-500 flex items-center justify-center">
-                                    <i class="fa-solid fa-chart-line"></i>
-                                </span>
-                                สถิติความสนใจรายหลักสูตร
-                            </h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 sm:ml-11">
-                                กราฟแสดงจำนวนผู้ที่สนใจสมัครเข้าร่วมในแต่ละหลักสูตรอบรม</p>
-                        </div>
-                    </div>
-
-                    <!-- Chart Container -->
-                    <div id="trainingAnalyticsChart"
-                        class="w-full h-[400px] flex-grow {{ $totalApplies > 0 ? '' : 'hidden' }}"></div>
-                    @if($totalApplies == 0)
-                        <div class="flex-grow flex flex-col items-center justify-center p-10 text-slate-400">
-                            <i class="fa-solid fa-chart-column text-5xl mb-4 opacity-20"></i>
-                            <p class="text-lg font-medium">ไม่พบข้อมูลสถิติ</p>
-                            <p class="text-sm">กรุณาเลือกตัวกรองอื่น หรือยังไม่มีการสมัครในช่วงเวลานี้</p>
-                        </div>
-                    @endif
+                <!-- Main Bar Chart -->
+                <div class="lg:col-span-2 bg-white dark:bg-[#1E2129] rounded-xl shadow-sm border border-gray-100 dark:border-gray-800/60 p-6 flex flex-col min-h-[450px]">
+                    <h3 class="text-sm font-bold text-gray-700 dark:text-white mb-6 uppercase tracking-wider">สถิติความสนใจรายหลักสูตร (RANKING)</h3>
+                    <div id="trainingMainChart" class="flex-grow"></div>
                 </div>
 
-                <!-- Bar Chart Comparison (was Donut) -->
-                <div
-                    class="bg-white dark:bg-[#1E2129] rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-slate-100 dark:border-slate-800/60 p-6 relative overflow-hidden transition-all duration-300 flex flex-col">
-                    <div class="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800">
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-3">
-                            <span
-                                class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-500 flex items-center justify-center">
-                                <i class="fa-solid fa-chart-bar"></i>
-                            </span>
-                            เปรียบเทียบความสนใจ
-                        </h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 sm:ml-11">
-                            จำนวนผู้สมัครในแต่ละหลักสูตร</p>
+                <!-- Right Side Donut/Bar -->
+                <div class="flex flex-col gap-6">
+                    <!-- Format Breakdown -->
+                    <div class="bg-white dark:bg-[#1E2129] rounded-xl shadow-sm border border-gray-100 dark:border-gray-800/60 p-6">
+                        <h3 class="text-sm font-bold text-gray-700 dark:text-white mb-6 uppercase tracking-wider">รูปแบบการฝึกอบรม (Format)</h3>
+                        <div id="trainingFormatChart" class="h-64 flex items-center justify-center"></div>
                     </div>
 
-                    <!-- Chart Container -->
-                    <div id="trainingDonutChart"
-                        class="w-full flex-grow flex items-center justify-center mt-4 {{ $totalApplies > 0 ? '' : 'hidden' }}">
+                    <!-- Additional Stats -->
+                    <div class="bg-white dark:bg-[#1E2129] rounded-xl shadow-sm border border-gray-100 dark:border-gray-800/60 p-6 flex-grow text-center flex flex-col items-center justify-center">
+                         <h3 class="text-sm font-bold text-gray-700 dark:text-white mb-6 uppercase tracking-wider w-full text-left">ความสนใจแยกตามหน่วยงาน</h3>
+                         <div id="trainingDeptChart" class="w-full"></div>
                     </div>
-                    @if($totalApplies == 0)
-                        <div class="flex-grow flex flex-col items-center justify-center p-10 text-slate-400">
-                            <i class="fa-solid fa-chart-pie text-5xl mb-4 opacity-20"></i>
-                            <p class="text-lg font-medium">ไม่มีข้อมูลความสนใจ</p>
-                        </div>
-                    @endif
                 </div>
             </div>
 
+            <!-- Recent Registrations (Connect with training_applies) -->
+            <div class="bg-white dark:bg-[#1E2129] rounded-xl shadow-sm border border-gray-100 dark:border-gray-800/60 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-800/60 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-800 dark:text-white uppercase tracking-wider">รายการลงทะเบียนล่าสุด</h3>
+                        <p class="text-slate-400 text-[10px] mt-1">แสดงข้อมูลพนักงานที่ลงทะเบียนเข้าร่วมล่าสุด 10 รายการ</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 flex items-center justify-center">
+                        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/50 dark:bg-slate-800/20">
+                                <th class="px-6 py-3 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">พนักงาน</th>
+                                <th class="px-6 py-3 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">หลักสูตร</th>
+                                <th class="px-6 py-3 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest text-center">เวลาที่ลงทะเบียน</th>
+                                <th class="px-6 py-3 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest text-right">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800/60">
+                            @forelse($recentApplies as $apply)
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-red-500 group-hover:text-white transition-all">
+                                                <i class="fa-solid fa-user text-[10px]"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-bold text-gray-700 dark:text-slate-200">
+                                                    {{ $apply->user ? $apply->user->fullname : ('รหัส: ' . $apply->employee_code) }}
+                                                </p>
+                                                <p class="text-[10px] text-slate-400">{{ $apply->employee_code }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="text-xs font-medium text-gray-600 dark:text-slate-300">
+                                            {{ $apply->training ? $apply->training->branch : 'ไม่พบข้อมูลหลักสูตร' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 py-1 px-2 rounded-md">
+                                            <i class="fa-regular fa-clock mr-1"></i>
+                                            {{ $apply->created_at->format('d/m/Y H:i') }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-[10px] font-bold bg-green-50 dark:bg-green-900/20 text-green-600 border border-green-200/50 dark:border-green-900/50">
+                                            <span class="w-1 h-1 rounded-full bg-green-600 animate-pulse"></span>
+                                            สำเร็จ
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-12 text-center text-slate-400">
+                                        <i class="fa-solid fa-inbox text-3xl mb-3 opacity-20"></i>
+                                        <p class="text-xs font-medium uppercase tracking-widest">ยังไม่มีข้อมูลการลงทะเบียน</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -302,253 +209,108 @@
         document.addEventListener("DOMContentLoaded", function () {
             const labels = @json($labels);
             const dataCounts = @json($data);
+            
+            const formatLabels = @json($formatLabels);
+            const formatData = @json($formatData);
+            
+            const deptLabels = @json($deptLabels);
+            const deptData = @json($deptData);
 
             if (dataCounts.length === 0) {
-                console.log("No data to display on charts");
+                console.log("No data for charts");
                 return;
             }
 
             const isDarkMode = document.documentElement.classList.contains('dark');
-            const textColor = isDarkMode ? '#94a3b8' : '#64748b'; // slate-400 : slate-500
-            const gridColor = isDarkMode ? '#334155' : '#f1f5f9'; // slate-700 : slate-100
+            const textColor = isDarkMode ? '#94a3b8' : '#64748b';
+            const gridColor = isDarkMode ? '#334155' : '#f1f5f9';
 
-            var options = {
-                series: [{
-                    name: 'จำนวนผู้สนใจ',
-                    data: dataCounts
-                }],
-                chart: {
-                    height: 450,
-                    type: 'bar',
-                    fontFamily: 'Prompt, sans-serif',
-                    toolbar: {
-                        show: true,
-                        tools: {
-                            download: true,
-                            selection: false,
-                            zoom: false,
-                            zoomin: false,
-                            zoomout: false,
-                            pan: false,
-                            reset: false
-                        }
-                    },
-                    parentHeightOffset: 0
+            // 1. Main Horizontal Bar Chart (Ranking by Interest)
+            var mainChartOptions = {
+                series: [{ name: 'จำนวนผู้สมัคร', data: dataCounts }],
+                chart: { 
+                    height: Math.max(400, labels.length * 40), 
+                    type: 'bar', 
+                    fontFamily: 'Prompt, sans-serif', 
+                    toolbar: { show: false } 
                 },
-                stroke: {
-                    show: true,
-                    width: 2,
-                    colors: ['transparent']
+                plotOptions: { 
+                    bar: { 
+                        horizontal: true, 
+                        borderRadius: 6, 
+                        barHeight: '60%', 
+                        distributed: true, 
+                        dataLabels: { position: 'end' } 
+                    } 
                 },
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        borderRadius: 8,
-                        columnWidth: '50%',
-                        borderRadiusApplication: 'end',
-                        dataLabels: {
-                            position: 'top',
-                        },
-                    }
+                colors: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#f43f5e', '#6366f1', '#14b8a6'],
+                dataLabels: { 
+                    enabled: true, 
+                    offsetX: 25, 
+                    style: { fontSize: '12px', colors: [textColor], fontWeight: 'bold' },
+                    formatter: function(val) { return val + " คน"; }
                 },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'light',
-                        type: "vertical",
-                        shadeIntensity: 0.5,
-                        gradientToColors: ['#3b82f6'],
-                        inverseColors: true,
-                        opacityFrom: 1,
-                        opacityTo: 0.8,
-                        stops: [0, 100],
-                    }
+                xaxis: { 
+                    categories: labels, 
+                    labels: { style: { colors: textColor, fontSize: '11px' } }, 
+                    axisBorder: { show: false }, 
+                    axisTicks: { show: false } 
                 },
-                colors: ['#60a5fa'],
-                dataLabels: {
-                    enabled: true,
-                    offsetY: -20,
-                    style: {
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        colors: [isDarkMode ? '#e2e8f0' : '#475569']
-                    },
-                    formatter: function (val) {
-                        return val;
-                    }
+                yaxis: { 
+                    labels: { 
+                        maxWidth: 300,
+                        style: { colors: textColor, fontSize: '11px' } 
+                    } 
                 },
-                labels: labels,
-                xaxis: {
-                    type: 'category',
-                    labels: {
-                        style: {
-                            colors: textColor,
-                            fontSize: '12px',
-                        },
-                        trim: true,
-                        rotate: -45,
-                        hideOverlappingLabels: false,
-                    },
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
-                },
-                yaxis: [{
-                    title: {
-                        text: 'จำนวนผู้สมัคร (คน)',
-                        style: {
-                            color: textColor,
-                            fontSize: '13px',
-                            fontWeight: 500,
-                        }
-                    },
-                    labels: {
-                        style: { colors: textColor },
-                        formatter: function (val) {
-                            return Math.round(val);
-                        }
-                    }
-                }],
-                grid: {
-                    borderColor: gridColor,
-                    strokeDashArray: 4,
-                    padding: { top: 10, right: 10, bottom: 0, left: 10 }
-                },
-                legend: {
-                    position: 'top',
-                    horizontalAlign: 'right',
-                    offsetY: -10,
-                    markers: { radius: 12 },
-                    itemMargin: { horizontal: 10, vertical: 0 },
-                    labels: { colors: textColor }
-                },
-                tooltip: {
-                    shared: true,
-                    intersect: false,
-                    y: {
-                        formatter: function (y) {
-                            if (typeof y !== "undefined") {
-                                return y.toFixed(0) + " คน";
-                            }
-                            return y;
-                        }
-                    },
-                    theme: isDarkMode ? 'dark' : 'light',
-                    style: { fontSize: '13px' }
-                }
+                grid: { borderColor: gridColor, strokeDashArray: 4, xaxis: { lines: { show: true } } },
+                legend: { show: false },
+                tooltip: { theme: isDarkMode ? 'dark' : 'light' }
             };
+            var mainChart = new ApexCharts(document.querySelector("#trainingMainChart"), mainChartOptions);
+            mainChart.render();
 
-            var chart = new ApexCharts(document.querySelector("#trainingAnalyticsChart"), options);
-            chart.render();
-
-            // Horizontal Bar Chart Options (Replaces Donut)
-            var donutOptions = {
-                series: [{
-                    name: 'จำนวนผู้สนใจ',
-                    data: dataCounts
-                }],
-                chart: {
-                    type: 'bar',
-                    height: 380,
-                    fontFamily: 'Prompt, sans-serif',
-                    toolbar: { show: false }
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: true,
-                        borderRadius: 6,
-                        barHeight: '70%',
-                        distributed: true,
-                        dataLabels: {
-                            position: 'bottom'
-                        }
-                    }
-                },
-                colors: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'],
-                dataLabels: {
-                    enabled: true,
-                    textAnchor: 'start',
-                    style: {
-                        colors: ['#fff'],
-                        fontWeight: 600
-                    },
-                    formatter: function (val, opt) {
-                        return opt.w.globals.labels[opt.dataPointIndex] + ": " + val + " คน"
-                    },
-                    offsetX: 0
-                },
-                xaxis: {
-                    categories: labels,
-                    labels: {
-                        style: {
-                            colors: textColor,
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        show: false
-                    }
-                },
-                grid: {
-                    borderColor: gridColor,
-                    xaxis: {
-                        lines: {
-                            show: true
-                        }
-                    }
-                },
-                legend: {
-                    show: false
-                },
-                tooltip: {
-                    theme: isDarkMode ? 'dark' : 'light',
-                    y: {
-                        formatter: function (val) {
-                            return val + " คน"
-                        }
-                    }
-                }
+            // 2. Training Format (Donut Chart)
+            var formatChartOptions = {
+                series: formatData,
+                chart: { type: 'donut', height: 280, fontFamily: 'Prompt, sans-serif' },
+                labels: formatLabels,
+                colors: ['#3b82f6', '#10b981', '#f59e0b'],
+                legend: { position: 'bottom', labels: { colors: textColor } },
+                plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'รวมทั้งสิ้น', color: textColor } } } } },
+                stroke: { show: false },
+                tooltip: { theme: isDarkMode ? 'dark' : 'light' }
             };
+            var formatChart = new ApexCharts(document.querySelector("#trainingFormatChart"), formatChartOptions);
+            formatChart.render();
 
-            var donutChart = new ApexCharts(document.querySelector("#trainingDonutChart"), donutOptions);
-            donutChart.render();
+            // 3. Department Breakdown (Horizontal Bar)
+            var deptChartOptions = {
+                series: [{ name: 'ผู้สมัคร', data: deptData }],
+                chart: { type: 'bar', height: 250, toolbar: { show: false }, fontFamily: 'Prompt, sans-serif' },
+                plotOptions: { bar: { horizontal: true, borderRadius: 5, barHeight: '50%', distributed: true } },
+                colors: ['#6366f1', '#10b981', '#f59e0b', '#ef4444'],
+                xaxis: { categories: deptLabels, labels: { style: { colors: textColor, fontSize: '10px' } } },
+                yaxis: { labels: { show: true, maxWidth: 150, style: { colors: textColor, fontSize: '10px' } } },
+                grid: { borderColor: gridColor, strokeDashArray: 4 },
+                legend: { show: false },
+                tooltip: { theme: isDarkMode ? 'dark' : 'light' }
+            };
+            var deptChart = new ApexCharts(document.querySelector("#trainingDeptChart"), deptChartOptions);
+            deptChart.render();
 
-            // Observe theme changes to adapt chart coloring
-            const observer = new MutationObserver(function (mutations) {
-                mutations.forEach(function (mutation) {
-                    if (mutation.attributeName === "class" || mutation.attributeName === "data-theme") {
-                        const darkNow = document.documentElement.classList.contains('dark');
-                        const newText = darkNow ? '#94a3b8' : '#64748b';
-                        const newGrid = darkNow ? '#334155' : '#f1f5f9';
-
-                        chart.updateOptions({
-                            xaxis: { labels: { style: { colors: newText } } },
-                            yaxis: [{
-                                title: { style: { color: newText } },
-                                labels: { style: { colors: newText } }
-                            }],
-                            legend: { labels: { colors: newText } },
-                            grid: { borderColor: newGrid },
-                            dataLabels: {
-                                style: { colors: [darkNow ? '#e2e8f0' : '#475569'] }
-                            },
-                            tooltip: { theme: darkNow ? 'dark' : 'light' }
-                        });
-
-                        donutChart.updateOptions({
-                            xaxis: { labels: { style: { colors: newText } } },
-                            grid: { borderColor: newGrid },
-                            tooltip: { theme: darkNow ? 'dark' : 'light' }
-                        });
-                    }
-                });
+            // Theme Observer
+            const observer = new MutationObserver(() => {
+                const dark = document.documentElement.classList.contains('dark');
+                const newText = dark ? '#94a3b8' : '#64748b';
+                const newGrid = dark ? '#334155' : '#f1f5f9';
+                [mainChart, formatChart, deptChart].forEach(c => c.updateOptions({
+                    xaxis: { labels: { style: { colors: newText } } },
+                    yaxis: { labels: { style: { colors: newText } } },
+                    grid: { borderColor: newGrid },
+                    tooltip: { theme: dark ? 'dark' : 'light' }
+                }));
             });
-
-            observer.observe(document.documentElement, {
-                attributes: true,
-                attributeFilter: ['class', 'data-theme']
-            });
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
         });
     </script>
 @endsection

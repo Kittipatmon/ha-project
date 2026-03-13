@@ -286,4 +286,9 @@ class User extends Authenticatable
         return self::getSexOptions()[$this->sex]['color'] ?? 'default';
     }
 
+    public function trainingApplies()
+    {
+        return $this->hasMany(TrainingApply::class, 'employee_code', 'employee_code');
+    }
+
 }

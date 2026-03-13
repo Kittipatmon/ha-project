@@ -59,6 +59,9 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::get('/dashboard', function () {
+    if (!(auth()->check() && (auth()->user()->hr_status == 0 || auth()->user()->employee_code == '11648'))) {
+        abort(403);
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -157,6 +160,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/suggestion/{id}', [SuggestionController::class, 'destroy'])->name('suggestion.destroy');
 
     //Training Backend
+    Route::get('/backend/training/dashboard', [TrainingController::class, 'dashboard'])->name('backend.training.dashboard');
+    Route::get('/backend/training/applicants', [TrainingController::class, 'applicants'])->name('backend.training.applicants');
+    Route::get('/backend/training/{id}/applicants', [TrainingController::class, 'courseApplicants'])->name('backend.training.course.applicants');
     Route::get('/backend/training', [TrainingController::class, 'index'])->name('backend.training.index');
     Route::get('/backend/training/create', [TrainingController::class, 'create'])->name('backend.training.create');
     Route::post('/backend/training', [TrainingController::class, 'store'])->name('backend.training.store');
