@@ -13,6 +13,9 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                'kumwell-red': '#B21F24', // Standard Kumwell Red
+            },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },

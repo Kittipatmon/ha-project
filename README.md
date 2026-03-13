@@ -1,61 +1,163 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# HR System - ระบบบริหารจัดการทรัพยากรบุคคล
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+ระบบบริหารจัดการทรัพยากรบุคคล (HR System) พัฒนาด้วย Laravel Framework สำหรับจัดการข้อมูลพนักงาน ข่าวสาร และการฝึกอบรม
 
-## About Laravel
+## 📋 สารบัญ
+- [คุณสมบัติของระบบ](#-คุณสมบัติของระบบ)
+- [เทคโนโลยีที่ใช้](#-เทคโนโลยีที่ใช้)
+- [ขั้นตอนการติดตั้ง](#-ขั้นตอนการติดตั้ง)
+- [คู่มือการใช้งานระบบเบื้องต้น (Step-by-Step)](#-คู่มือการใช้งานระบบเบื้องต้น-step-by-step)
+- [กระบวนการทำงานของแต่ละระบบ (Workflows)](#-กระบวนการทำงานของแต่ละระบบ-workflows)
+- [ระบบฝึกอบรม (Training Module)](#-ระบบฝึกอบรม-training-module)
+- [การใช้งานหน้า Dashboard](#-การใช้งานหน้า-dashboard)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 คุณสมบัติของระบบ
+ระบบถูกออกแบบเป็นโมดูล (Micro-services style) เพื่อรองรับการทำงานที่หลากหลาย:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **HR Request (พร้อมใช้งาน):** ยื่นคำร้องขอเอกสาร, แก้ไขเวลาทำงาน, ขอใบรับรองเงินเดือน ฯลฯ
+- **Manpower (พร้อมใช้งาน):** ระบบบริหารจัดการอัตรากำลังพลและโครงสร้างองค์กร
+- **Training (พร้อมใช้งาน):** ระบบลงทะเบียนหลักสูตรอบรมและรายงานสถิติความสนใจ
+- **Suggestion (พร้อมใช้งาน):** กล่องรับข้อเสนอแนะและเรื่องร้องเรียนสำหรับพนักงาน
+- **Data Management (สำหรับ Admin):** ระบบจัดการข้อมูลพื้นฐานพนักงานและฐานข้อมูลระบบ
+- **โมดูลในอนาคต (Coming Soon):** Recruitment (รับสมัครงาน), Safety & Env. (ความปลอดภัยและสิ่งแวดล้อม), และ Analytics (Dashboard สถิติภาพรวม)
 
-## Learning Laravel
+## 💻 เทคโนโลยีที่ใช้
+- **Framework:** Laravel 11.x
+- **Frontend:** Tailwind CSS, Blade Template, ApexCharts (สำหรับกราฟ)
+- **Database:** MySQL / MariaDB
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🛠 ขั้นตอนการติดตั้ง
+1. **Clone Project:**
+   ```bash
+   git clone [repository-url]
+   ```
+2. **Install Dependencies:**
+   ```bash
+   composer install
+   npm install && npm run build
+   ```
+3. **Configure Environment:**
+   - คัดลอกเพิ่มไฟล์ `.env`
+   - ตั้งค่า `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
+4. **Generate Key & Migrate:**
+   ```bash
+   php artisan key:generate
+   php artisan migrate --seed
+   ```
+5. **Run Server:**
+   ```bash
+   php artisan serve
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 📖 คู่มือการใช้งานระบบเบื้องต้น (Step-by-Step)
+เมื่อผู้ใช้งานเข้าสู่ระบบ จะพบกับหน้า **"ระบบบริการ Service"** ซึ่งเป็นศูนย์รวมแอปพลิเคชันและโมดูลต่างๆ สามารถเลือกระบบที่ต้องการใช้งานตามขั้นตอนดังนี้:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 1. สำหรับพนักงานทั่วไป (Employee Services)
+- **ยื่นคำร้อง (HR Request):** 
+  - เลือกการ์ด "HR Request" และคลิก **"เข้าสู่ระบบ"** 
+  - เข้าไปกรอกแบบฟอร์มเพื่อยื่นคำร้องขอเอกสาร, แก้ไขเวลาทำงาน, หรือขอใบรับรอง ฯลฯ
+- **แจ้งเรื่องร้องเรียน/เสนอแนะ (Suggestion):**
+  - เลือกการ์ด "Suggestion" และคลิก **"ร้องเรียน / เสนอแนะ"** 
+  - กรอกรายละเอียดข้อเสนอแนะหรือปัญหาที่ต้องการแจ้งให้ผู้ดูแลระบบรับทราบ
+- **สมัครอบรมและพัฒนาทักษะ (Training):**
+  - เลือกการ์ด "Training" และคลิก **"เข้าสู่ระบบ"** 
+  - เลือกหลักสูตรที่สนใจและลงทะเบียนเข้าร่วมอบรม
+- **ดูและสมัครตำแหน่งงานว่าง (Recruitment):**
+  - เลือกการ์ด "Recruitment" และคลิก **"ดูงานที่เปิดรับ"** 
+  - อ่านรายละเอียดตำแหน่งงานว่างและดำเนินการสมัครงาน
 
-### Premium Partners
+### 2. สำหรับหัวหน้างานและฝ่ายบุคคล
+- **จัดการอัตรากำลังพล (Manpower):**
+  - เลือกการ์ด "Manpower" และคลิก **"เข้าสู่ระบบ"** 
+  - เข้าไปเพื่อตรวจสอบและตั้งค่าระบบจัดการอัตรากำลังพลขององค์กร
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 3. สำหรับผู้ดูแลระบบ (Admin)
+- **จัดการฐานข้อมูล (Data Management):**
+  - จะเข้าถึงได้เฉพาะสิทธิ์ระดับ Admin (สังเกตจากป้ายกำกับ ADMIN สีเขียวในการ์ด)
+  - เลือกการ์ด "Data Management" แล้วคลิก **"จัดการข้อมูล"** เพื่อบริหารจัดการข้อมูลพนักงานและระบบหลังบ้าน
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🎓 ระบบฝึกอบรม (Training Module)
+โมดูลสำหรับการจัดการหลักสูตรอบรม แบ่งออกเป็น 2 ส่วนหลัก:
 
-## Code of Conduct
+### 1. ส่วนหลังบ้าน (Backend)
+- เข้าใช้งานผ่านเมนูจัดการการฝึกอบรม
+- **เพิ่มหลักสูตร:** กำหนดชื่อหลักสูตร, แผนก, จำนวนชั่วโมง, และวันที่จัดอบรม
+- **จัดการสถานะ:** เปิดให้ลงทะเบียน (Available) หรือ ปิดเนื่องจากเต็ม (Full)
+- **แนบเอกสาร:** อัปโหลดไฟล์ PDF หรือแนบลิงก์ที่เกี่ยวข้อง
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2. ส่วนหน้าบ้าน (Frontend)
+- พนักงานสามารถเลือกดูหลักสูตรที่สนใจ
+- **ลงทะเบียน:** คลิกสมัครหลักสูตรโดยอ้างอิงรหัสพนักงาน
+- **ตรวจสอบสิทธิ์:** ระบบจะแสดงสถานะหากพนักงานเคยสมัครหลักสูตรนั้นๆ ไปแล้ว
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📊 การใช้งานหน้า Dashboard
+หน้า Dashboard ของการฝึกอบรมพัฒนามาเพื่อสรุปภาพรวมความสนใจของพนักงาน:
 
-## License
+- **การกรองข้อมูล (Filtering):** สามารถเลือกดูข้อมูลตาม ปี, เดือน, วัน หรือ ค้นหาตามชื่อหลักสูตร
+- **สรุปรายงาน (Stats Summary):**
+  - จำนวนหลักสูตรทั้งหมด
+  - จำนวนผู้สนใจสมัครรวม
+  - ค่าเฉลี่ยผู้สมัครต่อหลักสูตร
+  - **หลักสูตรที่ได้รับความนิยมสูงสุด:** แสดงหลักสูตรที่มีคนสนใจมากที่สุดพร้อมจำนวนคน
+- **กราฟวิเคราะห์ (Charts):**
+  - **สถิติรายหลักสูตร:** กราฟแท่งแสดงจำนวนผู้สมัครเปรียบเทียบแต่ละหลักสูตร (แสดงเฉพาะหลักสูตรที่มีผู้สมัครเพื่อให้กราฟกระชับ)
+  - **การเปรียบเทียบความสนใจ:** กราฟแท่งแนวนอนเพื่อดูสัดส่วนความนิยมในแต่ละหลักสูตร
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## ⚙️ กระบวนการทำงานของแต่ละระบบ (Workflows)
+
+### 📂 1. HR Request (ระบบคำร้อง)
+**กระบวนการทำงาน:**
+1. **พนักงาน:** สร้างคำร้องผ่านระบบ (เช่น แก้ไขเวลาทำงาน, ขอเอกสารรับรอง) พร้อมแนบหลักฐาน (ถ้ามี)
+2. **หัวหน้างาน:** ได้รับการแจ้งเตือนเพื่อตรวจสอบและพิจารณาอนุมัติคำร้องของทีม
+3. **ฝ่ายบุคคล (HR):** ตรวจสอบคำร้องที่ผ่านการอนุมัติ ดำเนินการออกเอกสาร หรืออัปเดตข้อมูลเข้าระบบ
+4. **พนักงาน:** สามารถติดตามสถานะคำร้องแบบ Real-time จนกว่าจะเสร็จสิ้น
+
+### 👥 2. Manpower (ระบบจัดอัตรากำลังพล)
+**กระบวนการทำงาน:**
+1. **ฝ่ายบุคคล / ผู้บริหาร:** กำหนดโครงสร้างองค์กรและแผนอัตรากำลัง (Headcount Plan)
+2. **ระบบประมวลผล:** เปรียบเทียบอัตรากำลังพนักงานปัจจุบัน (Actual) กับอัตรากำลังที่วางแผน (Plan) แบบอัตโนมัติ
+3. **หัวหน้างาน:** ตรวจสอบโครงสร้างแผนกตนเอง เพื่อดูอัตรากำลังที่ขาดและสามารถส่งคำร้องเพื่อเปิดรับสมัครพนักงานทดแทนได้
+4. **การอัปเดตข้อมูล:** เมื่อมีการรับพนักงานใหม่ ลาออก หรือโอนย้าย ข้อมูลของ Manpower จะถูกปรับปรุงอัตโนมัติตามโครงสร้าง
+
+### 🎓 3. Training (ระบบฝึกอบรม)
+**กระบวนการทำงาน:**
+1. **HR / ผู้จัดอบรม:** สร้างหลักสูตรใหม่ กำหนดจำนวนที่นั่ง วิทยากร และช่วงเวลาเปิดรับสมัคร
+2. **พนักงาน:** เข้าดูรายการหลักสูตรที่สถานะ "เปิดรับ" (Available) และกดลงทะเบียนสมัคร
+3. **ระบบตรวจสอบ:** ตรวจสอบสิทธิ์ว่าเคยลงทะเบียนแล้วหรือไม่ หรือที่นั่งเต็มหรือไม่ (หากเต็ม สถานะจะเปลี่ยนเป็น Full และป้องกันการลงทะเบียนเพิ่ม)
+4. **การประมวลผลวิเคราะห์:** HR เรียกดูรายงานและ Dashboard สถิติความสนใจของผู้สมัครเพื่อเตรียมการเข้าอบรม
+
+### 💼 4. Recruitment (ระบบรับสมัครงาน / ตำแหน่งงานว่าง)
+**กระบวนการทำงาน:**
+1. **หัวหน้าแผนก:** ยื่นแบบฟอร์มขอพนักงานใหม่ (อิงจาก Manpower ที่ว่างในแผนก)
+2. **ฝ่ายบุคคล:** สร้างประกาศรับสมัครงานและกำหนดรายละเอียดคุณสมบัติในระบบ
+3. **ผู้สมัคร / พนักงานภายใน:** เลือกดูตำแหน่งงานที่เปิดรับ และกดยื่นใบสมัครพร้อมแนบ Resume ผ่านระบบ
+4. **ฝ่ายบุคคล / ผู้สัมภาษณ์:** คัดกรองผู้สมัครเบื้องต้น, นัดหมายสัมภาษณ์, ให้คะแนนการสัมภาษณ์แบบดิจิทัล และสรุปผลรับเข้าทำงาน
+
+### 💡 5. Suggestion (กล่องรับข้อเสนอแนะ)
+**กระบวนการทำงาน:**
+1. **พนักงาน:** เขียนข้อเสนอแนะ คำติชม หรือเรื่องร้องเรียน และกดส่งเข้าระบบ (สามารถเลือกปกปิดชื่อได้)
+2. **ผู้ดูแลระบบ / ส่วนกลาง:** รับรายการแจ้งเตือน ตรวจสอบเนื้อหา และประเมินเพื่อมอบหมายเรื่องต่อให้ผู้รับผิดชอบที่เกี่ยวข้อง
+3. **การพิจารณา:** ผู้รับผิดชอบนำเรื่องไปพิจารณาดำเนินการปรับปรุงแก้ไข หรือหาแนวทางพัฒนา
+4. **การแจ้งผล:** เมื่อดำเนินการแล้วเสร็จ สถานะรับเรื่องจะถูกอัปเดต และแจ้งผลการทำงานกลับให้ผู้เสนอแนะทราบ
+
+### 🗄️ 6. Data Management (ระบบจัดการข้อมูล)
+**กระบวนการทำงาน:**
+1. **ผู้ดูแลระบบ (Admin):** ล็อกอินด้วยสิทธิ์ระดับ Admin เพื่อเข้าถึงส่วนเสริมหลังบ้าน
+2. **การจัดการข้อมูลหลัก (Master Data):** เพิ่ม ลบ หรือแก้ไขข้อมูลพื้นฐาน เช่น รายชื่อพนักงาน โครงสร้างบริษัท ตำแหน่งงาน วันหยุด ฯลฯ
+3. **กำหนดสิทธิ์ (Role & Permission):** จัดการสิทธิ์การใช้งานในระบบเพื่อจำกัดการเข้าถึงข้อมูลของผู้ใช้งานตามระดับตำแหน่ง
+4. **การบำรุงรักษาระบบ (Maintenance):** ควบคุมและดูแลคุณภาพข้อมูลในฐานข้อมูลทั้งหมดให้ถูกต้องตรงกันเสมอ
+
+---
+*หมายเหตุ: ข้อมูลวันที่ในฐานข้อมูล (start_date, end_date) บางส่วนจัดเก็บเป็นรูปแบบข้อความภาษาไทย ตัวกรองหลักใน Dashboard จึงอ้างอิงจากวันที่สมัคร (created_at) เป็นหลัก*

@@ -21,11 +21,17 @@ class UserTypeController extends Controller
             'type_name' => 'required|string|max:255',
         ]);
 
-        UserType::create([
+        $data = [
             'type_name' => $request->type_name,
             'description' => $request->description,
             'status' => $request->status ?? 0,
-        ]);
+        ];
+
+        if (empty($data['type_code'])) {
+            $data['type_code'] = 'UT-' . time() . rand(100, 999);
+        }
+
+        UserType::create($data);
 
         return redirect()->route('usertypes.index')->with('success', 'User type created successfully.');
     }

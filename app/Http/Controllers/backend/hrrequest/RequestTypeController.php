@@ -27,7 +27,12 @@ class RequestTypeController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        RequestType::create($request->all());
+        $data = $request->all();
+        if (empty($data['code'])) {
+            $data['code'] = 'REQ-' . time() . rand(100, 999);
+        }
+
+        RequestType::create($data);
 
         return redirect()->route('request-types.index')->with('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว.');
     }

@@ -21,6 +21,8 @@ use App\Http\Controllers\backend\LeaveReportsController;
 
 
 use App\Http\Controllers\backend\NewsController;
+use App\Http\Controllers\backend\SuggestionController;
+use App\Http\Controllers\backend\TrainingController;
 use App\Http\Controllers\backend\users\UserController;
 use App\Http\Controllers\backend\users\UserTypeController;
 
@@ -68,9 +70,20 @@ Route::get('/requestHR/dashboard/filter', [RequestHRController::class, 'dashboar
 
 Route::get('/manpower/dashboard', [ManpowerController::class, 'dashboard'])->name('manpower.dashboard');
 Route::get('/manpower/index', [ManpowerController::class, 'index'])->name('manpower.index');
-    
+Route::get('/manpower/export/excel', [ManpowerController::class, 'exportExcel'])->name('manpower.export.excel');
+Route::get('/manpower/export/pdf', [ManpowerController::class, 'exportPdf'])->name('manpower.export.pdf');
+
 Route::get('news/detail/{id}', [NewsController::class, 'detail'])->name('news.detail');
 Route::get('news-all', [NewsController::class, 'newsAll'])->name('news.newsAll');
+
+Route::get('news-all', [NewsController::class, 'newsAll'])->name('news.newsAll');
+
+// Public Recruitment Routes
+Route::get('/recruitment', [App\Http\Controllers\Frontend\RecruitmentController::class, 'index'])->name('recruitment.index');
+Route::get('/recruitment/job/{slug}', [App\Http\Controllers\Frontend\RecruitmentController::class, 'show'])->name('recruitment.show');
+Route::get('/recruitment/apply/{slug}', [App\Http\Controllers\Frontend\RecruitmentController::class, 'apply'])->name('recruitment.apply');
+Route::post('/recruitment/apply/{slug}', [App\Http\Controllers\Frontend\RecruitmentController::class, 'submitApplication'])->name('recruitment.submit');
+Route::get('/recruitment/success/{slug}', [App\Http\Controllers\Frontend\RecruitmentController::class, 'success'])->name('recruitment.success');
 
 Route::middleware('auth')->group(function () {
 
@@ -119,7 +132,7 @@ Route::middleware('auth')->group(function () {
     Route::post('request-types', [RequestTypeController::class, 'store'])->name('request-types.store');
     Route::put('request-types/{id}', [RequestTypeController::class, 'update'])->name('request-types.update');
     Route::delete('request-types/{id}', [RequestTypeController::class, 'destroy'])->name('request-types.destroy');
-    
+
     Route::get('request-subtypes', [RequestSubtypeController::class, 'index'])->name('request-subtypes.index');
     Route::post('request-subtypes', [RequestSubtypeController::class, 'store'])->name('request-subtypes.store');
     Route::put('request-subtypes/{id}', [RequestSubtypeController::class, 'update'])->name('request-subtypes.update');
@@ -131,10 +144,74 @@ Route::middleware('auth')->group(function () {
     //profile user
     Route::get('users/profile/{id}', [UserController::class, 'profileUser'])->name('users.profile');
 
-    //Leave Reports
+    //Suggestion
+    Route::get('/api/suggestions', [SuggestionController::class, 'apiSuggestions']);
+    Route::get('/suggestion', [SuggestionController::class, 'index'])->name('suggestion.index');
+    Route::post('/suggestion', [SuggestionController::class, 'store'])->name('suggestion.store');
+    Route::get('/suggestion/dashboard', [SuggestionController::class, 'dashboard'])->name('suggestion.dashboard');
+    Route::get('/suggestion/list', [SuggestionController::class, 'list'])->name('suggestion.list');
+    Route::get('/suggestion/{id}/show', [SuggestionController::class, 'show'])->name('suggestion.show');
+    Route::get('/suggestion/user/{id}/show', [SuggestionController::class, 'userShow'])->name('suggestion.user.show');
+    Route::get('/suggestion/{id}/edit', [SuggestionController::class, 'edit'])->name('suggestion.edit');
+    Route::put('/suggestion/{id}', [SuggestionController::class, 'update'])->name('suggestion.update');
+    Route::delete('/suggestion/{id}', [SuggestionController::class, 'destroy'])->name('suggestion.destroy');
+
+    //Training Backend
+    Route::get('/backend/training', [TrainingController::class, 'index'])->name('backend.training.index');
+    Route::get('/backend/training/create', [TrainingController::class, 'create'])->name('backend.training.create');
+    Route::post('/backend/training', [TrainingController::class, 'store'])->name('backend.training.store');
+    Route::get('/backend/training/{id}/edit', [TrainingController::class, 'edit'])->name('backend.training.edit');
+    Route::put('/backend/training/{id}', [TrainingController::class, 'update'])->name('backend.training.update');
+    Route::delete('/backend/training/{id}', [TrainingController::class, 'destroy'])->name('backend.training.destroy');
+
+    // Leave Reports
     Route::get('/leavereports/dashboard', [LeaveReportsController::class, 'dashboard'])->name('leavereports.dashboard');
     Route::post('/leavereports/import', [LeaveReportsController::class, 'import'])->name('leavereports.import');
+    Route::get('/leavereports/pdf', [LeaveReportsController::class, 'exportData'])->name('leavereports.pdf');
+
+    // Training Frontend
+    Route::get('/training/dashboard', [\App\Http\Controllers\TrainingController::class, 'dashboard'])->name('training.dashboard');
+    Route::get('/training', [App\Http\Controllers\TrainingController::class, 'index'])->name('training.index');
+    Route::get('/training/apply/{id?}', [App\Http\Controllers\TrainingController::class, 'apply'])->name('training.apply');
+    Route::post('/training/store', [App\Http\Controllers\TrainingController::class, 'store'])->name('training.store');
+
+    // Recruitment System
+    Route::prefix('backend/recruitment')->name('backend.recruitment.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [App\Http\Controllers\Backend\Recruitment\DashboardController::class, 'index'])->name('dashboard');
+
+        // Requests
+        Route::get('/requests', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'index'])->name('requests.index');
+        Route::get('/requests/create', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'create'])->name('requests.create');
+        Route::post('/requests', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'store'])->name('requests.store');
+        Route::get('/requests/{recruitmentRequest}', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'show'])->name('requests.show');
+        Route::post('/requests/{recruitmentRequest}/approve', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'approve'])->name('requests.approve');
+        Route::post('/requests/{recruitmentRequest}/reject', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'reject'])->name('requests.reject');
+
+        // Job Posts
+        Route::get('/posts', [App\Http\Controllers\Backend\Recruitment\JobPostController::class, 'index'])->name('posts.index');
+        Route::get('/posts/create', [App\Http\Controllers\Backend\Recruitment\JobPostController::class, 'create'])->name('posts.create');
+        Route::post('/posts', [App\Http\Controllers\Backend\Recruitment\JobPostController::class, 'store'])->name('posts.store');
+        Route::get('/posts/{jobPost}/edit', [App\Http\Controllers\Backend\Recruitment\JobPostController::class, 'edit'])->name('posts.edit');
+        Route::put('/posts/{jobPost}', [App\Http\Controllers\Backend\Recruitment\JobPostController::class, 'update'])->name('posts.update');
+        Route::delete('/posts/{jobPost}', [App\Http\Controllers\Backend\Recruitment\JobPostController::class, 'destroy'])->name('posts.destroy');
+
+        // Applicant Management
+
+        // Applicant Management
+        Route::get('/applications', [App\Http\Controllers\Backend\Recruitment\ApplicantController::class, 'index'])->name('applications.index');
+        Route::get('/applications/{application}', [App\Http\Controllers\Backend\Recruitment\ApplicantController::class, 'show'])->name('applications.show');
+        Route::post('/applications/{application}/update-status', [App\Http\Controllers\Backend\Recruitment\ApplicantController::class, 'updateStatus'])->name('applications.update-status');
+
+        // Interviews
+        Route::post('/applications/{application}/interviews', [App\Http\Controllers\Backend\Recruitment\InterviewController::class, 'store'])->name('interviews.store');
+        Route::post('/interviews/{interview}/status', [App\Http\Controllers\Backend\Recruitment\InterviewController::class, 'updateStatus'])->name('interviews.update-status');
+        Route::post('/interviews/{interview}/scores', [App\Http\Controllers\Backend\Recruitment\InterviewController::class, 'storeScores'])->name('interviews.store-scores');
+
+        // Email API
+        Route::post('/applications/{application}/send-email', [App\Http\Controllers\Backend\Recruitment\EmailController::class, 'sendDirectEmail'])->name('applications.send-email');
+    });
 
 });
 // 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

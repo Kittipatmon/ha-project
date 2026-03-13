@@ -14,33 +14,43 @@
                 </p>
             </div>
             
-            <div class="flex flex-wrap gap-3">
-                {{-- Date Filter Mockup --}}
-                <div class="relative">
-                    <select class="h-10 pl-3 pr-8 text-sm bg-white border border-gray-300 rounded-lg appearance-none dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option>เดือนนี้</option>
-                        <option>ไตรมาสนี้</option>
-                        <option>ปีนี้</option>
+            <div class="flex flex-wrap gap-3" x-data="{ open: false }">
+                {{-- Date Filter --}}
+                <form id="filterForm" action="{{ route('manpower.dashboard') }}" method="GET" class="relative">
+                    <select name="period" onchange="this.form.submit()" class="h-10 pl-3 pr-8 text-sm bg-white border border-gray-300 rounded-lg appearance-none dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="month" {{ ($currentFilter ?? '') == 'month' ? 'selected' : '' }}>เดือนนี้</option>
+                        <option value="quarter" {{ ($currentFilter ?? '') == 'quarter' ? 'selected' : '' }}>ไตรมาสนี้</option>
+                        <option value="year" {{ ($currentFilter ?? '') == 'year' ? 'selected' : '' }}>ปีนี้</option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
+                </form>
+
+                <div class="relative">
+                    <button @click="open = !open" @click.away="open = false" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg shadow-sm dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Export Report
+                        <svg class="w-4 h-4 ml-2 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    
+                    <div x-show="open" x-transition.origin.top.right
+                        class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700"
+                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                        <div class="py-1" role="none">
+                            <a href="{{ route('manpower.export.excel', ['period' => $currentFilter ?? 'month']) }}" 
+                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600" role="menuitem">
+                                <i class="mr-3 text-green-600 far fa-file-excel"></i>
+                                Export to Excel
+                            </a>
+                            <a href="{{ route('manpower.export.pdf', ['period' => $currentFilter ?? 'month']) }}" 
+                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600" role="menuitem">
+                                <i class="mr-3 text-red-600 far fa-file-pdf"></i>
+                                Export to PDF
+                            </a>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- <button class="inline-flex items-center px-4 py-2 text-sm font-medium btn btn-success text-gray-700 transition-colors border border-gray-300 rounded-lg shadow-sm dark:text-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <svg class="w-4 h-4 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Import Data
-                </button> -->
-
-                <button class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg shadow-sm dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Export Report
-                </button>
-                
-                <!-- <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    เพิ่มพนักงาน
-                </a> -->
             </div>
         </div>
 

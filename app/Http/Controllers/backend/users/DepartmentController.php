@@ -17,7 +17,8 @@ class DepartmentController extends Controller
     public function index()
     {
         $departments = Department::all();
-        return view('backend.department.index', compact('departments'));
+        $divisions = Division::all();
+        return view('backend.department.index', compact('departments', 'divisions'));
     }
 
     public function create()
@@ -42,7 +43,19 @@ class DepartmentController extends Controller
             'division_id' => 'nullable|integer|exists:divisions,division_id',
         ]);
 
-        Department::create($request->all());
+        $data = $request->all();
+        if ($request->filled('division_id')) {
+            $division = Division::find($request->division_id);
+            if ($division) {
+                $data['section_id'] = $division->section_id;
+            }
+        }
+
+        Department::create($data);
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Department created successfully.']);
+        }
 
         return redirect()->route('departments.index')->with('success', 'Department created successfully.');
     }
@@ -56,8 +69,20 @@ class DepartmentController extends Controller
             'division_id' => 'nullable|integer|exists:divisions,division_id',
         ]);
 
+        $data = $request->all();
+        if ($request->filled('division_id')) {
+            $division = Division::find($request->division_id);
+            if ($division) {
+                $data['section_id'] = $division->section_id;
+            }
+        }
+
         $department = Department::findOrFail($id);
-        $department->update($request->all());
+        $department->update($data);
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Department updated successfully.']);
+        }
 
         return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
     }
@@ -66,6 +91,11 @@ class DepartmentController extends Controller
     {
         $department = Department::findOrFail($id);
         $department->delete();
+
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Department deleted successfully.']);
+        }
+
         return redirect()->route('departments.index')->with('success', 'Department deleted successfully.');
     }
 }

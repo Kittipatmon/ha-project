@@ -42,39 +42,42 @@ class ApproveController extends Controller
         }
 
         $data = $request->validate([
-            'status'  => 'required|integer|in:1,2,3',
+            'status' => 'required|integer|in:1,2,3',
             'comment' => 'nullable|string|max:1000',
         ]);
 
         // 0 = รออนุมัติ 1 = อนุมัติ 2 = ไม่อนุมัติ 3 = ส่งกลับแก้ไข
         $status = (int) ($data['status'] ?? $hrrequest->approver_manager_status);
 
-        $hrrequest->approver_manager_status  = $status;
+        $hrrequest->approver_manager_status = $status;
         $hrrequest->approver_manager_comment = $data['comment'] ?? null;
-        $hrrequest->approver_manager_at      = now();
+        $hrrequest->approver_manager_at = now();
 
         // กำหนดสถานะหลัก + ข้อความตอบกลับ
         $flashType = 'info';
-        $flashMsg  = 'อัปเดตสถานะคำขอเรียบร้อยแล้ว';
+        $flashMsg = 'อัปเดตสถานะคำขอเรียบร้อยแล้ว';
 
         if ($status === 1) {
             $hrrequest->status = HrRequests::STATUS_APPROVED_HR;
             $hrrequest->approver_hr_id = null;
-            $hrrequest->approver_hr_status = 0; 
+            $hrrequest->approver_hr_status = 0;
             $flashType = 'success';
-            $flashMsg  = 'คำขอได้รับการอนุมัติแล้ว';
+            $flashMsg = 'คำขอได้รับการอนุมัติแล้ว';
         } elseif ($status === 2) {
             $hrrequest->status = HrRequests::STATUS_REJECTED;
             $flashType = 'error';
-            $flashMsg  = 'คำขอถูกปฏิเสธแล้ว';
+            $flashMsg = 'คำขอถูกปฏิเสธแล้ว';
         } elseif ($status === 3) {
             $hrrequest->status = HrRequests::STATUS_PENDING;
             $flashType = 'warning';
-            $flashMsg  = 'คำขอถูกส่งกลับแก้ไขแล้ว';
+            $flashMsg = 'คำขอถูกส่งกลับแก้ไขแล้ว';
         }
 
         if ($hrrequest->save()) {
-            return redirect()->route('approve.approvemanalist')->with($flashType, $flashMsg);
+            if ($hrrequest->save()) {
+                return redirect()->route('approve.approvemanalist')
+                    ->with($flashType, $flashMsg);
+            }
         }
 
         return redirect()->back()->with('error', 'เกิดข้อผิดพลาดในการอนุมัติคำขอ');
@@ -95,12 +98,12 @@ class ApproveController extends Controller
     public function approvehrlistall(Request $request)
     {
         $categories = RequestCategories::all();
-        $types      = RequestType::all();
-        $subtypes   = RequestSubtypes::all();
+        $types = RequestType::all();
+        $subtypes = RequestSubtypes::all();
 
-        $sections    = Section::orderBy('section_name')->get();
+        $sections = Section::orderBy('section_name')->get();
         $departments = Department::orderBy('department_name')->get();
-        $divisions   = Division::orderBy('division_name')->get();
+        $divisions = Division::orderBy('division_name')->get();
 
         $statuses = [
             ['id' => HrRequests::STATUS_PENDING, 'name' => 'อนุมัติโดยผู้จัดการ'],
@@ -124,7 +127,7 @@ class ApproveController extends Controller
 
             $query->where(function ($q) use ($search, $userIds) {
                 $q->where('request_code', 'like', "%{$search}%")
-                  ->orWhere('title', 'like', "%{$search}%");
+                    ->orWhere('title', 'like', "%{$search}%");
                 if ($userIds->isNotEmpty()) {
                     $q->orWhereIn('employee_id', $userIds->all());
                 }
@@ -168,11 +171,11 @@ class ApproveController extends Controller
         $baseQuery = clone $query;
 
         // Summary counts for current filters (excluding status)
-        $totalCount       = (clone $baseQuery)->count();
-        $statusCompleted  = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
-        $statusPending    = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
+        $totalCount = (clone $baseQuery)->count();
+        $statusCompleted = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
+        $statusPending = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
         $statusAPPROVEDHR = (clone $baseQuery)->where('status', HrRequests::STATUS_APPROVED_HR)->count();
-        $statusCancelled  = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
+        $statusCancelled = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -188,7 +191,7 @@ class ApproveController extends Controller
 
 
         $hrrequests = $query->get();
-    return view('requesthr.approve.approvehrlistall', compact('hrrequests', 'categories', 'types', 'subtypes', 'statuses', 'statusCompleted', 'statusPending', 'statusAPPROVEDHR', 'statusCancelled', 'totalCount' ,'sections','departments','divisions'));
+        return view('requesthr.approve.approvehrlistall', compact('hrrequests', 'categories', 'types', 'subtypes', 'statuses', 'statusCompleted', 'statusPending', 'statusAPPROVEDHR', 'statusCancelled', 'totalCount', 'sections', 'departments', 'divisions'));
     }
 
     /**
@@ -207,7 +210,7 @@ class ApproveController extends Controller
 
             $query->where(function ($q) use ($search, $userIds) {
                 $q->where('request_code', 'like', "%{$search}%")
-                  ->orWhere('title', 'like', "%{$search}%");
+                    ->orWhere('title', 'like', "%{$search}%");
                 if ($userIds->isNotEmpty()) {
                     $q->orWhereIn('employee_id', $userIds->all());
                 }
@@ -250,11 +253,11 @@ class ApproveController extends Controller
         $baseQuery = clone $query;
 
         // Summary counts used by the PDF view (excluding status filter)
-        $totalCount       = (clone $baseQuery)->count();
-        $statusCompleted  = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
-        $statusPending    = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
+        $totalCount = (clone $baseQuery)->count();
+        $statusCompleted = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
+        $statusPending = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
         $statusAPPROVEDHR = (clone $baseQuery)->where('status', HrRequests::STATUS_APPROVED_HR)->count();
-        $statusCancelled  = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
+        $statusCancelled = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -287,7 +290,7 @@ class ApproveController extends Controller
 
             $query->where(function ($q) use ($search, $userIds) {
                 $q->where('request_code', 'like', "%{$search}%")
-                  ->orWhere('title', 'like', "%{$search}%");
+                    ->orWhere('title', 'like', "%{$search}%");
                 if ($userIds->isNotEmpty()) {
                     $q->orWhereIn('employee_id', $userIds->all());
                 }
@@ -341,19 +344,19 @@ class ApproveController extends Controller
         // Clone before applying status/date to compute consistent counts (same as PDF)
         $baseQuery = clone $query;
 
-        $totalCount       = (clone $baseQuery)->count();
-        $statusCompleted  = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
-        $statusPending    = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
+        $totalCount = (clone $baseQuery)->count();
+        $statusCompleted = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
+        $statusPending = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
         $statusAPPROVEDHR = (clone $baseQuery)->where('status', HrRequests::STATUS_APPROVED_HR)->count();
-        $statusCancelled  = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
+        $statusCancelled = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
 
         $hrrequests = $query->get();
 
-        $filename = 'hr_requests_'.now()->format('Ymd_His').'.csv';
+        $filename = 'hr_requests_' . now()->format('Ymd_His') . '.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
         $columns = [
@@ -374,7 +377,7 @@ class ApproveController extends Controller
             $output = fopen('php://output', 'w');
 
             // BOM for Excel UTF-8
-            fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+            fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
             // Summary rows (Thai labels) before the data header
             fputcsv($output, ['รายการคำขอทั้งหมด', $totalCount]);
@@ -386,7 +389,7 @@ class ApproveController extends Controller
 
             // Blank line before table header
             fputcsv($output, []);
-            
+
             // Header columns
             fputcsv($output, $columns);
 
@@ -425,7 +428,7 @@ class ApproveController extends Controller
 
             $query->where(function ($q) use ($search, $userIds) {
                 $q->where('request_code', 'like', "%{$search}%")
-                  ->orWhere('title', 'like', "%{$search}%");
+                    ->orWhere('title', 'like', "%{$search}%");
                 if ($userIds->isNotEmpty()) {
                     $q->orWhereIn('employee_id', $userIds->all());
                 }
@@ -468,11 +471,11 @@ class ApproveController extends Controller
         $baseQuery = clone $query;
 
         // Summary counts (excluding status/date filters)
-        $totalCount       = (clone $baseQuery)->count();
-        $statusCompleted  = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
-        $statusPending    = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
+        $totalCount = (clone $baseQuery)->count();
+        $statusCompleted = (clone $baseQuery)->where('status', HrRequests::STATUS_COMPLETED)->count();
+        $statusPending = (clone $baseQuery)->where('status', HrRequests::STATUS_PENDING)->count();
         $statusAPPROVEDHR = (clone $baseQuery)->where('status', HrRequests::STATUS_APPROVED_HR)->count();
-        $statusCancelled  = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
+        $statusCancelled = (clone $baseQuery)->whereIn('status', [HrRequests::STATUS_CANCELLED, HrRequests::STATUS_REJECTED])->count();
 
         // Apply status/date filters for the actual list
         if ($request->filled('status')) {
@@ -490,11 +493,11 @@ class ApproveController extends Controller
         $hrrequests = $query->get();
 
 
-        $filename = 'hr_requests_'.now()->format('Ymd_His').'.pdf';
+        $filename = 'hr_requests_' . now()->format('Ymd_His') . '.pdf';
 
         // Use Dompdf if available
-        if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('requesthr.approve.approvehrlistall_pdf', [
+        if (class_exists(Pdf::class)) {
+            $pdf = Pdf::loadView('requesthr.approve.approvehrlistall_pdf', [
                 'hrrequests' => $hrrequests,
                 'generated_at' => now(),
                 'totalCount' => $totalCount,
@@ -517,41 +520,41 @@ class ApproveController extends Controller
 
     public function hrcheck(Request $request, $id)
     {
-         $hrrequest = HrRequests::findOrFail($id);
+        $hrrequest = HrRequests::findOrFail($id);
 
         // if ($hrrequest->approver_hr_id !== auth()->id()) {
         //     abort(403, 'คุณไม่มีสิทธิ์อนุมัติคำขอนี้');
         // }
 
         $data = $request->validate([
-            'status'  => 'required|integer|in:1,2,3',
+            'status' => 'required|integer|in:1,2,3',
             'comment' => 'nullable|string|max:1000',
         ]);
 
         // 0 = รออนุมัติ 1 = อนุมัติ 2 = ไม่อนุมัติ 3 = ส่งกลับแก้ไข
         $status = (int) ($data['status'] ?? $hrrequest->approver_hr_status);
 
-        $hrrequest->approver_hr_id      = auth()->id();
-        $hrrequest->approver_hr_status  = $status;
+        $hrrequest->approver_hr_id = auth()->id();
+        $hrrequest->approver_hr_status = $status;
         $hrrequest->approver_hr_comment = $data['comment'] ?? null;
-        $hrrequest->approver_hr_at      = now();
+        $hrrequest->approver_hr_at = now();
 
         // กำหนดสถานะหลัก + ข้อความตอบกลับ
         $flashType = 'info';
-        $flashMsg  = 'อัปเดตสถานะคำขอเรียบร้อยแล้ว';
+        $flashMsg = 'อัปเดตสถานะคำขอเรียบร้อยแล้ว';
 
         if ($status === 1) {
             $hrrequest->status = HrRequests::STATUS_COMPLETED;
             $flashType = 'success';
-            $flashMsg  = 'คำขอได้รับการอนุมัติแล้ว';
+            $flashMsg = 'คำขอได้รับการอนุมัติแล้ว';
         } elseif ($status === 2) {
             $hrrequest->status = HrRequests::STATUS_REJECTED;
             $flashType = 'error';
-            $flashMsg  = 'คำขอถูกปฏิเสธแล้ว';
+            $flashMsg = 'คำขอถูกปฏิเสธแล้ว';
         } elseif ($status === 3) {
             $hrrequest->status = HrRequests::STATUS_PENDING;
             $flashType = 'warning';
-            $flashMsg  = 'คำขอถูกส่งกลับแก้ไขแล้ว';
+            $flashMsg = 'คำขอถูกส่งกลับแก้ไขแล้ว';
         }
 
         if ($hrrequest->save()) {

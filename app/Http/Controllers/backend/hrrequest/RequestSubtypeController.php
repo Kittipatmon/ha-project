@@ -27,7 +27,12 @@ class RequestSubtypeController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        RequestSubtypes::create($request->all());
+        $data = $request->all();
+        if (empty($data['code'])) {
+            $data['code'] = 'SUB-' . time() . rand(100, 999);
+        }
+
+        RequestSubtypes::create($data);
 
         return redirect()->route('request-subtypes.index')->with('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว.');
     }

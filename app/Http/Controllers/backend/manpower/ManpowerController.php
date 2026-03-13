@@ -13,25 +13,47 @@ use App\Models\UserType;
 
 class ManpowerController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        $filter = $request->input('period', 'month');
+        $data = $this->getDashboardData($filter);
+        return view('manpower.dashboard', array_merge($data, ['currentFilter' => $filter]));
+    }
+
+    private function getDashboardData($filter)
+    {
+        $startDate = now()->startOfMonth();
+        $endDate = now()->endOfMonth();
+
+        if ($filter === 'quarter') {
+            $startDate = now()->startOfQuarter();
+            $endDate = now()->endOfQuarter();
+        } elseif ($filter === 'year') {
+            $startDate = now()->startOfYear();
+            $endDate = now()->endOfYear();
+        }
+
         // 1. Key Metrics
         $totalEmployees = User::active()->count();
-        
-        // Compare with last month for trend (Simplified)
-        $lastMonthEmployees = User::where('created_at', '<', now()->startOfMonth())->where('status', User::STATUS_ACTIVE)->count(); 
-        // Note: This is an approximation. Real historical data would require a history table.
-        $growthRate = $lastMonthEmployees > 0 ? (($totalEmployees - $lastMonthEmployees) / $lastMonthEmployees) * 100 : 0;
 
-        $newHiresCount = User::whereMonth('startwork_date', now()->month)
-                             ->whereYear('startwork_date', now()->year)
-                             ->count();
+        // Compare with previous period (Simplified)
+        $prevStartDate = (clone $startDate)->subMonth();
+        if ($filter === 'quarter')
+            $prevStartDate = (clone $startDate)->subQuarter();
+        elseif ($filter === 'year')
+            $prevStartDate = (clone $startDate)->subYear();
+
+        $lastPeriodEmployees = User::where('created_at', '<', $startDate)
+            ->where('status', User::STATUS_ACTIVE)->count();
+
+        $growthRate = $lastPeriodEmployees > 0 ? (($totalEmployees - $lastPeriodEmployees) / $lastPeriodEmployees) * 100 : 0;
+
+        $newHiresCount = User::whereBetween('startwork_date', [$startDate, $endDate])->count();
 
         $resignationsCount = User::where('status', User::STATUS_INACTIVE)
-                                 ->whereMonth('endwork_date', now()->month)
-                                 ->whereYear('endwork_date', now()->year)
-                                 ->count();
-        
+            ->whereBetween('endwork_date', [$startDate, $endDate])
+            ->count();
+
         $turnoverRate = $totalEmployees > 0 ? ($resignationsCount / $totalEmployees) * 100 : 0;
 
         // Average Tenure (in years)
@@ -45,12 +67,12 @@ class ManpowerController extends Controller
             ->select('sex', \DB::raw('count(*) as count'))
             ->groupBy('sex')
             ->pluck('count', 'sex');
-        
+
         $maleCount = $genderStats['ชาย'] ?? 0;
         $femaleCount = $genderStats['หญิง'] ?? 0;
 
         // 2. Charts Data
-        
+
         // Division Distribution
         $divisionStats = User::active()
             ->join('divisions', 'userskml.division_id', '=', 'divisions.division_id')
@@ -81,13 +103,13 @@ class ManpowerController extends Controller
             ->select('level_user', \DB::raw('count(*) as count'))
             ->groupBy('level_user')
             ->get()
-            ->map(function($item) {
+            ->map(function ($item) {
                 $options = User::getLevelUserOptions();
                 $item->label = $options[$item->level_user]['label'] ?? 'Unknown';
                 $item->color = $options[$item->level_user]['color'] ?? 'gray';
                 return $item;
             })
-            ->sortBy('level_user'); // Sort by level hierarchy
+            ->sortBy('level_user');
 
         // 3. Tables
         $recentHires = User::active()
@@ -96,23 +118,65 @@ class ManpowerController extends Controller
             ->take(5)
             ->get();
 
-        // Probation / Contract Expiry (Next 30 days)
-        // Assuming probation is 119 days from startwork_date
         $probationUpcoming = User::active()
             ->get()
-            ->filter(function($user) {
-                if (!$user->startwork_date) return false;
+            ->filter(function ($user) {
+                if (!$user->startwork_date)
+                    return false;
                 $probationDate = \Carbon\Carbon::parse($user->startwork_date)->addDays(119);
                 return $probationDate->between(now(), now()->addDays(30));
             })
             ->take(5);
 
-        return view('manpower.dashboard', compact(
-            'totalEmployees', 'growthRate', 'maleCount', 'femaleCount',
-            'newHiresCount', 'resignationsCount', 'turnoverRate',
-            'avgTenureYears', 'divisionStats', 'sectionStats', 'workplaceStats',
-            'levelStats', 'recentHires', 'probationUpcoming'
-        ));
+        return [
+            'totalEmployees' => $totalEmployees,
+            'growthRate' => $growthRate,
+            'maleCount' => $maleCount,
+            'femaleCount' => $femaleCount,
+            'newHiresCount' => $newHiresCount,
+            'resignationsCount' => $resignationsCount,
+            'turnoverRate' => $turnoverRate,
+            'avgTenureYears' => $avgTenureYears,
+            'divisionStats' => $divisionStats,
+            'sectionStats' => $sectionStats,
+            'workplaceStats' => $workplaceStats,
+            'levelStats' => $levelStats,
+            'recentHires' => $recentHires,
+            'probationUpcoming' => $probationUpcoming,
+            'filter' => $filter,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ];
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $filter = $request->input('period', 'month');
+        $data = $this->getDashboardData($filter);
+        $data['title'] = "Manpower Report (" . ucfirst($filter) . ")";
+
+        $filename = "manpower-report-" . date('YmdHis') . ".xls";
+        $headers = [
+            "Content-type" => "application/vnd.ms-excel",
+            "Content-Disposition" => "attachment; filename=\"$filename\"",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        return response()->view('manpower.exports.excel', $data)->withHeaders($headers);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $filter = $request->input('period', 'month');
+        $data = $this->getDashboardData($filter);
+        $data['title'] = "Manpower Report (" . ucfirst($filter) . ")";
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('manpower.exports.pdf', $data);
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->stream('manpower-report.pdf');
     }
 
     public function index()

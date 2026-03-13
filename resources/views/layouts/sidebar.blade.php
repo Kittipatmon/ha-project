@@ -18,13 +18,16 @@
         .sidebar-scroll::-webkit-scrollbar {
             width: 5px;
         }
+
         .sidebar-scroll::-webkit-scrollbar-track {
             background: #121418;
         }
+
         .sidebar-scroll::-webkit-scrollbar-thumb {
             background: #333;
             border-radius: 10px;
         }
+
         .sidebar-scroll::-webkit-scrollbar-thumb:hover {
             background: #D71920;
         }
@@ -33,7 +36,7 @@
         .hidden-force {
             display: none !important;
         }
-        
+
         /* Smooth transition for sidebar width */
         #sidebar {
             transition: width 0.3s ease;
@@ -57,7 +60,7 @@
                         }
                     },
                     width: {
-                        '68': '17rem', 
+                        '68': '17rem',
                     }
                 }
             }
@@ -80,24 +83,29 @@
 
     <div class="flex h-screen overflow-hidden">
 
-        <aside id="sidebar" class="w-62 flex-shrink-0 flex flex-col h-full bg-[#150f0f] text-white border-r border-gray-800 shadow-xl z-20 relative">
+        <aside id="sidebar"
+            class="w-62 flex-shrink-0 flex flex-col h-full bg-[#150f0f] text-white border-r border-gray-800 shadow-xl z-20 relative">
 
             <!-- Header -->
             <div class="h-20 flex items-center justify-between px-6 border-b border-gray-800/50 bg-[#0B1120]">
-                
-                <div id="sidebar-logo" class="flex items-center gap-3 overflow-hidden whitespace-nowrap transition-all duration-300 opacity-100">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-kumwell-red to-red-700 flex items-center justify-center shadow-lg shadow-red-900/20 flex-shrink-0">
+
+                <div id="sidebar-logo"
+                    class="flex items-center gap-3 overflow-hidden whitespace-nowrap transition-all duration-300 opacity-100">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-kumwell-red to-red-700 flex items-center justify-center shadow-lg shadow-red-900/20 flex-shrink-0">
                         <span class="font-bold text-white text-lg">H</span>
                     </div>
-                    <a href="{{ route('welcome') }}"> 
+                    <a href="{{ route('welcome') }}">
                         <div class="flex flex-col leading-none">
                             <span class="text-lg font-bold tracking-wide text-white">Kumwell</span>
-                            <span class="text-[10px] text-kumwell-red font-bold uppercase tracking-[0.2em]">HA System</span>
+                            <span class="text-[10px] text-kumwell-red font-bold uppercase tracking-[0.2em]">HA
+                                System</span>
                         </div>
                     </a>
                 </div>
 
-                <button id="sidebar-toggle-btn" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all focus:outline-none">
+                <button id="sidebar-toggle-btn"
+                    class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all focus:outline-none">
                     <i id="icon-bars" class="fa-solid fa-bars-staggered text-sm hidden"></i>
                     <i id="icon-chevron" class="fa-solid fa-chevron-left text-sm"></i>
                 </button>
@@ -105,7 +113,8 @@
 
             <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto sidebar-scroll">
 
-                <div class="sidebar-text px-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Main Menu</div>
+                <div class="sidebar-text px-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Main
+                    Menu</div>
 
                 <!-- <a href="#" class="group relative flex items-center px-3 py-1 rounded-xl text-gray-400 hover:bg-gradient-to-r hover:from-kumwell-red hover:to-red-700 hover:text-white hover:shadow-lg hover:shadow-red-900/30 transition-all duration-200">
                     <i id="dashboard-icon" class="fa-solid fa-chart-pie text-sm w-6 text-center group-hover:text-white transition-colors mr-3"></i>
@@ -117,127 +126,257 @@
                 </a> -->
 
                 <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-dashboard')" 
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                            id="btn-dashboard">
+                    <button onclick="toggleDropdown('dropdown-dashboard')"
+                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                        id="btn-dashboard">
                         <div class="flex items-center">
-                            <i id="dashboard-icon" class="fa-solid fa-chart-pie text-sm w-6 text-center group-hover:text-white transition-colors mr-3"></i>
+                            <i id="dashboard-icon"
+                                class="fa-solid fa-chart-pie text-sm w-6 text-center group-hover:text-white transition-colors mr-3"></i>
                             <span class="sidebar-text">Dashboard</span>
                         </div>
-                        <i id="arrow-dashboard" class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        <i id="arrow-dashboard"
+                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
                     </button>
 
                     <div id="dropdown-dashboard" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
                         <!-- <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
                             Request HR
                         </a> -->
-                        <a href="{{ route('leavereports.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                        <a href="{{ route('leavereports.dashboard') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
                             ขาด ลา
+                        </a>
+                        <a href="{{ route('manpower.dashboard') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            อัตรากำลังพล
                         </a>
                     </div>
 
-                    <div class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                    <div
+                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
                         Dashboard
                     </div>
                 </div>
 
                 <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-datapublic')" 
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                            id="btn-datapublic">
+                    <button onclick="toggleDropdown('dropdown-datapublic')"
+                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                        id="btn-datapublic">
                         <div class="flex items-center">
                             <i id="icon-datapublic" class="fa-solid fa-database text-sm w-6 text-center mr-3"></i>
                             <span class="sidebar-text">ข้อมูลทั่วไป</span>
                         </div>
-                        <i id="arrow-datapublic" class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        <i id="arrow-datapublic"
+                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
                     </button>
 
                     <div id="dropdown-datapublic" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="{{ route('news.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                        <a href="{{ route('news.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
                             - ข้อมูลข่าวสาร
                         </a>
                     </div>
-                    
-                    <div class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+
+                    <div
+                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
                         ข้อมูลทั่วไป
                     </div>
                 </div>
 
                 <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-request')" 
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                            id="btn-request">
+                    <button onclick="toggleDropdown('dropdown-request')"
+                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                        id="btn-request">
                         <div class="flex items-center">
                             <i id="icon-request" class="fa-solid fa-file-signature text-sm w-6 text-center mr-3"></i>
                             <span class="sidebar-text">Request Settings</span>
                         </div>
-                        <i id="arrow-request" class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        <i id="arrow-request"
+                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
                     </button>
 
                     <div id="dropdown-request" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="{{ route('request-categories.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                        <a href="{{ route('request-categories.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
                             - ประเภทคำร้อง
                         </a>
-                        <a href="{{ route('request-types.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                        <a href="{{ route('request-types.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
                             - ตัวเลือกการร้องขอ
                         </a>
-                         <a href="{{ route('request-subtypes.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                        <a href="{{ route('request-subtypes.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
                             - ประเภทย่อย
                         </a>
                     </div>
-                    
-                    <div class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+
+                    <div
+                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
                         Request Settings
                     </div>
                 </div>
 
                 <div class="relative group">
-                    <button onclick="toggleDropdown('dropdown-hr')" 
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
-                            id="btn-hr">
+                    <button onclick="toggleDropdown('dropdown-hr')"
+                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                        id="btn-hr">
                         <div class="flex items-center">
                             <i id="icon-hr" class="fa-solid fa-users-gear text-sm w-6 text-center mr-3"></i>
                             <span class="sidebar-text">HR Settings</span>
                         </div>
-                        <i id="arrow-hr" class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                        <i id="arrow-hr"
+                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
                     </button>
 
                     <div id="dropdown-hr" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                        <a href="{{ route('users.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลพนักงาน</a>
-                        <a href="{{ route('usertypes.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลประเภทพนักงาน</a>
-                        <a href="{{ route('sections.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลสายงาน</a>
-                        <a href="{{ route('divisions.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลฝ่าย</a>
-                        <a href="{{ route('departments.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">- ข้อมูลแผนก</a>
+                        <a href="{{ route('users.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                            ข้อมูลพนักงาน</a>
+                        <a href="{{ route('usertypes.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                            ข้อมูลประเภทพนักงาน</a>
+                        <a href="{{ route('sections.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                            ข้อมูลสายงาน</a>
+                        <a href="{{ route('divisions.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                            ข้อมูลฝ่าย</a>
+                        <a href="{{ route('departments.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                            ข้อมูลแผนก</a>
                     </div>
-                     <div class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                    <div
+                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
                         HR Settings
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <button onclick="toggleDropdown('dropdown-suggestion')"
+                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                        id="btn-suggestion">
+                        <div class="flex items-center">
+                            <i id="icon-suggestion" class="fa-solid fa-database text-sm w-6 text-center mr-3"></i>
+                            <span class="sidebar-text">รายการร้องเรียน</span>
+                        </div>
+                        <i id="arrow-suggestion"
+                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                    </button>
+
+                    <div id="dropdown-suggestion" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <!-- <a href="{{ route('suggestion.dashboard') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            - Dashboard
+                        </a> -->
+                        <a href="{{ route('suggestion.list') }}"
+                            class="flex justify-between items-center px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            <span>- รับเรื่องร้องเรียน</span>
+                            @php
+                                $newSuggestionsCount = \App\Models\Suggestion::where('status', 'รอรับเรื่องคำร้อง')->count();
+                            @endphp
+                            @if($newSuggestionsCount > 0)
+                                <span
+                                    class="badge badge-error badge-sm text-white font-bold ml-2">{{ $newSuggestionsCount }}</span>
+                            @endif
+                        </a>
+                    </div>
+
+                    <div
+                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                        ข้อมูลทั่วไป
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <button onclick="toggleDropdown('dropdown-training')"
+                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                        id="btn-training">
+                        <div class="flex items-center">
+                            <i id="icon-training" class="fa-solid fa-graduation-cap text-sm w-6 text-center mr-3"></i>
+                            <span class="sidebar-text">ระบบฝึกอบรมและพัฒนาทักษะ</span>
+                        </div>
+                        <i id="arrow-training"
+                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                    </button>
+
+                    <div id="dropdown-training" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <a href="{{ route('backend.training.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            - รายการข้อมูลการฝึกอบรม
+                        </a>
+                    </div>
+
+                    <div
+                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                        ระบบฝึกอบรมและพัฒนาทักษะ
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <button onclick="toggleDropdown('dropdown-recruitment')"
+                        class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                        id="btn-recruitment">
+                        <div class="flex items-center">
+                            <i id="icon-recruitment" class="fa-solid fa-user-plus text-sm w-6 text-center mr-3"></i>
+                            <span class="sidebar-text">ระบบสรรหาบุคลากร</span>
+                        </div>
+                        <i id="arrow-recruitment"
+                            class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                    </button>
+
+                    <div id="dropdown-recruitment" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <a href="{{ route('backend.recruitment.dashboard') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            - ภาพรวม (Dashboard)
+                        </a>
+                        <a href="{{ route('backend.recruitment.requests.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            - คำขอเปิดรับสมัครพนักงาน
+                        </a>
+                        <a href="{{ route('backend.recruitment.posts.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            - ประกาศรับสมัครงาน
+                        </a>
+                        <a href="{{ route('backend.recruitment.applications.index') }}"
+                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                            - รายชื่อผู้สมัคร
+                        </a>
+                    </div>
+
+                    <div
+                        class="tooltip absolute left-14 top-2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none z-50 whitespace-nowrap ml-2 shadow-md border border-gray-700 hidden">
+                        ระบบสรรหาบุคลากร
                     </div>
                 </div>
 
             </nav>
 
             <div class="border-t border-gray-800 p-4 bg-[#0a0c10]">
-                
+
                 <div class="sidebar-text flex items-center justify-between mb-4">
                     <span class="text-xs font-semibold text-gray-500 uppercase">Preferences</span>
                 </div>
 
-                <div class="sidebar-text flex items-center justify-between px-3 py-2 rounded-lg bg-gray-900 border border-gray-800 mb-3">
+                <div
+                    class="sidebar-text flex items-center justify-between px-3 py-2 rounded-lg bg-gray-900 border border-gray-800 mb-3">
                     <div class="flex items-center gap-2 text-sm text-gray-400">
                         <i class="fa-solid fa-moon"></i>
                         <span>Dark Mode</span>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
-                        <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-kumwell-red"></div>
+                        <div
+                            class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-kumwell-red">
+                        </div>
                     </label>
                 </div>
 
                 <div id="user-profile" class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-gray-600 flex items-center justify-center text-white font-bold shadow-md shrink-0">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-gray-600 flex items-center justify-center text-white font-bold shadow-md shrink-0">
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    
+
                     <div class="sidebar-text flex-1 min-w-0">
                         <p class="text-sm font-medium text-white truncate">
                             {{ Auth::user()->fullname }}
@@ -252,11 +391,18 @@
 
         <main class="flex-1 bg-gray-50 dark:bg-kumwell-dark text-gray-900 dark:text-gray-100 overflow-y-auto relative">
             <div class="p-4">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-300/30 pb-3">
-                    <h1 class="text-xl font-bold text-gray-800 dark:text-white">
-                        @yield('title', 'Dashboard')
-                    </h1>
-                    <div class="text-sm text-red-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-gray-300/30 pb-3 gap-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                        <h1 class="text-xl font-bold text-gray-800 dark:text-white">
+                            @yield('title', 'Dashboard')
+                        </h1>
+                        @hasSection('header_actions')
+                            <div class="w-full sm:w-auto">
+                                @yield('header_actions')
+                            </div>
+                        @endif
+                    </div>
+                    <div class="text-sm text-red-500 shrink-0">
                         <span id="current-date"></span>
                     </div>
                 </div>
@@ -276,13 +422,35 @@
         const tooltips = document.querySelectorAll('.tooltip');
         const dropdownSubmenus = document.querySelectorAll('[id^="dropdown-"]');
         const userProfile = document.getElementById('user-profile');
-        
-        let isSidebarOpen = true;
+
+        let isSidebarOpen = localStorage.getItem('sidebar-open') !== 'false';
+
+        // Initial State Restoration
+        document.addEventListener('DOMContentLoaded', () => {
+            restoreSidebarStates();
+        });
 
         toggleBtn.addEventListener('click', () => {
             isSidebarOpen = !isSidebarOpen;
+            localStorage.setItem('sidebar-open', isSidebarOpen);
             updateSidebarState();
         });
+
+        function restoreSidebarStates() {
+            // Restore Sidebar Width
+            updateSidebarState();
+
+            // Restore Dropdown States
+            const savedDropdowns = JSON.parse(localStorage.getItem('sidebar-dropdowns') || '{}');
+            Object.keys(savedDropdowns).forEach(id => {
+                if (savedDropdowns[id]) {
+                    const content = document.getElementById(id);
+                    if (content) {
+                        performToggle(id, true);
+                    }
+                }
+            });
+        }
 
         function updateSidebarState() {
             if (isSidebarOpen) {
@@ -295,11 +463,11 @@
 
                 sidebarLogo.classList.remove('opacity-0', 'w-0');
                 sidebarLogo.classList.add('opacity-100');
-                
+
                 sidebarTexts.forEach(el => el.classList.remove('hidden'));
 
                 tooltips.forEach(t => t.classList.add('hidden'));
-                
+
                 userProfile.classList.remove('justify-center');
 
             } else {
@@ -319,13 +487,14 @@
 
                 tooltips.forEach(t => t.classList.remove('hidden'));
 
-                 userProfile.classList.add('justify-center');
+                userProfile.classList.add('justify-center');
             }
         }
 
         function toggleDropdown(dropdownId) {
             if (!isSidebarOpen) {
                 isSidebarOpen = true;
+                localStorage.setItem('sidebar-open', 'true');
                 updateSidebarState();
                 setTimeout(() => {
                     performToggle(dropdownId);
@@ -335,26 +504,34 @@
             }
         }
 
-        function performToggle(dropdownId) {
+        function performToggle(dropdownId, forceOpen = false) {
             const content = document.getElementById(dropdownId);
-            const btn = content.previousElementSibling; 
+            if (!content) return;
+
+            const btn = content.previousElementSibling;
             const arrow = btn.querySelector('.fa-chevron-down');
 
-            if (content.classList.contains('hidden')) {
+            const currentDropdowns = JSON.parse(localStorage.getItem('sidebar-dropdowns') || '{}');
+
+            if (content.classList.contains('hidden') || forceOpen) {
                 content.classList.remove('hidden');
-                arrow.classList.add('rotate-180');
+                if (arrow) arrow.classList.add('rotate-180');
                 btn.classList.add('bg-white/5', 'text-white');
+                currentDropdowns[dropdownId] = true;
             } else {
                 content.classList.add('hidden');
-                arrow.classList.remove('rotate-180');
+                if (arrow) arrow.classList.remove('rotate-180');
                 btn.classList.remove('bg-white/5', 'text-white');
+                currentDropdowns[dropdownId] = false;
             }
+
+            localStorage.setItem('sidebar-dropdowns', JSON.stringify(currentDropdowns));
         }
 
         const darkModeToggle = document.getElementById('dark-mode-toggle');
-        
-        if (localStorage.getItem('theme') === 'dark' || 
-           (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
             darkModeToggle.checked = true;
         } else {
@@ -362,7 +539,7 @@
             darkModeToggle.checked = false;
         }
 
-        darkModeToggle.addEventListener('change', function() {
+        darkModeToggle.addEventListener('change', function () {
             if (this.checked) {
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
@@ -373,12 +550,12 @@
         });
 
         const dateElement = document.getElementById('current-date');
-        if(dateElement) {
+        if (dateElement) {
             const now = new Date();
-            dateElement.textContent = now.toDateString(); 
+            dateElement.textContent = now.toDateString();
         }
 
-        
+
 
         @if(session('success'))
             Swal.fire({
@@ -390,8 +567,10 @@
             });
         @endif
     </script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     @yield('scripts')
-    
+    @stack('scripts')
+
 </body>
+
 </html>
