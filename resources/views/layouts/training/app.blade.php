@@ -19,6 +19,24 @@
             font-family: 'Prompt', 'Kanit', sans-serif;
         }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        kumwell: {
+                            red: '#D71920',
+                            dark: '#121418',
+                            card: '#1E2129',
+                            hover: '#2A2E38'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
 
     <!-- Scripts -->
@@ -58,22 +76,21 @@
 
         <!-- Page Heading -->
         @if(isset($breadcrumbs) && is_array($breadcrumbs))
-            <!-- <div class="max-w-8xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
-                    <div class="breadcrumbs text-sm">
-                        <ul>
-                            @foreach($breadcrumbs as $breadcrumb)
+            <div class="max-w-8xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
+                <div class="breadcrumbs text-sm">
+                    <ul>
+                        @foreach($breadcrumbs as $breadcrumb)
                             <li>
                                 @if(isset($breadcrumb['url']) && $breadcrumb['url'])
-                                <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['label'] }}</a>
+                                    <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['label'] }}</a>
                                 @else
-                                {{ $breadcrumb['label'] }}
+                                    {{ $breadcrumb['label'] }}
                                 @endif
                             </li>
-                            @endforeach
-                        </ul>
-
-                    </div>
-                </div> -->
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
         @endif
 
         <!-- Page Content -->
@@ -89,28 +106,28 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     @stack('scripts')
     <script>
-        // Wire up dark/light toggles
-        (function () {
-            const root = document.documentElement;
-            function applyTheme(theme) {
-                const isDark = theme === 'dark';
-                root.classList.toggle('dark', isDark);
-                root.setAttribute('data-theme', isDark ? 'dark' : 'light');
-                try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (_) { }
-                // sync all toggles
-                document.querySelectorAll('[data-theme-toggle]')
-                    .forEach(el => { if ('checked' in el) el.checked = isDark; });
-            }
-            // initialize toggles
-            const initialTheme = root.classList.contains('dark') ? 'dark' : 'light';
-            document.querySelectorAll('[data-theme-toggle]').forEach(el => {
-                if ('checked' in el) el.checked = (initialTheme === 'dark');
-                el.addEventListener('change', () => applyTheme(el.checked ? 'dark' : 'light'));
-            });
-            // optional buttons
-            document.querySelectorAll('[data-set-theme]')
-                .forEach(btn => btn.addEventListener('click', () => applyTheme(btn.dataset.setTheme)));
-        })();
+                // Wire up dark/light toggles
+                (function () {
+                    const root = document.documentElement;
+                    function applyTheme(theme) {
+                        const isDark = theme === 'dark';
+                        root.classList.toggle('dark', isDark);
+                        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+                        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (_) { }
+                        // sync all toggles
+                        document.querySelectorAll('[data-theme-toggle]')
+                            .forEach(el => { if ('checked' in el) el.checked = isDark; });
+                    }
+                    // initialize toggles
+                    const initialTheme = root.classList.contains('dark') ? 'dark' : 'light';
+                    document.querySelectorAll('[data-theme-toggle]').forEach(el => {
+                        if ('checked' in el) el.checked = (initialTheme === 'dark');
+                        el.addEventListener('change', () => applyTheme(el.checked ? 'dark' : 'light'));
+                    });
+                    // optional buttons
+                    document.querySelectorAll('[data-set-theme]')
+                        .forEach(btn => btn.addEventListener('click', () => applyTheme(btn.dataset.setTheme)));
+                })();
     </script>
 </body>
 

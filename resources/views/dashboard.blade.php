@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+    html {
+        scroll-behavior: smooth;
+    }
+</style>
+
 <div class="max-w-8xl mx-auto">
     <div class="card-body ">
         <div class="flex justify-between">

@@ -21,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if($this->app->environment('production') || env('APP_ENV') === 'local') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         View::composer('layouts.navigation', function($view) {
             $employees = User::select('employee_code','first_name','last_name')->orderBy('employee_code')->get();
             $view->with('employees', $employees);

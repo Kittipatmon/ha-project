@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         /* Font Setting */
         body {
             font-family: 'Prompt', sans-serif;
@@ -147,7 +151,7 @@
         </div>
 
         <!-- ================= SERVICES GRID ================= -->
-        <div class="py-12 border-y border-slate-100 dark:border-white/5">
+        <div id="services-grid" class="py-12 border-y border-slate-100 dark:border-white/5">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
                     <div>
@@ -365,7 +369,7 @@
         </div>
 
         <!-- ================= NEWS SECTION ================= -->
-        <div class="py-16 relative">
+        <div id="news-grid" class="py-16 relative">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-end mb-8">
                     <div>

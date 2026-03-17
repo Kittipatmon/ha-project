@@ -163,6 +163,25 @@
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition"
                                 href="{{ route('training.dashboard') }}">Dashboard</a>
                         </li>
+                        <li>
+                            @auth
+                                <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition"
+                                    href="{{ route('dashboard') }}">HA Guide Book</a>
+                            @else
+                                <button type="button"
+                                    class="login-open-btn navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition">HA
+                                    Guide Book</button>
+                            @endauth
+                        </li>
+                        <li>
+                            @auth
+                                <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition"
+                                    href="{{ route('dashboard') }}">Calendar</a>
+                            @else
+                                <button type="button"
+                                    class="login-open-btn navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition">Calendar</button>
+                            @endauth
+                        </li>
                     </ul>
                 </div>
 
