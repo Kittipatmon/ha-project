@@ -1,484 +1,459 @@
 @extends('layouts.manpower.app')
 
 @section('content')
-    <div class="min-h-screen p-6 mt-6 rounded-2xl transition-colors duration-200 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-        
-        {{-- Header Section --}}
-        <div class="flex flex-col gap-4 mb-8 md:flex-row md:items-center md:justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
-                    <span class="text-blue-600 dark:text-blue-400">Manpower</span> Dashboard
-                </h1>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    ภาพรวมทรัพยากรบุคคล สถิติ และข้อมูลเชิงลึกขององค์กร
-                </p>
-            </div>
+    <div class="min-h-screen p-6 pt-8 pb-20 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-gray-200">
+        <div class="max-w-8xl mx-auto space-y-8">
             
-            <div class="flex flex-wrap gap-3" x-data="{ open: false }">
-                {{-- Date Filter --}}
-                <form id="filterForm" action="{{ route('manpower.dashboard') }}" method="GET" class="relative">
-                    <select name="period" onchange="this.form.submit()" class="h-10 pl-3 pr-8 text-sm bg-white border border-gray-300 rounded-lg appearance-none dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="month" {{ ($currentFilter ?? '') == 'month' ? 'selected' : '' }}>เดือนนี้</option>
-                        <option value="quarter" {{ ($currentFilter ?? '') == 'quarter' ? 'selected' : '' }}>ไตรมาสนี้</option>
-                        <option value="year" {{ ($currentFilter ?? '') == 'year' ? 'selected' : '' }}>ปีนี้</option>
-                    </select>
-                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                </form>
+            <!-- Top Navigation & Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-xl shadow-blue-500/20">
+                            <i class="fa-solid fa-users-gear text-xl"></i>
+                        </div>
+                        ฝ่ายบริหารทรัพยากรบุคคล (Manpower Dashboard)
+                    </h1>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm font-medium">
+                        ภาพรวมทรัพยากรบุคคล สถิติ และข้อมูลเชิงลึกขององค์กรรายบุคคลและสาขา
+                    </p>
+                </div>
 
-                <div class="relative">
-                    <button @click="open = !open" @click.away="open = false" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg shadow-sm dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Export Report
-                        <svg class="w-4 h-4 ml-2 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    
-                    <div x-show="open" x-transition.origin.top.right
-                        class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700"
-                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-                        <div class="py-1" role="none">
+                    {{-- Custom Period Filter --}}
+                    <div x-data="{ 
+                        open: false, 
+                        selected: '{{ ($currentFilter ?? '') == 'quarter' ? 'ไตรมาสนี้' : (($currentFilter ?? '') == 'year' ? 'ปีนี้' : 'เดือนนี้') }}',
+                        value: '{{ $currentFilter ?? 'month' }}',
+                        options: [
+                            { label: 'เดือนนี้', value: 'month' },
+                            { label: 'ไตรมาสนี้', value: 'quarter' },
+                            { label: 'ปีนี้', value: 'year' }
+                        ],
+                        select(option) {
+                            this.selected = option.label;
+                            this.value = option.value;
+                            this.open = false;
+                            $nextTick(() => { $refs.filterForm.submit(); });
+                        }
+                    }" class="relative">
+                        <form x-ref="filterForm" action="{{ route('manpower.dashboard') }}" method="GET">
+                            <input type="hidden" name="period" :value="value">
+                        </form>
+                        
+                        <button @click="open = !open" type="button" 
+                            class="flex items-center justify-between gap-3 px-5 py-2.5 bg-white dark:bg-slate-800 border-0 ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl text-sm font-bold shadow-sm transition-all hover:ring-blue-500 min-w-[140px]">
+                            <span class="text-slate-700 dark:text-slate-200" x-text="selected"></span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform" :class="{'rotate-180': open}"></i>
+                        </button>
+
+                        <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2"
+                            class="absolute right-0 z-50 mt-3 w-44 origin-top-right rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-black/5 dark:ring-white/5 overflow-hidden py-1.5" style="display: none;">
+                            <template x-for="option in options" :key="option.value">
+                                <button @click="select(option)" type="button" 
+                                    class="flex items-center w-full px-4 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                    <span x-text="option.label"></span>
+                                    <i x-show="value === option.value" class="fa-solid fa-check ml-auto text-blue-500 text-xs"></i>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <button @click="open = !open" @click.away="open = false" 
+                            class="inline-flex items-center justify-center gap-2 bg-slate-900 dark:bg-blue-600 text-white font-bold py-2.5 px-6 rounded-2xl text-sm shadow-lg shadow-blue-500/20 hover:scale-[1.02] active:scale-95 transition-all">
+                            <i class="fa-solid fa-file-export text-blue-200"></i>
+                            Export Report
+                            <i class="fa-solid fa-chevron-down text-[8px] ml-1 transition-transform" :class="{'rotate-180': open}"></i>
+                        </button>
+                        
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2"
+                            class="absolute right-0 z-50 mt-3 w-60 origin-top-right rounded-3xl bg-white dark:bg-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5 overflow-hidden py-2" style="display: none;">
                             <a href="{{ route('manpower.export.excel', ['period' => $currentFilter ?? 'month']) }}" 
-                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600" role="menuitem">
-                                <i class="mr-3 text-green-600 far fa-file-excel"></i>
+                                class="flex items-center px-5 py-4 text-sm font-bold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                <div class="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-600 mr-4">
+                                    <i class="fa-solid fa-file-excel text-lg"></i>
+                                </div>
                                 Export to Excel
                             </a>
                             <a href="{{ route('manpower.export.pdf', ['period' => $currentFilter ?? 'month']) }}" 
-                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600" role="menuitem">
-                                <i class="mr-3 text-red-600 far fa-file-pdf"></i>
+                                class="flex items-center px-5 py-4 text-sm font-bold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center text-rose-600 mr-4">
+                                    <i class="fa-solid fa-file-pdf text-lg"></i>
+                                </div>
                                 Export to PDF
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Key Metrics Grid --}}
-        <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
-            
-            <!-- Card 1: Total Employees -->
-            <div class="p-6 transition-all bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700 hover:shadow-md">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">พนักงานทั้งหมด</p>
-                        <h3 class="mt-2 text-3xl font-bold text-gray-800 dark:text-white">{{ number_format($totalEmployees) }}</h3>
-                    </div>
-                    <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30">
-                        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    </div>
-                </div>
-                <div class="flex items-center mt-4 text-sm">
-                    <span class="flex items-center font-medium {{ $growthRate >= 0 ? 'text-green-500' : 'text-red-500' }}">
-                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $growthRate >= 0 ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6' }}"></path></svg>
-                        {{ $growthRate >= 0 ? '+' : '' }}{{ number_format($growthRate, 1) }}%
-                    </span>
-                    <span class="ml-2 text-gray-400 dark:text-gray-500">จากเดือนที่แล้ว</span>
-                </div>
-                <div class="mt-3 text-xs text-gray-400 dark:text-gray-500">
-                    ชาย: {{ number_format($maleCount) }} | หญิง: {{ number_format($femaleCount) }}
-                </div>
-            </div>
-
-            <!-- Card 2: New Hires -->
-            <div class="p-6 transition-all bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700 hover:shadow-md">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">พนักงานใหม่ (เดือนนี้)</p>
-                        <h3 class="mt-2 text-3xl font-bold text-gray-800 dark:text-white">{{ number_format($newHiresCount) }}</h3>
-                    </div>
-                    <div class="p-2 rounded-lg bg-green-50 dark:bg-green-900/30">
-                        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                    </div>
-                </div>
-                <div class="flex items-center mt-4 text-sm">
-                    <span class="text-gray-500 dark:text-gray-400">ยินดีต้อนรับสมาชิกใหม่</span>
-                </div>
-            </div>
-
-            <!-- Card 3: Turnover Rate -->
-            <div class="p-6 transition-all bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700 hover:shadow-md">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">อัตราการลาออก</p>
-                        <h3 class="mt-2 text-3xl font-bold text-gray-800 dark:text-white">{{ number_format($turnoverRate, 1) }}%</h3>
-                    </div>
-                    <div class="p-2 rounded-lg bg-red-50 dark:bg-red-900/30">
-                        <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                    </div>
-                </div>
-                <div class="flex items-center mt-4 text-sm">
-                    <span class="text-gray-500 dark:text-gray-400">{{ $resignationsCount }} คนในเดือนนี้</span>
-                </div>
-            </div>
-
-            <!-- Card 4: Average Tenure -->
-            <div class="p-6 transition-all bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700 hover:shadow-md">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">อายุงานเฉลี่ย</p>
-                        <h3 class="mt-2 text-3xl font-bold text-gray-800 dark:text-white">{{ number_format($avgTenureYears, 1) }} <span class="text-lg font-normal text-gray-500">ปี</span></h3>
-                    </div>
-                    <div class="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/30">
-                        <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                </div>
-                <div class="flex items-center mt-4 text-sm">
-                    <span class="text-gray-500 dark:text-gray-400">ความผูกพันองค์กร</span>
-                </div>
-            </div>
-        </div>
-
-        {{-- Charts Section --}}
-        <div class="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-3">
-            
-            <!-- Chart 1: Department Distribution -->
-            <div class="p-6 bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700 lg:col-span-2">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">จำนวนพนักงานแยกตามฝ่าย</h3>
-                </div>
-                
-                <div class="relative h-64 p-4 border border-dashed border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-900 dark:border-gray-700">
-                    @if($divisionStats->count() > 0)
-                        @php 
-                            $maxDiv = $divisionStats->max('count'); 
-                            $count = $divisionStats->count();
-                            $segmentWidth = 100 / $count;
-                            $points = [];
-                            
-                            foreach($divisionStats->values() as $index => $div) {
-                                $x = ($index * $segmentWidth) + ($segmentWidth / 2);
-                                // Map values to 10-85% vertical range (leaving more space for labels at bottom)
-                                $percentage = $maxDiv > 0 ? ($div->count / $maxDiv) : 0;
-                                $y = 85 - ($percentage * 65); // Top 20% to Bottom 85%
-                                $points[] = "$x,$y";
-                            }
-                            $pointsString = implode(' ', $points);
-                            
-                            $firstX = ($segmentWidth / 2);
-                            $lastX = (($count - 1) * $segmentWidth) + ($segmentWidth / 2);
-                        @endphp
-
-                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <line x1="0" y1="85" x2="100" y2="85" stroke="currentColor" stroke-width="0.5" class="text-gray-200 dark:text-gray-700" vector-effect="non-scaling-stroke" />
-                            <line x1="0" y1="20" x2="100" y2="20" stroke="currentColor" stroke-width="0.5" class="text-gray-200 dark:text-gray-700" stroke-dasharray="4 4" vector-effect="non-scaling-stroke" />
-                            <polygon 
-                                fill="currentColor" 
-                                class="text-blue-500 opacity-10 dark:text-blue-400" 
-                                points="{{ $firstX }},85 {{ $pointsString }} {{ $lastX }},85" 
-                                vector-effect="non-scaling-stroke"
-                            />
-                            <polyline 
-                                fill="none" 
-                                stroke="currentColor" 
-                                stroke-width="2" 
-                                class="text-blue-500 dark:text-blue-400" 
-                                points="{{ $pointsString }}" 
-                                vector-effect="non-scaling-stroke"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-
-                        <!-- Data Points & Labels -->
-                        <div class="absolute inset-0">
-                            @foreach($divisionStats->values() as $index => $div)
-                                @php 
-                                    $left = ($index * $segmentWidth) + ($segmentWidth / 2);
-                                    $percentage = $maxDiv > 0 ? ($div->count / $maxDiv) : 0;
-                                    $bottom = 15 + ($percentage * 65); // Inverse of Y calculation (100 - 85 = 15)
-                                @endphp
-                                
-                                <!-- Point Container -->
-                                <div class="absolute flex flex-col items-center group" style="left: {{ $left }}%; bottom: {{ $bottom }}%; transform: translate(-50%, 50%);">
-                                    <!-- Dot -->
-                                    <div class="w-3 h-3 bg-white border-2 border-blue-500 rounded-full dark:border-blue-400 dark:bg-gray-800 group-hover:scale-125 transition-transform z-10 cursor-pointer"></div>
-                                    
-                                    <!-- Tooltip -->
-                                    <div class="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none">
-                                        <div class="px-2 py-1 text-xs text-white bg-gray-800 rounded shadow-lg whitespace-nowrap dark:bg-gray-700">
-                                            {{ $div->count }} คน
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- X-Axis Label with Count -->
-                                <div class="absolute bottom-1 flex flex-col items-center justify-end pointer-events-none" style="left: {{ $left }}%; transform: translateX(-50%); width: {{ $segmentWidth }}%;">
-                                    <div class="mb-1 text-xs font-bold text-blue-600 dark:text-blue-400">
-                                        {{ $div->count }}
-                                    </div>
-                                    <div class="w-full text-[10px] text-center text-gray-500 dark:text-gray-400 truncate px-1" title="{{ $div->division_name }}">
-                                        {{ Str::limit($div->division_name, 10) }}
-                                    </div>
-                                </div>
-                            @endforeach
+            <!-- Stats/Summary Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white dark:bg-[#1E2129] p-7 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5 hover:-translate-y-1 transition-all relative overflow-hidden group">
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-blue-500/5 rounded-full group-hover:scale-150 transition-transform"></div>
+                    <div class="flex items-center gap-5 relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-blue-500/30 shrink-0">
+                            <i class="fa-solid fa-users"></i>
                         </div>
-                    @else
-                        <div class="absolute inset-0 flex items-center justify-center text-gray-400">ไม่มีข้อมูล</div>
-                    @endif
-                </div>
-                 {{-- Section Distribution --}}
-            <h3 class="mt-6 text-lg font-bold text-gray-800 dark:text-white">จำนวนพนักงานแยกตามสายงาน (Section)</h3>
-            
-            <div class="relative h-64 p-4 border border-dashed border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-900 dark:border-gray-700">
-                @if($sectionStats->count() > 0)
-                    @php 
-                        $maxSec = $sectionStats->max('count'); 
-                        $count = $sectionStats->count();
-                    @endphp
-                    
-                    <div class="absolute inset-0 flex items-end justify-around px-4 pb-12">
-                        @foreach($sectionStats as $stat)
-                            @php 
-                                $height = $maxSec > 0 ? ($stat->count / $maxSec) * 80 : 0; // Max height 80%
-                            @endphp
-                            <div class="relative flex flex-col items-center justify-end w-full h-full group">
-                                <!-- Count Label on top -->
-                                <div class="mb-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {{ $stat->count }}
-                                </div>
-                                
-                                <!-- Bar -->
-                                <div class="w-12 bg-indigo-500 rounded-t-lg opacity-80 hover:opacity-100 transition-all duration-300 relative group-hover:scale-105" style="height: {{ $height }}%"></div>
-                                
-                                <!-- Label -->
-                                <div class="absolute bottom-0 w-full text-center transform translate-y-full pt-2">
-                                    <div class="text-xs font-medium text-gray-600 dark:text-gray-400 truncate px-1" title="{{ $stat->section_code }}">
-                                        {{ Str::limit($stat->section_code, 15) }}
-                                    </div>
-                                    <div class="text-xs font-bold text-indigo-600 dark:text-indigo-400 mt-1">
-                                        {{ $stat->count }}
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="absolute inset-0 flex items-center justify-center text-gray-400">ไม่มีข้อมูล</div>
-                @endif
-            </div>
-            </div>
-
-            <!-- Chart 2: Workplace -->
-            <div class="flex flex-col gap-6">
-                <div class="flex-1 p-6 bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700">
-                    <h3 class="mb-4 text-lg font-bold text-gray-800 dark:text-white">สถานที่ทำงาน (Workplace)</h3>
-                    
-                    @if($workplaceStats->count() > 0)
-                        @php 
-                            $totalWP = $workplaceStats->sum('count'); 
-                            $colors = ['bg-blue-500', 'bg-indigo-400', 'bg-purple-400', 'bg-pink-400', 'bg-gray-400'];
-                        @endphp
-                        <div class="flex items-center justify-center h-40 mb-4">
-                            {{-- Simple Pie Chart Representation using Conic Gradient --}}
-                            @php
-                                $gradient = [];
-                                $current = 0;
-                                $colorHex = ['#3b82f6', '#818cf8', '#c084fc', '#f472b6', '#9ca3af'];
-                                foreach($workplaceStats as $index => $wp) {
-                                    $percent = ($wp->count / $totalWP) * 100;
-                                    $end = $current + $percent;
-                                    $color = $colorHex[$index % count($colorHex)];
-                                    $gradient[] = "$color $current% $end%";
-                                    $current = $end;
-                                }
-                                $gradientString = implode(', ', $gradient);
-                            @endphp
-                            <div class="relative w-32 h-32 rounded-full" style="background: conic-gradient({{ $gradientString }});">
-                                <div class="absolute inset-0 m-auto w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
-                                    <span class="text-xs font-bold text-gray-600 dark:text-gray-300">{{ $workplaceStats->count() }} Sites</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="space-y-3">
-                            @foreach($workplaceStats as $index => $wp)
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="flex items-center text-gray-600 dark:text-gray-300">
-                                    <span class="w-3 h-3 mr-2 {{ $colors[$index % count($colors)] }} rounded-full"></span> 
-                                    {{ $wp->workplace }}
+                        <div class="overflow-hidden flex-1">
+                            <p class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">พนักงานทั้งหมด</p>
+                            <p class="text-4xl font-black text-slate-800 dark:text-white">{{ number_format($totalEmployees) }}</p>
+                            <div class="flex items-center mt-2 text-[11px]">
+                                <span class="font-black {{ $growthRate >= 0 ? 'text-emerald-500' : 'text-rose-500' }} flex items-center bg-{{ $growthRate >= 0 ? 'emerald' : 'rose' }}-50 dark:bg-{{ $growthRate >= 0 ? 'emerald' : 'rose' }}-900/20 px-2 py-0.5 rounded-full">
+                                    <i class="fa-solid {{ $growthRate >= 0 ? 'fa-caret-up' : 'fa-caret-down' }} mr-1"></i>
+                                    {{ number_format(abs($growthRate), 1) }}%
                                 </span>
-                                <span class="font-medium text-gray-800 dark:text-white">{{ number_format(($wp->count / $totalWP) * 100, 1) }}%</span>
+                                <span class="ml-2 text-slate-400 font-bold uppercase tracking-tighter">vs last month</span>
                             </div>
-                            @endforeach
                         </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white dark:bg-[#1E2129] p-7 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5 hover:-translate-y-1 transition-all relative overflow-hidden group">
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-emerald-500/5 rounded-full group-hover:scale-150 transition-transform"></div>
+                    <div class="flex items-center gap-5 relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-emerald-500/30 shrink-0">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <div class="overflow-hidden flex-1">
+                            <p class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">พนักงานใหม่ ({{ $currentFilter == 'year' ? 'ปีนี้' : ($currentFilter == 'quarter' ? 'ไตรมาสนี้' : 'เดือนนี้') }})</p>
+                            <p class="text-4xl font-black text-slate-800 dark:text-white">{{ number_format($newHiresCount) }}</p>
+                            <p class="text-[11px] text-slate-400 mt-2 font-bold italic">Welcome to the team!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white dark:bg-[#1E2129] p-7 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5 hover:-translate-y-1 transition-all relative overflow-hidden group">
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-rose-500/5 rounded-full group-hover:scale-150 transition-transform"></div>
+                    <div class="flex items-center gap-5 relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-br from-rose-400 to-rose-600 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-rose-500/30 shrink-0">
+                            <i class="fa-solid fa-user-minus"></i>
+                        </div>
+                        <div class="overflow-hidden flex-1">
+                            <p class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">อัตราการลาออก</p>
+                            <p class="text-4xl font-black text-slate-800 dark:text-white">{{ number_format($turnoverRate, 1) }}%</p>
+                            <p class="text-[11px] text-slate-400 mt-2 font-bold uppercase tracking-tighter">{{ $resignationsCount }} resignations</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white dark:bg-[#1E2129] p-7 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5 hover:-translate-y-1 transition-all relative overflow-hidden group">
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-amber-500/5 rounded-full group-hover:scale-150 transition-transform"></div>
+                    <div class="flex items-center gap-5 relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-amber-500/30 shrink-0">
+                            <i class="fa-solid fa-business-time"></i>
+                        </div>
+                        <div class="overflow-hidden flex-1">
+                            <p class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">อายุงานเฉลี่ย</p>
+                            <p class="text-4xl font-black text-slate-800 dark:text-white">{{ number_format($avgTenureYears, 1) }} <span class="text-lg font-normal text-slate-400 ml-1">ปี</span></p>
+                            <p class="text-[11px] text-slate-400 mt-2 font-bold uppercase tracking-tighter">Retention rate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Charts Section --}}
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                
+                <!-- Main Charts Column -->
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-white dark:bg-[#1E2129] p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5 overflow-hidden">
+                        <div class="flex items-center justify-between mb-8">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+                                    <div class="w-2 h-8 bg-blue-500 rounded-full"></div>
+                                    พนักงานแยกตามฝ่าย (Division)
+                                </h3>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1 ml-5">Distribution analysis</p>
+                            </div>
+                        </div>
+                        <div id="divisionChart" class="w-full" style="min-height: 350px;"></div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#1E2129] p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5">
+                        <div class="flex items-center justify-between mb-8">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+                                    <div class="w-2 h-8 bg-indigo-500 rounded-full"></div>
+                                    พนักงานแยกตามสายงาน (Section)
+                                </h3>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1 ml-5">Detailed breakdown</p>
+                            </div>
+                        </div>
+                        <div id="sectionChart" class="w-full" style="min-height: 350px;"></div>
+                    </div>
+                </div>
+
+                <!-- Workplace & Gender -->
+                <div class="space-y-8">
+                    <div class="bg-white dark:bg-[#1E2129] p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5">
+                        <h3 class="mb-8 text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+                            <i class="fa-solid fa-location-dot text-rose-500"></i>
+                            สถานที่ทำงาน
+                        </h3>
+                        <div id="workplaceChart" class="w-full" style="min-height: 300px;"></div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#1E2129] p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5">
+                        <h3 class="mb-8 text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+                            <i class="fa-solid fa-venus-mars text-indigo-500"></i>
+                            สัดส่วนเพศ
+                        </h3>
+                        <div id="genderChart" class="w-full" style="min-height: 280px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Hiring Trend Chart (Full Width) -->
+            <div class="bg-white dark:bg-[#1E2129] p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                    <div>
+                        <h3 class="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
+                            <i class="fa-solid fa-chart-line text-emerald-500"></i>
+                            เปรียบเทียบพนักงานใหม่แต่ละเดือน (รายปี)
+                        </h3>
+                        <p class="text-slate-400 text-sm font-bold mt-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info italic text-[10px]"></i>
+                            ข้อมูลเปรียบเทียบจำนวนการจ้างานรายเดือนของแต่ละปีงบประมาณ
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3" id="comparisonLegend"></div>
+                </div>
+                <div id="manpowerMonthlyComparisonChart" class="w-full" style="min-height: 420px;"></div>
+            </div>
+
+            {{-- Level Distribution (Full Width) --}}
+            <div class="bg-white dark:bg-[#1E2129] p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5">
+                <h3 class="mb-10 text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
+                    <i class="fa-solid fa-sitemap text-amber-500"></i>
+                    โครงสร้างระดับพนักงาน (Level Hierarchy)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-8">
+                    @if($levelStats->count() > 0)
+                        @php $maxLevel = $levelStats->max('count'); @endphp
+                        @foreach($levelStats as $stat)
+                        @php 
+                            $width = ($stat->count / $maxLevel) * 100; 
+                            $colorClass = 'from-blue-400 to-blue-600 shadow-blue-500/20';
+                            if(str_contains($stat->color, 'error')) $colorClass = 'from-rose-400 to-rose-600 shadow-rose-500/20';
+                            elseif(str_contains($stat->color, 'warning')) $colorClass = 'from-amber-400 to-amber-600 shadow-amber-500/20';
+                            elseif(str_contains($stat->color, 'success')) $colorClass = 'from-emerald-400 to-emerald-600 shadow-emerald-500/20';
+                            elseif(str_contains($stat->color, 'secondary')) $colorClass = 'from-indigo-400 to-indigo-600 shadow-indigo-500/20';
+                        @endphp
+                        <div class="group">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-black text-slate-500 dark:text-slate-400 group-hover:text-blue-500 transition-colors uppercase tracking-widest text-[11px]">
+                                    {{ $stat->label }}
+                                </span>
+                                <span class="text-lg font-black text-slate-800 dark:text-white">
+                                    {{ number_format($stat->count) }} <span class="text-[10px] font-bold text-slate-400 uppercase ml-1">People</span>
+                                </span>
+                            </div>
+                            <div class="h-3 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden shadow-inner flex border border-slate-100 dark:border-white/5">
+                                <div class="h-full bg-gradient-to-r {{ $colorClass }} rounded-full shadow-lg transform origin-left transition-all duration-1000 group-hover:scale-x-[1.02]" style="width: {{ $width }}%"></div>
+                            </div>
+                        </div>
+                        @endforeach
                     @else
-                        <div class="flex items-center justify-center h-40 text-gray-400">ไม่มีข้อมูล</div>
+                        <div class="col-span-full text-center py-10 text-slate-400 italic">ไม่มีข้อมูลแสดงผล</div>
                     @endif
                 </div>
-
-                <!-- Gender Chart -->
-                <div class="flex-1 p-6 bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700">
-                    <h3 class="mb-4 text-lg font-bold text-gray-800 dark:text-white">สัดส่วนเพศ (Gender)</h3>
-                    
-                    <div class="flex items-center justify-center h-40 mb-4">
-                        {{-- Donut Chart for Gender --}}
-                        @php
-                            $totalGender = $maleCount + $femaleCount;
-                            $malePercent = $totalGender > 0 ? ($maleCount / $totalGender) * 100 : 0;
-                            $femalePercent = $totalGender > 0 ? ($femaleCount / $totalGender) * 100 : 0;
-                        @endphp
-                        <div class="relative w-32 h-32 rounded-full" style="background: conic-gradient(#3b82f6 0% {{ $malePercent }}%, #ec4899 {{ $malePercent }}% 100%);">
-                            <div class="absolute inset-0 m-auto w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
-                                <div class="text-center">
-                                    <span class="block text-xs font-bold text-gray-600 dark:text-gray-300">Total</span>
-                                    <span class="text-sm font-bold text-gray-800 dark:text-white">{{ number_format($totalGender) }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="flex items-center text-gray-600 dark:text-gray-300">
-                                <span class="w-3 h-3 mr-2 bg-blue-500 rounded-full"></span> 
-                                ชาย (Male)
-                            </span>
-                            <span class="font-medium text-gray-800 dark:text-white">{{ number_format($maleCount) }} ({{ number_format($malePercent, 1) }}%)</span>
-                        </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="flex items-center text-gray-600 dark:text-gray-300">
-                                <span class="w-3 h-3 mr-2 bg-pink-500 rounded-full"></span> 
-                                หญิง (Female)
-                            </span>
-                            <span class="font-medium text-gray-800 dark:text-white">{{ number_format($femaleCount) }} ({{ number_format($femalePercent, 1) }}%)</span>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
 
-       
-
-        {{-- Level Distribution (Full Width) --}}
-        <div class="p-6 mb-8 bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700">
-            <h3 class="mb-6 text-lg font-bold text-gray-800 dark:text-white">โครงสร้างระดับพนักงาน (Level Hierarchy)</h3>
-            <div class="space-y-4">
-                @if($levelStats->count() > 0)
-                    @php $maxLevel = $levelStats->max('count'); @endphp
-                    @foreach($levelStats as $stat)
-                    @php 
-                        $width = ($stat->count / $maxLevel) * 100; 
-                        // Map color name to tailwind class if possible, or use default
-                        $colorClass = 'bg-blue-500';
-                        if(str_contains($stat->color, 'error')) $colorClass = 'bg-red-500';
-                        elseif(str_contains($stat->color, 'info')) $colorClass = 'bg-sky-500';
-                        elseif(str_contains($stat->color, 'primary')) $colorClass = 'bg-blue-600';
-                        elseif(str_contains($stat->color, 'success')) $colorClass = 'bg-green-500';
-                        elseif(str_contains($stat->color, 'warning')) $colorClass = 'bg-yellow-500';
-                        elseif(str_contains($stat->color, 'accent')) $colorClass = 'bg-teal-500';
-                        elseif(str_contains($stat->color, 'secondary')) $colorClass = 'bg-purple-500';
-                        elseif(str_contains($stat->color, 'neutral')) $colorClass = 'bg-gray-500';
-                    @endphp
-                    <div class="flex items-center text-sm">
-                        <div class="w-40 font-medium text-gray-600 dark:text-gray-300 truncate" title="{{ $stat->label }}">
-                            ระดับพนักงาน : 
-                            {{ $stat->label }}</div>
-                        <div class="flex-1 h-4 mx-4 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-700">
-                            <div class="h-full {{ $colorClass }} rounded-full opacity-80" style="width: {{ $width }}%"></div>
-                        </div>
-                        <div class="w-12 text-right text-gray-500 dark:text-gray-400">{{ $stat->count }}</div>
+            {{-- Tables Section --}}
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                
+                <!-- Recent Hires Table -->
+                <div class="bg-white dark:bg-[#1E2129] rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5 overflow-hidden">
+                    <div class="p-8 border-b border-slate-50 dark:border-white/5 flex items-center justify-between">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+                            <i class="fa-solid fa-user-clock text-blue-500"></i>
+                            พนักงานเข้าใหม่ล่าสุด
+                        </h3>
+                        <a href="{{ route('users.index') }}" class="text-xs font-black text-blue-500 hover:text-blue-600 uppercase tracking-widest bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-xl transition-colors">View All</a>
                     </div>
-                    @endforeach
-                @else
-                    <div class="text-center text-gray-400">ไม่มีข้อมูล</div>
-                @endif
-            </div>
-        </div>
-
-        {{-- Tables Section --}}
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            
-            <!-- Recent Hires Table -->
-            <div class="overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700">
-                <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/30">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">พนักงานใหม่ล่าสุด</h3>
-                    <a href="{{ route('users.index') }}" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">ดูทั้งหมด</a>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
-                        <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th class="px-6 py-3">ชื่อ-สกุล</th>
-                                <th class="px-6 py-3">ตำแหน่ง</th>
-                                <th class="px-6 py-3">วันที่เริ่มงาน</th>
-                                <th class="px-6 py-3">สถานะ</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            @forelse($recentHires as $user)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                                    <div class="flex items-center gap-3">
-                                        <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 text-blue-600 dark:text-blue-300 uppercase">
-                                            {{ substr($user->first_name, 0, 1) }}
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/50 dark:bg-white/5">
+                                    <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">พนักงาน</th>
+                                    <th class="px-6 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">วันที่เริ่มงาน</th>
+                                    <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50 dark:divide-white/5">
+                                @forelse($recentHires as $hire)
+                                <tr class="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors group">
+                                    <td class="px-8 py-5">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                                                <i class="fa-solid fa-user"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-bold text-slate-800 dark:text-gray-200">{{ $hire->prefix_name }}{{ $hire->first_name }} {{ $hire->last_name }}</div>
+                                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-0.5">{{ $hire->division_name }}</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div class="font-bold">{{ $user->prefix . " " . $user->fullname }}</div>
-                                            <div class="text-xs text-gray-500">{{ $user->employee_code }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600 dark:text-gray-300">
-                                    {{ $user->position ?? '-' }}
-                                    <div class="text-xs text-gray-400">แผนก : {{ $user->department->department_fullname ?? '' }}</div>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600 dark:text-gray-300">
-                                    {{ $user->startwork_date ? \Carbon\Carbon::parse($user->startwork_date)->format('d/m/Y') : '-' }}
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                        {{ $user->status == \App\Models\User::STATUS_ACTIVE ? 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30' : 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30' }}">
-                                        {{ $user->status_label }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">ไม่มีข้อมูลพนักงานใหม่</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Probation / Contract Expiry -->
-            <div class="bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700">
-                <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/30">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">ครบกำหนดทดลองงาน (เร็วๆ นี้)</h3>
-                    <span class="text-xs text-gray-500 dark:text-gray-400">30 วันข้างหน้า</span>
-                </div>
-                <div class="p-6 space-y-4">
-                    @forelse($probationUpcoming as $user)
-                    @php 
-                        $probationDate = \Carbon\Carbon::parse($user->startwork_date)->addDays(119);
-                        $daysLeft = now()->diffInDays($probationDate, false);
-                    @endphp
-                    <div class="flex items-center justify-between p-4 transition-colors border border-orange-100 rounded-lg cursor-pointer bg-orange-50 dark:bg-orange-900/20 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900/30">
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center justify-center w-10 h-10 text-orange-600 bg-white rounded-full shadow-sm dark:bg-gray-800 dark:text-orange-400 uppercase font-bold">
-                                {{ substr($user->first_name, 0, 1) }}
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-800 dark:text-white">{{ $user->fullname }}</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $user->department->department_name ?? '-' }} • 
-                                    <span class="{{ $daysLeft < 7 ? 'text-red-500 font-bold' : '' }}">
-                                        ครบกำหนด: {{ $probationDate->format('d/m/Y') }}
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                        <button class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded shadow-sm dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 hover:text-blue-600 dark:hover:text-blue-400">
-                            ประเมิน
-                        </button>
+                                    </td>
+                                    <td class="px-6 py-5 text-center">
+                                        <span class="text-xs font-bold text-slate-600 dark:text-slate-400">{{ $hire->start_date ? \Carbon\Carbon::parse($hire->start_date)->format('d M Y') : '-' }}</span>
+                                    </td>
+                                    <td class="px-8 py-5 text-right">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 border border-emerald-100 dark:border-emerald-900/30">
+                                            Active
+                                        </span>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr><td colspan="3" class="px-8 py-10 text-center text-slate-400 italic">ไม่มีข้อมูลพนักงานใหม่</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
-                    @empty
-                    <div class="text-center text-gray-500 py-4">ไม่มีพนักงานครบกำหนดทดลองงานในช่วงนี้</div>
-                    @endforelse
+                </div>
+
+                <!-- Probation Table -->
+                <div class="bg-white dark:bg-[#1E2129] rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-white/5 overflow-hidden">
+                    <div class="p-8 border-b border-slate-50 dark:border-white/5 flex items-center justify-between">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+                            <i class="fa-solid fa-calendar-check text-amber-500"></i>
+                            ครบกำหนดทดลองงาน
+                        </h3>
+                        <span class="bg-amber-50 dark:bg-amber-900/20 text-amber-600 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest">Next 30 Days</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/50 dark:bg-white/5">
+                                    <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">พนักงาน</th>
+                                    <th class="px-6 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">วันครบกำหนด</th>
+                                    <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">ระยะเวลา</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50 dark:divide-white/5">
+                                @forelse($probationUpcoming as $emp)
+                                @php 
+                                    $probationDate = \Carbon\Carbon::parse($emp->startwork_date)->addDays(119);
+                                    $daysLeft = now()->diffInDays($probationDate, false);
+                                @endphp
+                                <tr class="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors group">
+                                    <td class="px-8 py-5">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-amber-500 group-hover:text-white transition-all">
+                                                <i class="fa-solid fa-hourglass-half"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-bold text-slate-800 dark:text-gray-200">{{ $emp->fullname }}</div>
+                                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-0.5">Emp ID: {{ $emp->employee_code }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-5 text-center">
+                                        <span class="text-xs font-black text-rose-500 dark:text-rose-400">{{ $probationDate->format('d M Y') }}</span>
+                                    </td>
+                                    <td class="px-8 py-5 text-right">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest {{ $daysLeft <= 7 ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600' }}">
+                                            {{ $daysLeft }} วัน
+                                        </span>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr><td colspan="3" class="px-8 py-10 text-center text-slate-400 italic">ไม่มีพนักงานครบกำหนดในช่วงนี้</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
+
+    @push('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
+            const baseOptions = {
+                chart: {
+                    parentHeightOffset: 0,
+                    toolbar: { show: false },
+                    fontFamily: 'Prompt, sans-serif'
+                },
+                theme: { mode: isDark ? 'dark' : 'light' },
+                grid: { borderColor: gridColor },
+                xaxis: { labels: { style: { colors: textColor, fontWeight: 600 } } },
+                yaxis: { labels: { style: { colors: textColor, fontWeight: 600 } } }
+            };
+
+            // 1. Division Distribution (Column)
+            new ApexCharts(document.querySelector("#divisionChart"), {
+                ...baseOptions,
+                series: [{ name: 'จำนวนพนักงาน', data: @json($divData) }],
+                chart: { ...baseOptions.chart, type: 'bar', height: 350 },
+                colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                plotOptions: { bar: { borderRadius: 8, columnWidth: '50%', distributed: true } },
+                xaxis: { ...baseOptions.xaxis, categories: @json($divLabels) },
+                legend: { show: false }
+            }).render();
+
+            // 2. Section Distribution (Horizontal Bar)
+            new ApexCharts(document.querySelector("#sectionChart"), {
+                ...baseOptions,
+                series: [{ name: 'จำนวนพนักงาน', data: @json($secData) }],
+                chart: { ...baseOptions.chart, type: 'bar', height: 350 },
+                colors: ['#6366f1', '#f43f5e', '#10b981', '#eab308', '#8b5cf6'],
+                plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%', distributed: true } },
+                xaxis: { ...baseOptions.xaxis, categories: @json($secLabels) },
+                legend: { show: false }
+            }).render();
+
+            // 3. Workplace Distribution (Donut)
+            new ApexCharts(document.querySelector("#workplaceChart"), {
+                ...baseOptions,
+                series: @json($wpData),
+                chart: { ...baseOptions.chart, type: 'donut', height: 300 },
+                labels: @json($wpLabels),
+                colors: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'],
+                stroke: { show: false },
+                legend: { position: 'bottom', labels: { colors: textColor } },
+                plotOptions: { pie: { donut: { size: '75%' } } }
+            }).render();
+
+            // 4. Gender Distribution (Donut)
+            new ApexCharts(document.querySelector("#genderChart"), {
+                ...baseOptions,
+                series: [{{ $maleCount }}, {{ $femaleCount }}],
+                chart: { ...baseOptions.chart, type: 'donut', height: 280 },
+                labels: ['Male', 'Female'],
+                colors: ['#3b82f6', '#ec4899'],
+                stroke: { show: false },
+                legend: { position: 'bottom', labels: { colors: textColor } },
+                plotOptions: { pie: { donut: { size: '70%', labels: { show: true, total: { show: true, color: textColor } } } } }
+            }).render();
+
+            // 5. Monthly Hiring Trend (Area)
+            const yearlyData = @json($yearlyComparisonData);
+            const years = Object.keys(yearlyData);
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const series = years.map(year => ({ name: 'ปี ' + year, data: yearlyData[year] }));
+
+            new ApexCharts(document.querySelector("#manpowerMonthlyComparisonChart"), {
+                ...baseOptions,
+                series: series,
+                chart: { ...baseOptions.chart, type: 'area', height: 420, stacked: false },
+                colors: ['#3b82f6', '#10b981', '#f59e0b'],
+                stroke: { curve: 'smooth', width: 3 },
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.05, stops: [20, 100] } },
+                xaxis: { ...baseOptions.xaxis, categories: months },
+                legend: { show: true, position: 'top', horizontalAlign: 'right', labels: { colors: textColor } },
+                markers: { size: 5, hover: { size: 7 } }
+            }).render();
+        });
+    </script>
+    @endpush
 @endsection

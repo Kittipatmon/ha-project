@@ -21,7 +21,8 @@
             </nav>
 
             <!-- Main Card Container -->
-            <div class="rounded-[20px] p-10 pb-32 custom-shadow w-full relative overflow-visible border border-gray-400/40">
+            <div
+                class="rounded-[2.5rem] p-8 md:p-12 pb-80 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] w-full relative overflow-visible border border-white dark:border-gray-700/50">
 
                 <div
                     class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 border-b border-gray-200 dark:border-gray-100/60 pb-4">
@@ -32,8 +33,7 @@
                             </div>
                             <h1 class="text-3xl font-bold text-red-500 tracking-tight">ระบบ Request HR</h1>
                         </div>
-                        <p class="text-gray-500 dark:text-white text-base font-light pl-1">จัดการคำขอ
-                            แจ้งเปลี่ยนแปลงแก้ไขเวลา และติดตามสถานะ</p>
+                        <p class="text-gray-500 dark:text-white text-base font-light pl-1">จัดการคำขอ แจ้งเปลี่ยนแปลงแก้ไขเวลา และติดตามสถานะ</p>
                     </div>
 
                     <div
@@ -50,110 +50,103 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons Area -->
-                <div class="flex justify-center items-center gap-2">
-
-                    <a href="{{ route('requesthr.index') }}">
+                <div class="flex justify-center items-center">
+                    <a href="{{ route('requesthr.index') }}" class="w-full max-w-sm">
                         <button
-                            class="group relative flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-red-600 to-rose-500 text-white rounded-2xl shadow-lg shadow-red-500/30 hover:shadow-red-500/50 hover:-translate-y-1 transition-all duration-300">
-                            <i
-                                class="fa-solid fa-paper-plane text-sm group-hover:rotate-12 transition-transform duration-300"></i>
-                            <span class="font-semibold tracking-wide">สร้างคำขอใหม่</span>
+                            class="group relative w-full flex items-center justify-center gap-4 px-10 py-5 bg-gradient-to-br from-red-600 via-red-500 to-rose-500 text-white rounded-3xl shadow-[0_20px_40px_-10px_rgba(220,38,38,0.4)] hover:shadow-[0_25px_50px_-12px_rgba(220,38,38,0.6)] hover:-translate-y-1.5 active:scale-95 transition-all duration-300">
+                            <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-paper-plane text-xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <div class="text-xs font-bold uppercase tracking-widest opacity-80 mb-0.5">Start New</div>
+                                <div class="text-xl font-black tracking-tight">สร้างคำขอใหม่</div>
+                            </div>
+                            <i class="fa-solid fa-arrow-right ml-auto opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"></i>
                         </button>
                     </a>
                 </div>
-                <div class="flex justify-center items-center gap-2 mt-6">
+                <div class="flex flex-wrap justify-center items-center gap-4 mt-12 px-4">
                     @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                         <div class="dropdown dropdown-bottom">
                             <div tabindex="0" role="button"
-                                class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl  border border-gray-200 hover:border-red-200 hover:bg-red-50/30 transition-all duration-200 shadow-sm">
+                                class="group flex items-center gap-4 px-5 py-4 rounded-[1.5rem] bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 hover:border-red-500/50 hover:bg-red-50/50 dark:hover:bg-red-500/5 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 min-w-[280px]">
 
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
-                                    <i class="fa-solid fa-file-circle-check"></i>
+                                <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-red-500/20 group-hover:rotate-6">
+                                    <i class="fa-solid fa-file-circle-check text-2xl"></i>
                                 </div>
 
-                                <span>รายงานรอ HR ตรวจสอบ</span>
+                                <div class="flex-1 text-left">
+                                    <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-red-500 transition-colors">Reports</div>
+                                    <div class="text-sm font-black text-slate-700 dark:text-gray-100">รอ HR ตรวจสอบ</div>
+                                </div>
 
-                                <div class="flex items-center gap-1.5 pl-3 border-l border-gray-200">
-                                    <span class="flex items-center justify-center badge badge-outline badge-info rounded-md"
-                                        title="รออนุมัติ">
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="px-3 py-1 bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-lg text-xs font-black shadow-sm" title="ตัวเลขจำนวนรอการตรวจสอบ">
                                         {{ $hrrequestapprovehrcount }}
                                     </span>
+                                    <i class="fa-solid fa-chevron-down text-[10px] text-gray-300 group-hover:text-red-500 transition-all group-hover:translate-y-0.5"></i>
                                 </div>
-
-                                <i
-                                    class="fa-solid fa-chevron-down text-xs text-gray-400 group-hover:text-red-500 transition-colors"></i>
                             </div>
 
-                            <ul tabindex="-1"
-                                class="dropdown-content menu p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-white dark:bg-gray-800 rounded-2xl w-80 mt-2 border border-gray-100 dark:border-gray-700 z-50">
-                                <li class="menu-title px-4 py-2 text-xs font-bold text-gray-400 uppercase">เลือกประเภทคำร้อง
+                            <ul tabindex="-1" class="dropdown-content menu p-3 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl w-80 mt-4 border border-white dark:border-gray-700/50 z-[100] animate-fade-in">
+                                <li class="menu-title px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Report Type</li>
+                                <li>
+                                    <a href="{{ route('approve.approvehrlist') }}" class="flex items-center gap-3 rounded-2xl py-4 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 active:bg-red-100 group transition-all duration-200">
+                                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-500/20 transition-colors">
+                                            <i class="fa-regular fa-file-lines text-lg text-slate-400 group-hover:text-red-500"></i>
+                                        </div>
+                                        <div class="flex-1 font-bold text-sm">รายการที่รอตรวจสอบ</div>
+                                        <span class="px-2.5 py-1 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 rounded-lg text-xs font-black">{{ $hrrequestapprovehrcount }}</span>
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('approve.approvehrlist') }}"
-                                        class="rounded-xl py-3 hover:bg-red-50 hover:text-red-600 group active:bg-red-100">
-                                        <i class="fa-regular fa-file-lines w-5 text-gray-400 group-hover:text-red-500"></i>
-                                        รายการที่รอตรวจสอบ
-                                        <span class="flex items-center justify-center badge badge-outline badge-info rounded-md"
-                                            title="จำนวนรอตรวจสอบ">
-                                            {{ $hrrequestapprovehrcount }}
-                                        </span>
-                                    </a>
-                                    <a href="{{ route('approve.approvehrlistall') }}"
-                                        class="rounded-xl py-3 hover:bg-red-50 hover:text-red-600 group active:bg-red-100">
-                                        <i class="fa-regular fa-file-lines w-5 text-gray-400 group-hover:text-red-500"></i>
-                                        รายการคำร้องขอทั้งหมด
-                                        <span
-                                            class="flex items-center justify-center badge badge-outline badge-primary rounded-md"
-                                            title="จำนวนคำร้องขอทั้งหมด">
-                                            {{ $hrrequestCounts }}
-                                        </span>
+                                    <a href="{{ route('approve.approvehrlistall') }}" class="flex items-center gap-3 rounded-2xl py-4 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 active:bg-red-100 group transition-all duration-200">
+                                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-500/20 transition-colors">
+                                            <i class="fa-solid fa-database text-lg text-slate-400 group-hover:text-red-500"></i>
+                                        </div>
+                                        <div class="flex-1 font-bold text-sm">รายการคำร้องขอทั้งหมด</div>
+                                        <span class="px-2.5 py-1 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-gray-300 rounded-lg text-xs font-black">{{ $hrrequestCounts }}</span>
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     @endif
 
-                    @php 
+                    @php
                         use App\Models\hrrequest\HrRequests;
                     @endphp
 
                     @if(HrRequests::where('approver_manager_id', Auth::id())->count() > 0)
                         <div class="dropdown dropdown-bottom">
                             <div tabindex="0" role="button"
-                                class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl  border border-gray-200 hover:border-red-200 hover:bg-red-50/30 transition-all duration-200 shadow-sm">
+                                class="group flex items-center gap-4 px-5 py-4 rounded-[1.5rem] bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 hover:border-red-500/50 hover:bg-red-50/50 dark:hover:bg-red-500/5 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 min-w-[280px]">
 
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
-                                    <i class="fa-solid fa-users-gear"></i>
+                                <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-red-500/20 group-hover:rotate-6">
+                                    <i class="fa-solid fa-users-gear text-2xl"></i>
                                 </div>
 
-                                <span>รายงานรออนุมัติ</span>
-
-                                <div class="flex items-center gap-1.5 pl-3 border-l border-gray-200">
-                                        <span class="flex items-center justify-center badge badge-outline badge-info rounded-md"
-                                        title="รออนุมัติ">
-                                    {{ $hrrequestapprovemanacount }}</span>
+                                <div class="flex-1 text-left">
+                                    <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-red-500 transition-colors">Management</div>
+                                    <div class="text-sm font-black text-slate-700 dark:text-gray-100">รออนุมัติ</div>
                                 </div>
 
-                                <i
-                                    class="fa-solid fa-chevron-down text-xs text-gray-400 group-hover:text-red-500 transition-colors"></i>
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="px-3 py-1 bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-lg text-xs font-black shadow-sm" title="ตัวเลขจำนวนรอการอนุมัติ">
+                                        {{ $hrrequestapprovemanacount }}
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down text-[10px] text-gray-300 group-hover:text-red-500 transition-all group-hover:translate-y-0.5"></i>
+                                </div>
                             </div>
 
-                            <ul tabindex="-1"
-                                class="dropdown-content menu p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-white dark:bg-gray-800 rounded-2xl w-60 mt-2 border border-gray-100 dark:border-gray-700 z-50">
-                                <li class="menu-title px-4 py-2 text-xs font-bold text-gray-400 uppercase">เลือกประเภทคำร้อง
-                                </li>
+                            <ul tabindex="-1" class="dropdown-content menu p-3 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl w-80 mt-4 border border-white dark:border-gray-700/50 z-[100] animate-fade-in">
+                                <li class="menu-title px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Management Action</li>
                                 <li>
-                                    <a href="{{ route('approve.approvemanalist') }}"
-                                        class="rounded-xl py-3 hover:bg-red-50 hover:text-red-600 group active:bg-red-100">
-                                        <i class="fa-regular fa-file-lines w-5 text-gray-400 group-hover:text-red-500"></i>
-                                        รายการที่รออนุมัติ
-                                        <span class="flex items-center justify-center badge badge-outline badge-info rounded-md"
-                                            title="จำนวนรออนุมัติ">
-                                            {{ $hrrequestapprovemanacount }}
-                                        </span>
+                                    <a href="{{ route('approve.approvemanalist') }}" class="flex items-center gap-3 rounded-2xl py-4 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 active:bg-red-100 group transition-all duration-200">
+                                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-500/20 transition-colors">
+                                            <i class="fa-regular fa-file-lines text-lg text-slate-400 group-hover:text-red-500"></i>
+                                        </div>
+                                        <div class="flex-1 font-bold text-sm">รายการที่รออนุมัติ</div>
+                                        <span class="px-2.5 py-1 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 rounded-lg text-xs font-black">{{ $hrrequestapprovemanacount }}</span>
                                     </a>
                                 </li>
                             </ul>
@@ -162,56 +155,43 @@
 
                     <div class="dropdown dropdown-bottom">
                         <div tabindex="0" role="button"
-                            class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl  border border-gray-200 hover:border-red-200 hover:bg-red-50/30 transition-all duration-200 shadow-sm">
+                            class="group flex items-center gap-4 px-5 py-4 rounded-[1.5rem] bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 hover:border-red-500/50 hover:bg-red-50/50 dark:hover:bg-red-500/5 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 min-w-[280px]">
 
-                            <div
-                                class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
-                                <i class="fa-solid fa-chart-line"></i>
+                            <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-red-500/20 group-hover:rotate-6">
+                                <i class="fa-solid fa-chart-line text-2xl"></i>
                             </div>
 
-                            <span>รายงานข้อมูลคำขอ</span>
+                            <div class="flex-1 text-left">
+                                <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-red-500 transition-colors">Statistics</div>
+                                <div class="text-sm font-black text-slate-700 dark:text-gray-100">ข้อมูลคำขอ</div>
+                            </div>
 
-                            <div class="flex items-center gap-1.5 pl-3 border-l border-gray-200">
-                                <span class="flex items-center justify-center badge badge-outline badge-warning rounded-md"
-                                    title="ดำเนินการ">
+                            <div class="flex flex-col items-end gap-1">
+                                <span class="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-lg text-xs font-black shadow-sm" title="ตัวเลขจำนวนรอรอดำเนินการ">
                                     {{ $hrrequests }}
                                 </span>
-                                <!-- <span class="flex items-center justify-center badge badge-outline badge-success rounded-md"
-                                    title="เสร็จสิ้น">
-
-                                </span> -->
+                                <i class="fa-solid fa-chevron-down text-[10px] text-gray-300 group-hover:text-red-500 transition-all group-hover:translate-y-0.5"></i>
                             </div>
-
-                            <i
-                                class="fa-solid fa-chevron-down text-xs text-gray-400 group-hover:text-red-500 transition-colors"></i>
                         </div>
 
-                        <ul tabindex="-1"
-                            class="dropdown-content menu p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-white dark:bg-gray-800 rounded-2xl w-60 mt-2 border border-gray-100 dark:border-gray-700 z-50">
-                            <li class="menu-title px-4 py-2 text-xs font-bold text-gray-400 uppercase">เลือกประเภทรายงาน
-                            </li>
+                        <ul tabindex="-1" class="dropdown-content menu p-3 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl w-80 mt-4 border border-white dark:border-gray-700/50 z-[100] animate-fade-in shadow-xl">
+                            <li class="menu-title px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Data List</li>
                             <li>
-                                <a href="{{ route('requesthr.list') }}"
-                                    class="rounded-xl py-3 hover:bg-red-50 hover:text-red-600 group active:bg-red-100">
-                                    <i cl
-                                  a     ss="fa-regular fa-file-lines w-5 text-gray-400 group-hover:text-red-500"></i>
-                                    รายการที่รอดำเนินการ
-                                    <span class="flex items-center justify-center badge badge-outline badge-warning rounded-md"
-                                        title="จำนวนรอดำเนินการ">
-                                        {{ $hrrequests }}
-                                    </span>
+                                <a href="{{ route('requesthr.list') }}" class="flex items-center gap-3 rounded-2xl py-4 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 active:bg-red-100 group transition-all duration-200">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-500/20 transition-colors">
+                                        <i class="fa-regular fa-file-lines text-lg text-slate-400 group-hover:text-red-500"></i>
+                                    </div>
+                                    <div class="flex-1 font-bold text-sm">รายการที่รอดำเนินการ</div>
+                                    <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 rounded-lg text-xs font-black">{{ $hrrequests }}</span>
                                 </a>
                             </li>
-
-                                                           <li>
-                                <a href="{{ route('requesthr.listall') }}" class="rounded-xl py-3 hover:bg-red-50 hover:text-red-600 group active:bg-red-100">
-                                    <i cl
-                                       ass="fa-solid fa-clock-rotate-left w-5 text-gray-400 group-hover:text-red-500"></i>
-                                    รายการทั้งหมด
-                                    <span class="flex items-center justify-center badge badge-outline badge-primary rounded-md"
-                                        title="จำนวนรายการทั้งหมด">
-                                        {{ $hrrequestsCount }}
-                                    </span>
+                            <li>
+                                <a href="{{ route('requesthr.listall') }}" class="flex items-center gap-3 rounded-2xl py-4 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 active:bg-red-100 group transition-all duration-200">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-500/20 transition-colors">
+                                        <i class="fa-solid fa-clock-rotate-left text-lg text-slate-400 group-hover:text-red-500"></i>
+                                    </div>
+                                    <div class="flex-1 font-bold text-sm">รายการทั้งหมด</div>
+                                    <span class="px-2.5 py-1 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-gray-300 rounded-lg text-xs font-black">{{ $hrrequestsCount }}</span>
                                 </a>
                             </li>
                         </ul>

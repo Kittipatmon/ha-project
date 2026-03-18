@@ -4,12 +4,19 @@
     }
 
     .navbar-link {
-        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 8px 0 rgba(220, 38, 38, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 38px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 4px 12px 0 rgba(220, 38, 38, 0.12);
         color: #fff;
-        border: 1px solid transparent;
-        background: linear-gradient(90deg, rgb(220, 38, 38) 0%, rgb(168, 12, 12) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: linear-gradient(135deg, rgb(220, 38, 38) 0%, rgb(168, 12, 12) 100%);
         font-size: 14px;
+        border-radius: 0.75rem;
     }
 
     .navbar-link:hover {
@@ -93,7 +100,8 @@
     }
 </style>
 <!-- bg-white dark:bg-gray-800 -->
-<nav class="border-b border-gray-100  dark:border-gray-700 shadow-xl">
+<nav id="main-navbar"
+    class="fixed top-0 w-full z-[100] border-b border-gray-100 dark:border-gray-700 shadow-xl transition-all duration-500 transform -translate-y-full opacity-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg">
     <div class="px-4 sm:px-6 lg:px-8 relative z-50">
         <div class="flex justify-between h-16">
             <div class="flex">
@@ -110,9 +118,9 @@
             </div>
 
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden lg:flex lg:items-center lg:ms-6">
 
-                <div class="hidden space-x-2 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-2 lg:-my-px lg:ms-10 lg:flex">
                     <div class="relative">
                         <button id="theme-toggle-btn" type="button"
                             class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
@@ -176,8 +184,7 @@
 
                     <ul class="hidden lg:flex space-x-1 items-center">
                         <li>
-                            <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition"
-                                href="{{ route('welcome') }}">หน้าหลัก</a>
+                            <a class="navbar-link shadow transition" href="{{ route('welcome') }}">หน้าหลัก</a>
                         </li>
                         <!-- <li>
                             <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition" href="{{ route('welcome.system') }}">บริการ</a>
@@ -185,13 +192,11 @@
                         <li>
                             @auth
                                 <section id="HAService">
-                                    <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition"
-                                        href="#services-grid">HA Service</a>
+                                    <a class="navbar-link shadow transition" href="#services-grid">HA Service</a>
                                 </section>
                             @else
                                 <section id="HAService">
-                                    <button type="button" class="login-open-btn navbar-link px-6 py-2 text-base text-black rounded-xl shadow
-                                                        transition">HA
+                                    <button type="button" class="login-open-btn navbar-link shadow transition">HA
                                         Service</button>
                                 </section>
                             @endauth
@@ -199,13 +204,12 @@
                         <li>
                             @auth
                                 <section id="news">
-                                    <a class="navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition"
-                                        href="#news-grid">ประชาสัมพันธ์</a>
+                                    <a class="navbar-link shadow transition" href="#news-grid">ประชาสัมพันธ์</a>
                                 </section>
                             @else
                                 <section id="news">
                                     <button type="button"
-                                        class="login-open-btn navbar-link px-6 py-2 text-base text-black rounded-xl shadow transition">ประชาสัมพันธ์</button>
+                                        class="login-open-btn navbar-link shadow transition">ประชาสัมพันธ์</button>
                                 </section>
                             @endauth
                         </li>
@@ -242,27 +246,26 @@
 
                 <div class="relative ml-1">
                     @guest
-                        <button type="button"
-                            class="login-open-btn navbar-link px-4 py-1.5 text-base text-black rounded-xl shadow transition">
+                        <button type="button" class="login-open-btn navbar-link shadow transition">
                             <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Login
                         </button>
                     @endguest
                     @auth
 
                         <button type="button" id="profile-btn"
-                            class="navbar-link px-3 py-2.5 text-black rounded-xl shadow flex items-center transition">
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    class="lucide lucide-circle-user-round-icon lucide-circle-user-round">
-                                    <path d="M18 20a6 6 0 0 0-12 0" />
-                                    <circle cx="12" cy="10" r="4" />
-                                    <circle cx="12" cy="12" r="10" />
-                                </svg>
-                            </div>
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            class="navbar-link p-1 text-black rounded-xl shadow flex items-center transition overflow-hidden">
+                            <div class="flex items-center gap-2">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/10">
+                                    @if(Auth::user()->photo_user)
+                                        <img src="{{ asset(Auth::user()->photo_user) }}" alt="Avatar"
+                                            class="w-full h-full object-cover">
+                                    @else
+                                        <i class="fa-solid fa-gear text-white text-sm"></i>
+                                    @endif
+                                </div>
+                                <svg class="fill-current h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                         d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                         clip-rule="evenodd" />
@@ -270,35 +273,146 @@
                             </div>
                         </button>
                         <div id="profile-menu"
-                            class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden-custom">
-                            <a href="{{ route('users.profile', ['id' => auth()->id()]) }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                {{ __('Profile') }}
-                            </a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <a href="{{ route('logout') }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    onclick="event.preventDefault(); this.closest('form').submit();">
-                                    {{ __('Log Out') }}
+                            class="absolute right-0 z-50 mt-3 w-64 origin-top-right rounded-2xl bg-white/95 dark:bg-[#1E2129]/95 backdrop-blur-xl py-2 shadow-2xl ring-1 ring-black/5 focus:outline-none hidden-custom border border-gray-100 dark:border-white/5 animate-fade-in">
+                            <!-- Header Section -->
+                            <div class="px-4 py-4 border-b border-gray-100 dark:border-white/5 mb-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="relative group">
+                                        <div
+                                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 p-[2px] shadow-lg shadow-red-500/20">
+                                            <div
+                                                class="w-full h-full rounded-[10px] bg-white dark:bg-[#1E2129] overflow-hidden">
+                                                @if(Auth::user()->photo_user)
+                                                    <img src="{{ asset(Auth::user()->photo_user) }}" alt="Avatar"
+                                                        class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                                                @else
+                                                    <div
+                                                        class="w-full h-full flex items-center justify-center bg-slate-50 dark:bg-slate-800">
+                                                        <i class="fa-solid fa-user text-slate-400"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-[#1E2129] rounded-full">
+                                        </div>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-black text-slate-800 dark:text-white line-clamp-1">
+                                            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
+                                        </p>
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            <span
+                                                class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                                            <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider truncate">
+                                                Authorized User
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Menu Section -->
+                            <div class="px-2 space-y-1">
+                                <a href="{{ route('users.profile', ['id' => auth()->id()]) }}"
+                                    class="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-red-600 dark:hover:text-red-500 transition-all rounded-xl group">
+                                    <div
+                                        class="w-9 h-9 rounded-lg bg-sky-50 dark:bg-sky-500/10 flex items-center justify-center text-sky-500 group-hover:scale-110 transition-transform">
+                                        <i class="fa-solid fa-user-gear text-base"></i>
+                                    </div>
+                                    <span>{{ __('Profile Settings') }}</span>
                                 </a>
-                            </form>
+
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <a href="{{ route('logout') }}"
+                                        class="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all rounded-xl group"
+                                        onclick="event.preventDefault(); this.closest('form').submit();">
+                                        <div
+                                            class="w-9 h-9 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">
+                                            <i class="fa-solid fa-power-off text-base"></i>
+                                        </div>
+                                        <span>{{ __('Log Out') }}</span>
+                                    </a>
+                                </form>
+                            </div>
+
+                            <!-- Footer Section -->
+                            <div
+                                class="mt-2 px-4 py-2 border-t border-gray-100 dark:border-white/5 flex justify-between items-center">
+                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Kumwell HR System
+                                </p>
+                                <span class="text-[9px] font-black text-red-500/50">v2.1</span>
+                            </div>
                         </div>
                     @endauth
                 </div>
             </div>
 
-            <div class="-me-2 flex items-center sm:hidden">
+            <div class="-me-2 flex items-center lg:hidden gap-2">
+                <!-- Mobile Theme Toggle -->
+                <div class="relative">
+                    <button id="mobile-theme-toggle-btn" type="button"
+                        class="flex items-center justify-center w-10 h-10 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl text-slate-600 dark:text-slate-300 transition-all active:scale-95 shadow-sm hover:bg-slate-200 dark:hover:bg-slate-700">
+                        <svg id="mobile-theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor"
+                            viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg id="mobile-theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor"
+                            viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"
+                                fill-rule="evenodd" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+
+                    <div id="mobile-theme-dropdown"
+                        class="z-[110] hidden-custom absolute right-0 mt-2 w-32 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 ring-1 ring-black/5">
+                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                            <li>
+                                <button type="button"
+                                    class="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    data-theme-value="light">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Light
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button"
+                                    class="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    data-theme-value="dark">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                                    </svg>
+                                    Dark
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button"
+                                    class="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    data-theme-value="auto">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    System
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
                 <button id="mobile-menu-btn"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                    class="flex items-center justify-center w-10 h-10 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl text-slate-600 dark:text-slate-300 transition-all active:scale-95 shadow-sm hover:bg-slate-200 dark:hover:bg-slate-700">
                     <svg id="icon-hamburger" class="h-6 w-6 block" stroke="currentColor" fill="none"
                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                             d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                     <svg id="icon-close-menu" class="h-6 w-6 hidden-custom" stroke="currentColor" fill="none"
                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                             d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
@@ -306,33 +420,111 @@
         </div>
     </div>
 
-    <div id="mobile-menu" class="hidden-custom sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <a href="{{ route('dashboard') }}"
-                class="block pl-3 pr-4 py-2 border-l-4 border-indigo-400 text-base font-medium text-indigo-700 bg-indigo-50 focus:outline-none focus:text-indigo-800 focus:bg-indigo-100 focus:border-indigo-700 transition duration-150 ease-in-out">
-                {{ __('Dashboard') }}
+    <div id="mobile-menu"
+        class="hidden-custom lg:hidden absolute top-full left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-100 dark:border-gray-800 shadow-2xl animate-fade-in overflow-y-auto max-h-[85vh]">
+        <div class="pt-4 pb-6 px-4 space-y-2">
+            <!-- Main Links -->
+            <a href="{{ route('welcome') }}"
+                class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-base font-bold text-slate-700 dark:text-slate-200 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 group">
+                <div
+                    class="w-10 h-10 rounded-xl bg-red-100/50 dark:bg-red-500/10 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform shadow-sm">
+                    <i class="fa-solid fa-house text-lg"></i>
+                </div>
+                <span>หน้าหลัก</span>
             </a>
+
+            @auth
+                <a href="#services-grid"
+                    class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-base font-bold text-slate-700 dark:text-slate-200 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 group mobile-link-close"
+                    onclick="document.getElementById('mobile-menu').classList.add('hidden-custom')">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-red-100/50 dark:bg-red-500/10 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform shadow-sm">
+                        <i class="fa-solid fa-briefcase text-lg"></i>
+                    </div>
+                    <span>HA Service</span>
+                </a>
+                <a href="#news-grid"
+                    class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-base font-bold text-slate-700 dark:text-slate-200 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 group mobile-link-close"
+                    onclick="document.getElementById('mobile-menu').classList.add('hidden-custom')">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-red-100/50 dark:bg-red-500/10 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform shadow-sm">
+                        <i class="fa-solid fa-newspaper text-lg"></i>
+                    </div>
+                    <span>ประชาสัมพันธ์</span>
+                </a>
+                <a href="{{ route('dashboard') }}"
+                    class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-base font-bold text-slate-700 dark:text-slate-200 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 group">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-red-100/50 dark:bg-red-500/10 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform shadow-sm">
+                        <i class="fa-solid fa-gauge-high text-lg"></i>
+                    </div>
+                    <span>Dashboard</span>
+                </a>
+            @else
+                <button type="button"
+                    class="login-open-btn w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-base font-bold text-slate-700 dark:text-slate-200 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 group">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-red-100/50 dark:bg-red-500/10 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform shadow-sm">
+                        <i class="fa-solid fa-briefcase text-lg"></i>
+                    </div>
+                    <span>HA Service</span>
+                </button>
+                <button type="button"
+                    class="login-open-btn w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-base font-bold text-slate-700 dark:text-slate-200 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 group">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-red-100/50 dark:bg-red-500/10 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform shadow-sm">
+                        <i class="fa-solid fa-newspaper text-lg"></i>
+                    </div>
+                    <span>ประชาสัมพันธ์</span>
+                </button>
+            @endauth
         </div>
 
         @auth
-            <div class="pt-4 pb-1 border-t border-gray-200">
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->first_name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+            <div class="mt-4 pt-6 pb-8 px-4 border-t border-gray-100 dark:border-gray-800">
+                <div class="flex items-center gap-4 px-2 mb-6">
+                    <div class="relative">
+                        <div
+                            class="w-14 h-14 bg-gradient-to-br from-red-500 to-red-700 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-xl shadow-red-500/20 rotate-3 overflow-hidden">
+                            @if(Auth::user()->photo_user)
+                                <img src="{{ asset(Auth::user()->photo_user) }}" alt="Avatar"
+                                    class="w-full h-full object-cover">
+                            @else
+                                {{ substr(Auth::user()->first_name, 0, 1) }}
+                            @endif
+                        </div>
+                        <div
+                            class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full">
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-black text-lg text-slate-800 dark:text-white leading-tight truncate">
+                            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
+                        </div>
+                        <div class="text-xs font-bold text-red-500 uppercase tracking-wider mt-0.5">Authorized User</div>
+                    </div>
                 </div>
 
-                <div class="mt-3 space-y-1">
-                    <a href="{{ route('profile.edit') }}"
-                        class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out">
-                        {{ __('Profile') }}
+                <div class="space-y-1">
+                    <a href="{{ route('users.profile', ['id' => auth()->id()]) }}"
+                        class="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-red-600 transition-all">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-gray-400">
+                            <i class="fa-solid fa-gear text-lg"></i>
+                        </div>
+                        <span>Profile Settings</span>
                     </a>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <a href="{{ route('logout') }}"
-                            class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
+                            class="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
                             onclick="event.preventDefault(); this.closest('form').submit();">
-                            {{ __('Log Out') }}
+                            <div
+                                class="w-10 h-10 rounded-xl bg-red-100/50 dark:bg-red-500/10 flex items-center justify-center text-red-600">
+                                <i class="fa-solid fa-arrow-right-from-bracket text-lg"></i>
+                            </div>
+                            <span>Log Out</span>
                         </a>
                     </form>
                 </div>
@@ -385,7 +577,7 @@
                         @endisset
                     </select>
                     <!-- <input id="employee_code" name="employee_code" type="text" autocomplete="username" required
-                                                                       class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500" value="{{ old('employee_code') }}"> -->
+                                                                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500" value="{{ old('employee_code') }}"> -->
                     @error('employee_code')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
@@ -477,6 +669,8 @@
             // Sync any other theme toggles in the page (if present)
             document.querySelectorAll('[data-theme-toggle]')
                 .forEach(el => { if ('checked' in el) el.checked = isDark; });
+            
+            updateThemeIcons();
         }
 
         // Initialize theme on load
@@ -484,14 +678,30 @@
         applyTheme(savedTheme);
 
         function updateThemeIcons() {
-            if (!themeToggleDarkIcon || !themeToggleLightIcon) return;
             const isDark = root.classList.contains('dark');
-            if (isDark) {
-                themeToggleDarkIcon.classList.add('hidden');
-                themeToggleLightIcon.classList.remove('hidden');
-            } else {
-                themeToggleDarkIcon.classList.remove('hidden');
-                themeToggleLightIcon.classList.add('hidden');
+            
+            // Desktop Icons
+            if (themeToggleDarkIcon && themeToggleLightIcon) {
+                if (isDark) {
+                    themeToggleDarkIcon.classList.add('hidden');
+                    themeToggleLightIcon.classList.remove('hidden');
+                } else {
+                    themeToggleDarkIcon.classList.remove('hidden');
+                    themeToggleLightIcon.classList.add('hidden');
+                }
+            }
+            
+            // Mobile Icons
+            const mobileDarkIcon = document.getElementById('mobile-theme-toggle-dark-icon');
+            const mobileLightIcon = document.getElementById('mobile-theme-toggle-light-icon');
+            if (mobileDarkIcon && mobileLightIcon) {
+                if (isDark) {
+                    mobileDarkIcon.classList.add('hidden');
+                    mobileLightIcon.classList.remove('hidden');
+                } else {
+                    mobileDarkIcon.classList.remove('hidden');
+                    mobileLightIcon.classList.add('hidden');
+                }
             }
         }
 
@@ -503,13 +713,29 @@
             themeToggleBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 themeDropdown.classList.toggle('hidden-custom');
+                if (mobileThemeDropdown) mobileThemeDropdown.classList.add('hidden-custom');
+            });
+        }
+
+        // Mobile Theme Toggle
+        const mobileThemeToggleBtn = document.getElementById('mobile-theme-toggle-btn');
+        const mobileThemeDropdown = document.getElementById('mobile-theme-dropdown');
+
+        if (mobileThemeToggleBtn && mobileThemeDropdown) {
+            mobileThemeToggleBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                mobileThemeDropdown.classList.toggle('hidden-custom');
+                if (themeDropdown) themeDropdown.classList.add('hidden-custom');
             });
         }
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function (e) {
-            if (themeToggleBtn && themeDropdown && !themeToggleBtn.contains(e.target) && !themeDropdown.contains(e.target)) {
+            if (themeDropdown && !themeToggleBtn?.contains(e.target) && !themeDropdown.contains(e.target)) {
                 themeDropdown.classList.add('hidden-custom');
+            }
+            if (mobileThemeDropdown && !mobileThemeToggleBtn?.contains(e.target) && !mobileThemeDropdown.contains(e.target)) {
+                mobileThemeDropdown.classList.add('hidden-custom');
             }
         });
 
@@ -602,6 +828,18 @@
             // Auto-open if validation errors exist
             const hasErrors = {{ ($errors->has('employee_code') || $errors->has('password')) ? 'true' : 'false' }};
             if (hasErrors) openLoginModal();
+        }
+    });
+
+    // Scroll Navbar Logic
+    window.addEventListener('scroll', function () {
+        const navbar = document.getElementById('main-navbar');
+        if (window.scrollY > 100) {
+            navbar.classList.remove('-translate-y-full', 'opacity-0');
+            navbar.classList.add('translate-y-0', 'opacity-100');
+        } else {
+            navbar.classList.add('-translate-y-full', 'opacity-0');
+            navbar.classList.remove('translate-y-0', 'opacity-100');
         }
     });
 </script>

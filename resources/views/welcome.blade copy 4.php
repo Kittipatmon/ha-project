@@ -55,95 +55,11 @@
             animation: float 6s ease-in-out infinite;
         }
 
-        /* Fade In Animation */
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-up {
-            opacity: 0;
-            animation: fadeUp 0.8s ease-out forwards;
-        }
-
-        .delay-100 {
-            animation-delay: 100ms;
-        }
-
-        .delay-200 {
-            animation-delay: 200ms;
-        }
-
-        .delay-300 {
-            animation-delay: 300ms;
-        }
-
-        .delay-400 {
-            animation-delay: 400ms;
-        }
-
-        .delay-500 {
-            animation-delay: 500ms;
-        }
-
-        /* Scroll Reveal Animation */
-        .reveal {
-            position: relative;
-            opacity: 0;
-            transition: all 1.2s ease;
-        }
-
-        .reveal.reveal-left {
-            transform: translateX(-50px);
-        }
-
-        .reveal.reveal-right {
-            transform: translateX(50px);
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        /* Hero Slider & Blurred BG */
-        .hero-bg-blur {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            z-index: 0;
-            filter: blur(40px) brightness(1.7);
-            opacity: 0.95;
-            transition: opacity 2.5s ease-in-out;
-            object-fit: cover;
-            transform: scale(1.1);
-        }
-
-        .hero-slider-item {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-            transform: scale(1.1);
-        }
-
-        .hero-slider-item.active {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .dark .hero-bg-blur {
-            filter: blur(80px) brightness(0.3);
-            opacity: 0.4;
+        /* Gradient Text */
+        .text-gradient-red {
+            background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 
@@ -165,71 +81,21 @@
                 localStorage.setItem('color-theme', 'dark');
             }
         }
-
-        // Scroll Reveal logic
-        document.addEventListener('DOMContentLoaded', function () {
-            const reveals = document.querySelectorAll('.reveal');
-
-            const revealObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        // Optional: stop observing once revealed
-                        // revealObserver.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.1 // Reveal when 10% of the element is visible
-            });
-
-            reveals.forEach(reveal => {
-                revealObserver.observe(reveal);
-            });
-
-            // Hero Slider logic
-            const slides = document.querySelectorAll('.hero-slider-item');
-            const bgBlurs = document.querySelectorAll('.hero-bg-blur');
-            let currentSlide = 0;
-
-            if (slides.length > 1) {
-                setInterval(() => {
-                    slides[currentSlide].classList.remove('active');
-                    bgBlurs[currentSlide].style.opacity = '0';
-
-                    currentSlide = (currentSlide + 1) % slides.length;
-
-                    slides[currentSlide].classList.add('active');
-                    bgBlurs[currentSlide].style.opacity = '0.95';
-                }, 5000);
-            }
-        });
     </script>
 
     <div class="min-h-screen  text-slate-800 dark:text-gray-200 theme-transition relative overflow-x-hidden">
 
 
         <!-- ================= HERO SECTION ================= -->
-        <div class="relative min-h-screen flex items-center pt-12 pb-20 overflow-hidden theme-transition">
+        <div class="relative pt-12 pb-20 lg:pt-24 lg:pb-32 overflow-hidden theme-transition">
 
-            <!-- Blurred Backgrounds -->
-            <div class="absolute inset-0 z-0">
-                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop"
-                    class="hero-bg-blur object-cover w-full h-full" style="opacity: 0.95">
-                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
-                    class="hero-bg-blur object-cover w-full h-full" style="opacity: 0">
-                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
-                    class="hero-bg-blur object-cover w-full h-full" style="opacity: 0">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-16">
 
-            </div>
-
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative w-full z-30">
-                <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-16 py-12 lg:py-32">
-
-                    <!-- Welcome Content -->
-                    <div
-                        class="max-w-4xl mx-auto lg:mx-0 flex flex-col items-center lg:items-start text-center lg:text-left relative z-30">
+                    <!-- Left: Content -->
+                    <div class="text-center lg:text-left order-2 lg:order-1 flex flex-col justify-center lg:pr-8">
                         <div
-                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 dark:bg-red-500/10 mb-8 border border-red-100 dark:border-red-500/20 shadow-sm w-max animate-fade-up">
+                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 dark:bg-red-500/10 mb-8 self-center lg:self-start border border-red-100 dark:border-red-500/20 shadow-sm w-max">
                             <span class="relative flex h-2 w-2">
                                 <span
                                     class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -239,87 +105,53 @@
                                 PLATFORM 2.0</span>
                         </div>
 
-                        <h1 class="text-[2.75rem] sm:text-6xl md:text-7xl lg:text-[5rem] font-bold mb-6 leading-[1.05] tracking-tight text-slate-900 dark:text-white animate-fade-up delay-100"
-                            style="text-shadow: 0 2px 10px rgba(0,0,0,0.05)">
+                        <h1
+                            class="text-[2.75rem] sm:text-6xl md:text-7xl lg:text-[5rem] font-bold mb-6 leading-[1.05] tracking-tight text-slate-900 dark:text-white">
                             <span class="block mb-2 sm:mb-4">Welcome to</span>
                             <span class="text-red-500 block">Human Assetment</span>
                         </h1>
 
-                        <p class="text-slate-800 dark:text-gray-100 text-base sm:text-lg lg:text-xl max-w-2xl mb-12 font-medium leading-relaxed animate-fade-up delay-200"
-                            style="text-shadow: 0 1px 2px rgba(255,255,255,0.8)">
+                        <p
+                            class="text-slate-500 dark:text-gray-400 text-sm sm:text-base lg:text-lg max-w-[600px] mb-10 font-light leading-relaxed mx-auto lg:mx-0">
                             ยกระดับการบริหารทรัพยากรบุคคล มุ่งเน้นการประเมินที่มีประสิทธิภาพ และวัฒนธรรมการเรียนรู้ตลอดชีวิต
                             (Life Long Learning) เพื่อขับเคลื่อนองค์กรสู่อนาคต
                         </p>
 
-                        <div class="flex flex-wrap justify-center lg:justify-start gap-6 animate-fade-up delay-300">
+                        <div class="flex flex-wrap justify-center lg:justify-start gap-4">
                             <a href="#"
-                                class="group px-10 py-4 bg-red-600 hover:bg-red-700 text-white text-base font-bold rounded-2xl shadow-xl shadow-red-600/30 hover:shadow-red-600/40 hover:-translate-y-1 transition-all flex items-center gap-3">
+                                class="group px-6 sm:px-8 py-3.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-2xl shadow-lg shadow-red-600/30 hover:shadow-red-600/40 hover:-translate-y-0.5 transition-all flex items-center gap-2">
                                 <span>นโยบายองค์กร</span>
-                                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                <i
+                                    class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
                             </a>
                             <a href="#"
-                                class="px-10 py-4 bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200 dark:border-white/10 hover:border-red-500 dark:hover:border-red-500 text-slate-700 dark:text-slate-300 text-base font-bold rounded-2xl hover:bg-white dark:hover:bg-white/10 shadow-lg hover:shadow-xl transition-all">
+                                class="px-6 sm:px-8 py-3.5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-red-500 dark:hover:border-red-500 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-2xl hover:bg-slate-50 dark:hover:bg-white/10 shadow-sm hover:shadow-md transition-all">
                                 พันธกิจ (Mission)
                             </a>
                         </div>
                     </div>
 
-                    <!-- Hero Image: Only show on Large Screens -->
-                    <div class="hidden lg:flex relative items-center justify-center w-full animate-fade-up delay-400 z-10">
+                    <!-- Right: Image -->
+                    <div class="relative order-1 lg:order-2 flex items-center justify-center w-full">
                         <div
-                            class="relative w-full aspect-[5/4] rounded-[2rem] overflow-hidden shadow-2xl animate-float bg-gray-100 dark:bg-gray-800">
-                            <!-- Slider Images -->
+                            class="relative w-full aspect-[4/3] lg:aspect-[5/4] rounded-[2rem] overflow-hidden shadow-2xl animate-float bg-gray-100 dark:bg-gray-800">
                             <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
-                                alt="Human Connection 1" class="hero-slider-item active w-full h-full object-cover">
-                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
-                                alt="Human Connection 2" class="hero-slider-item w-full h-full object-cover">
-                            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop"
-                                alt="Human Connection 3" class="hero-slider-item w-full h-full object-cover">
+                                alt="Human Connection" class="w-full h-full object-cover">
 
-                            <!-- Soft Gradient Overlay -->
+                            <!-- Soft Gradient Overlay to match the screenshot -->
                             <div
-                                class="absolute inset-0 bg-gradient-to-t from-gray-50/80 via-transparent to-transparent dark:from-[#0d1117] dark:to-transparent z-10">
+                                class="absolute inset-0 bg-gradient-to-t from-gray-50/80 via-transparent to-transparent dark:from-[#0f1115] dark:to-transparent">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Section Transition Gradient (Refined Smooth) -->
-            <div class="absolute bottom-0 left-0 w-full h-64 z-20 pointer-events-none transition-all duration-1000" style="background: linear-gradient(to top, 
-                                                        var(--bg-color, #ffffff) 0%, 
-                                                        var(--bg-color, #ffffff) 10%, 
-                                                        rgba(255,255,255,0.8) 30%, 
-                                                        rgba(255,255,255,0.4) 60%, 
-                                                        rgba(255,255,255,0) 100%);">
-            </div>
-
-            <style>
-                :root {
-                    --bg-color: #ffffff;
-                }
-
-                .dark :root {
-                    --bg-color: #0d1117;
-                }
-
-                /* Overwriting the style for dark mode because inline styles are hard to target with CSS classes alone */
-                .dark .hero-transition-overlay {
-                    background: linear-gradient(to top,
-                            #0d1117 0%,
-                            #0d1117 10%,
-                            rgba(13, 17, 23, 0.8) 30%,
-                            rgba(13, 17, 23, 0.4) 60%,
-                            rgba(13, 17, 23, 0) 100%) !important;
-                }
-            </style>
-            <div class="absolute bottom-0 left-0 w-full h-64 z-20 pointer-events-none hero-transition-overlay"></div>
         </div>
 
         <!-- ================= SERVICES GRID ================= -->
-        <div id="services-grid" class="py-12 border-y border-slate-100 dark:border-white/5 scroll-mt-20">
+        <div id="services-grid" class="py-12 border-y border-slate-100 dark:border-white/5">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4 reveal reveal-left">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
                     <div>
                         <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">ระบบบริการ <span
                                 class="text-red-500">Service</span></h2>
@@ -339,16 +171,15 @@
 
                 <!-- Section 1: Employee Services -->
                 <div class="mb-12">
-                    <div class="flex items-center gap-3 mb-6 reveal reveal-left">
+                    <div class="flex items-center gap-3 mb-6">
                         <div class="h-8 w-1 bg-red-600 rounded-full"></div>
                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">ระบบบริการผู้ใช้งาน <span
                                 class="text-slate-400 font-medium text-sm ml-2">Employee Services</span></h3>
                     </div>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         <!-- 1. HR Requests -->
                         @auth
-                            <a href="{{ route('request.hr') }}" class="{{ $cardClass }} reveal reveal-right"
-                                style="transition-delay: 100ms">
+                            <a href="{{ route('request.hr') }}" class="{{ $cardClass }}">
                                 <div class="{{ $imgWrapperClass }}">
                                     <img src="/images/welcome/reporting.jpg"
                                         onerror="this.src='https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=600'"
@@ -367,8 +198,7 @@
                                 <span class="{{ $btnActive }}">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></span>
                             </a>
                         @else
-                            <div class="{{ $cardClass }} cursor-pointer login-open-btn reveal reveal-right"
-                                style="transition-delay: 100ms">
+                            <div class="{{ $cardClass }} cursor-pointer login-open-btn">
                                 <div class="{{ $imgWrapperClass }}">
                                     <img src="/images/welcome/reporting.jpg"
                                         onerror="this.src='https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=600'"
@@ -389,8 +219,7 @@
 
                         <!-- 3. Training -->
                         @auth
-                            <a href="{{ route('training.index') }}" class="{{ $cardClass }} reveal reveal-right"
-                                style="transition-delay: 200ms">
+                            <a href="{{ route('training.index') }}" class="{{ $cardClass }}">
                                 <div class="{{ $imgWrapperClass }}">
                                     <img src="/images/welcome/training.jpg"
                                         onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600'"
@@ -409,8 +238,7 @@
                                 <span class="{{ $btnActive }}">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></span>
                             </a>
                         @else
-                            <div class="{{ $cardClass }} cursor-pointer login-open-btn reveal reveal-right"
-                                style="transition-delay: 200ms">
+                            <div class="{{ $cardClass }} cursor-pointer login-open-btn">
                                 <div class="{{ $imgWrapperClass }}">
                                     <img src="/images/welcome/training.jpg"
                                         onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600'"
@@ -431,8 +259,7 @@
                         @endauth
 
                         <!-- 4. Recruitment -->
-                        <a href="{{ route('recruitment.index') }}" class="{{ $cardClass }} reveal reveal-right"
-                            style="transition-delay: 300ms">
+                        <a href="{{ route('recruitment.index') }}" class="{{ $cardClass }}">
                             <div class="{{ $imgWrapperClass }}">
                                 <img src="/images/welcome/job-hiring.jpg"
                                     onerror="this.src='https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600'"
@@ -454,8 +281,7 @@
 
                         <!-- 6. Suggestion -->
                         @auth
-                            <a href="{{ route('suggestion.index') }}" class="{{ $cardClass }} reveal reveal-right"
-                                style="transition-delay: 400ms">
+                            <a href="{{ route('suggestion.index') }}" class="{{ $cardClass }}">
                                 <div class="{{ $imgWrapperClass }}">
                                     <img src="/images/welcome/suggestion.png"
                                         onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600'"
@@ -475,8 +301,7 @@
                                         class="fa-solid fa-arrow-right"></i></span>
                             </a>
                         @else
-                            <div class="{{ $cardClass }} cursor-pointer login-open-btn reveal reveal-right"
-                                style="transition-delay: 400ms">
+                            <div class="{{ $cardClass }} cursor-pointer login-open-btn">
                                 <div class="{{ $imgWrapperClass }}">
                                     <img src="/images/welcome/suggestion.png"
                                         onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600'"
@@ -501,15 +326,14 @@
                 <!-- Section 2: Management Dashboards (HA Only) -->
                 @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                     <div class="pt-8 border-t border-slate-100 dark:border-white/5">
-                        <div class="flex items-center gap-3 mb-6 reveal reveal-left">
+                        <div class="flex items-center gap-3 mb-6">
                             <div class="h-8 w-1 bg-blue-600 rounded-full"></div>
                             <h3 class="text-xl font-bold text-slate-800 dark:text-white">ระบบจัดการและวิเคราะห์ <span
                                     class="text-slate-400 font-medium text-sm ml-2">Management Dashboards</span></h3>
                         </div>
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                             <!-- 2. Manpower -->
-                            <a href="{{ route('manpower.dashboard') }}" class="{{ $cardClass }} reveal reveal-left"
-                                style="transition-delay: 100ms">
+                            <a href="{{ route('manpower.dashboard') }}" class="{{ $cardClass }}">
                                 <div class="{{ $imgWrapperClass }}">
                                     <img src="/images/welcome/manpower.jpg"
                                         onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=600'"
@@ -529,8 +353,7 @@
                             </a>
 
                             <!-- 7. Data Management -->
-                            <a href="{{ route('request.data') }}" class="{{ $cardClass }} reveal reveal-left"
-                                style="transition-delay: 200ms">
+                            <a href="{{ route('request.data') }}" class="{{ $cardClass }}">
                                 <div class="{{ $imgWrapperClass }}">
                                     <img src="/images/welcome/data-management.jpg"
                                         onerror="this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600'"
@@ -557,7 +380,7 @@
         <!-- ================= NEWS SECTION ================= -->
         <div id="news-grid" class="py-16 relative">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-end mb-8 reveal reveal-right">
+                <div class="flex justify-between items-end mb-8">
                     <div>
                         <h2 class="text-4xl font-bold mb-2">
                             <span class="text-red-600 dark:text-red-400">ข่าวสาร</span>
@@ -575,7 +398,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
                         <!-- Main Highlight -->
                         <div
-                            class="lg:col-span-7 group relative h-[400px] lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl shadow-slate-200 dark:shadow-black/50 cursor-pointer reveal reveal-left">
+                            class="lg:col-span-7 group relative h-[400px] lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl shadow-slate-200 dark:shadow-black/50 cursor-pointer">
                             <img src="{{ $highlight->image_path ? asset(is_array($highlight->image_path) ? $highlight->image_path[0] : $highlight->image_path) : 'https://placehold.co/1200x800/121418/FFF?text=News' }}"
                                 alt="{{ $highlight->title }}"
                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
@@ -605,8 +428,7 @@
                         </div>
 
                         <!-- Side News List -->
-                        <div
-                            class="lg:col-span-5 flex flex-col gap-4 h-[500px] overflow-y-auto no-scrollbar pr-2 reveal reveal-right">
+                        <div class="lg:col-span-5 flex flex-col gap-4 h-[500px] overflow-y-auto no-scrollbar pr-2">
                             @forelse($otherNews->take(4) as $item)
                                 <a href="{{ route('news.detail', $item->news_id) }}"
                                     class="group flex gap-4 p-4 bg-white dark:bg-[#1E2129] rounded-2xl border border-slate-100 dark:border-white/5 dark:hover:border-red-500/30 transition-all hover:shadow-lg dark:hover:shadow-none">

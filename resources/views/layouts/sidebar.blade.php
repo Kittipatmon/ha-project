@@ -126,24 +126,27 @@
                 </a> -->
                 @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                     <div class="relative group">
+                        @php
+                            $dashboardActive = request()->routeIs('leavereports.dashboard');
+                        @endphp
                         <button onclick="toggleDropdown('dropdown-dashboard')"
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl transition-all duration-200 {{ $dashboardActive ? 'bg-white/5 text-white shadow-sm' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}"
                             id="btn-dashboard">
                             <div class="flex items-center">
                                 <i id="dashboard-icon"
-                                    class="fa-solid fa-chart-pie text-sm w-6 text-center group-hover:text-white transition-colors mr-3"></i>
+                                    class="fa-solid fa-chart-pie text-sm w-6 text-center transition-colors mr-3 {{ $dashboardActive ? 'text-kumwell-red' : '' }}"></i>
                                 <span class="sidebar-text">Dashboard</span>
                             </div>
                             <i id="arrow-dashboard"
-                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200 {{ $dashboardActive ? 'rotate-180' : '' }}"></i>
                         </button>
 
-                        <div id="dropdown-dashboard" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <div id="dropdown-dashboard" class="{{ $dashboardActive ? '' : 'hidden' }} pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
                             <!-- <a href="#" class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                                Request HR
-                            </a> -->
+                                            Request HR
+                                        </a> -->
                             <a href="{{ route('leavereports.dashboard') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('leavereports.dashboard') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 ขาด ลา
                             </a>
 
@@ -157,20 +160,23 @@
                     </div>
 
                     <div class="relative group">
+                        @php
+                            $datapublicActive = request()->routeIs('news.*');
+                        @endphp
                         <button onclick="toggleDropdown('dropdown-datapublic')"
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl transition-all duration-200 {{ $datapublicActive ? 'bg-white/5 text-white' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}"
                             id="btn-datapublic">
                             <div class="flex items-center">
-                                <i id="icon-datapublic" class="fa-solid fa-database text-sm w-6 text-center mr-3"></i>
+                                <i id="icon-datapublic" class="fa-solid fa-database text-sm w-6 text-center mr-3 {{ $datapublicActive ? 'text-kumwell-red' : '' }}"></i>
                                 <span class="sidebar-text">ข้อมูลทั่วไป</span>
                             </div>
                             <i id="arrow-datapublic"
-                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200 {{ $datapublicActive ? 'rotate-180' : '' }}"></i>
                         </button>
 
-                        <div id="dropdown-datapublic" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <div id="dropdown-datapublic" class="{{ $datapublicActive ? '' : 'hidden' }} pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
                             <a href="{{ route('news.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('news.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - ข้อมูลข่าวสาร
                             </a>
                         </div>
@@ -184,28 +190,31 @@
 
                 @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                     <div class="relative group">
+                        @php
+                            $requestActive = request()->routeIs('request-categories.*') || request()->routeIs('request-types.*') || request()->routeIs('request-subtypes.*');
+                        @endphp
                         <button onclick="toggleDropdown('dropdown-request')"
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl transition-all duration-200 {{ $requestActive ? 'bg-white/5 text-white' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}"
                             id="btn-request">
                             <div class="flex items-center">
-                                <i id="icon-request" class="fa-solid fa-file-signature text-sm w-6 text-center mr-3"></i>
+                                <i id="icon-request" class="fa-solid fa-file-signature text-sm w-6 text-center mr-3 {{ $requestActive ? 'text-kumwell-red' : '' }}"></i>
                                 <span class="sidebar-text">Request Settings</span>
                             </div>
                             <i id="arrow-request"
-                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200 {{ $requestActive ? 'rotate-180' : '' }}"></i>
                         </button>
 
-                        <div id="dropdown-request" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <div id="dropdown-request" class="{{ $requestActive ? '' : 'hidden' }} pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
                             <a href="{{ route('request-categories.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('request-categories.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - ประเภทคำร้อง
                             </a>
                             <a href="{{ route('request-types.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('request-types.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - ตัวเลือกการร้องขอ
                             </a>
                             <a href="{{ route('request-subtypes.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('request-subtypes.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - ประเภทย่อย
                             </a>
                         </div>
@@ -219,32 +228,35 @@
 
                 @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                     <div class="relative group">
+                        @php
+                            $hrActive = request()->routeIs('users.*') || request()->routeIs('usertypes.*') || request()->routeIs('sections.*') || request()->routeIs('divisions.*') || request()->routeIs('departments.*');
+                        @endphp
                         <button onclick="toggleDropdown('dropdown-hr')"
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl transition-all duration-200 {{ $hrActive ? 'bg-white/5 text-white' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}"
                             id="btn-hr">
                             <div class="flex items-center">
-                                <i id="icon-hr" class="fa-solid fa-users-gear text-sm w-6 text-center mr-3"></i>
+                                <i id="icon-hr" class="fa-solid fa-users-gear text-sm w-6 text-center mr-3 {{ $hrActive ? 'text-kumwell-red' : '' }}"></i>
                                 <span class="sidebar-text">HR Settings</span>
                             </div>
                             <i id="arrow-hr"
-                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200 {{ $hrActive ? 'rotate-180' : '' }}"></i>
                         </button>
 
-                        <div id="dropdown-hr" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <div id="dropdown-hr" class="{{ $hrActive ? '' : 'hidden' }} pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
                             <a href="{{ route('users.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('users.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">-
                                 ข้อมูลพนักงาน</a>
                             <a href="{{ route('usertypes.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('usertypes.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">-
                                 ข้อมูลประเภทพนักงาน</a>
                             <a href="{{ route('sections.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('sections.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">-
                                 ข้อมูลสายงาน</a>
                             <a href="{{ route('divisions.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('divisions.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">-
                                 ข้อมูลฝ่าย</a>
                             <a href="{{ route('departments.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">-
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('departments.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">-
                                 ข้อมูลแผนก</a>
                         </div>
                         <div
@@ -256,24 +268,27 @@
 
                 @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                     <div class="relative group">
+                        @php
+                            $suggestionActive = request()->routeIs('suggestion.list');
+                        @endphp
                         <button onclick="toggleDropdown('dropdown-suggestion')"
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl transition-all duration-200 {{ $suggestionActive ? 'bg-white/5 text-white' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}"
                             id="btn-suggestion">
                             <div class="flex items-center">
-                                <i id="icon-suggestion" class="fa-solid fa-database text-sm w-6 text-center mr-3"></i>
+                                <i id="icon-suggestion" class="fa-solid fa-database text-sm w-6 text-center mr-3 {{ $suggestionActive ? 'text-kumwell-red' : '' }}"></i>
                                 <span class="sidebar-text">รายการร้องเรียน</span>
                             </div>
                             <i id="arrow-suggestion"
-                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200 {{ $suggestionActive ? 'rotate-180' : '' }}"></i>
                         </button>
 
-                        <div id="dropdown-suggestion" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                        <div id="dropdown-suggestion" class="{{ $suggestionActive ? '' : 'hidden' }} pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
                             <!-- <a href="{{ route('suggestion.dashboard') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                                - Dashboard
-                            </a> -->
+                                            class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                            - Dashboard
+                                        </a> -->
                             <a href="{{ route('suggestion.list') }}"
-                                class="flex justify-between items-center px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="flex justify-between items-center px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('suggestion.list') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 <span>- รับเรื่องร้องเรียน</span>
                                 @php
                                     $newSuggestionsCount = \App\Models\Suggestion::where('status', 'รอรับเรื่องคำร้อง')->count();
@@ -294,28 +309,31 @@
 
                 @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                     <div class="relative group">
+                        @php
+                            $trainingActive = request()->routeIs('backend.training.*');
+                        @endphp
                         <button onclick="toggleDropdown('dropdown-training')"
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl transition-all duration-200 {{ $trainingActive ? 'bg-white/5 text-white' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}"
                             id="btn-training">
                             <div class="flex items-center">
-                                <i id="icon-training" class="fa-solid fa-graduation-cap text-sm w-6 text-center mr-3"></i>
+                                <i id="icon-training" class="fa-solid fa-graduation-cap text-sm w-6 text-center mr-3 {{ $trainingActive ? 'text-kumwell-red' : '' }}"></i>
                                 <span class="sidebar-text">ระบบฝึกอบรมและพัฒนาทักษะ</span>
                             </div>
                             <i id="arrow-training"
-                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200 {{ $trainingActive ? 'rotate-180' : '' }}"></i>
                         </button>
 
-                        <div id="dropdown-training" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                            <a href="{{ route('backend.training.dashboard') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                                - ภาพรวม (Dashboard)
-                            </a>
+                        <div id="dropdown-training" class="{{ $trainingActive ? '' : 'hidden' }} pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+                            <!-- <a href="{{ route('backend.training.dashboard') }}"
+                                        class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                        - ภาพรวม (Dashboard)
+                                    </a> -->
                             <a href="{{ route('backend.training.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('backend.training.index') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - รายการข้อมูลการฝึกอบรม
                             </a>
                             <a href="{{ route('backend.training.applicants') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('backend.training.applicants') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - จัดการผู้สมัคร
                             </a>
                         </div>
@@ -329,32 +347,32 @@
 
                 @if(Auth::check() && (Auth::user()->hr_status == '0' || Auth::user()->employee_code == '11648'))
                     <div class="relative group">
+                        @php
+                            $recruitmentActive = request()->routeIs('backend.recruitment.*');
+                        @endphp
                         <button onclick="toggleDropdown('dropdown-recruitment')"
-                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                            class="w-full flex items-center justify-between px-3 py-1 rounded-xl transition-all duration-200 {{ $recruitmentActive ? 'bg-white/5 text-white' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}"
                             id="btn-recruitment">
                             <div class="flex items-center">
-                                <i id="icon-recruitment" class="fa-solid fa-user-plus text-sm w-6 text-center mr-3"></i>
+                                <i id="icon-recruitment" class="fa-solid fa-user-plus text-sm w-6 text-center mr-3 {{ $recruitmentActive ? 'text-kumwell-red' : '' }}"></i>
                                 <span class="sidebar-text">ระบบสรรหาบุคลากร</span>
                             </div>
                             <i id="arrow-recruitment"
-                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                                class="sidebar-text fa-solid fa-chevron-down text-xs transition-transform duration-200 {{ $recruitmentActive ? 'rotate-180' : '' }}"></i>
                         </button>
 
-                        <div id="dropdown-recruitment" class="hidden pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
-                            <a href="{{ route('backend.recruitment.dashboard') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
-                                - ภาพรวม (Dashboard)
-                            </a>
+                        <div id="dropdown-recruitment" class="{{ $recruitmentActive ? '' : 'hidden' }} pl-10 pr-2 py-1 space-y-1 transition-all duration-300">
+
                             <a href="{{ route('backend.recruitment.requests.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('backend.recruitment.requests.*') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - คำขอเปิดรับสมัครพนักงาน
                             </a>
                             <a href="{{ route('backend.recruitment.posts.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('backend.recruitment.posts.*') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - ประกาศรับสมัครงาน
                             </a>
                             <a href="{{ route('backend.recruitment.applications.index') }}"
-                                class="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50 transition-colors">
+                                class="block px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('backend.recruitment.applications.*') ? 'bg-gray-800/80 text-kumwell-red font-bold shadow-sm' : 'text-gray-500 hover:text-kumwell-red hover:bg-gray-800/50' }}">
                                 - รายชื่อผู้สมัคร
                             </a>
                         </div>
@@ -390,8 +408,12 @@
 
                 <div id="user-profile" class="flex items-center gap-3">
                     <div
-                        class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-gray-600 flex items-center justify-center text-white font-bold shadow-md shrink-0">
-                        <i class="fa-solid fa-user"></i>
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-gray-600 flex items-center justify-center text-white font-bold shadow-md shrink-0 overflow-hidden">
+                        @if(Auth::user()->photo_user)
+                            <img src="{{ asset(Auth::user()->photo_user) }}" alt="Avatar" class="w-full h-full object-cover">
+                        @else
+                            <i class="fa-solid fa-user"></i>
+                        @endif
                     </div>
 
                     <div class="sidebar-text flex-1 min-w-0">
@@ -468,7 +490,24 @@
                     }
                 }
             });
+
+            // Restore Scroll Position (Do this after dropdowns to ensure height is correct)
+            const sidebarNav = document.querySelector('.sidebar-scroll');
+            const savedScrollPos = localStorage.getItem('sidebar-scroll-pos');
+            if (sidebarNav && savedScrollPos) {
+                sidebarNav.scrollTop = savedScrollPos;
+            }
         }
+
+        // Save Scroll Position on Scroll
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarNav = document.querySelector('.sidebar-scroll');
+            if (sidebarNav) {
+                sidebarNav.addEventListener('scroll', () => {
+                    localStorage.setItem('sidebar-scroll-pos', sidebarNav.scrollTop);
+                });
+            }
+        });
 
         function updateSidebarState() {
             if (isSidebarOpen) {

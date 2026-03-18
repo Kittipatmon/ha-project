@@ -14,11 +14,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;400;600&family=Prompt:wght@200;400;600&display=swap"
         rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Prompt', 'Kanit', sans-serif;
-        }
-    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -37,6 +32,11 @@
             }
         }
     </script>
+    <style>
+        body {
+            font-family: 'Prompt', 'Kanit', sans-serif;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
 
     <!-- Scripts -->
@@ -70,8 +70,8 @@
 </head>
 
 
-<body class="overflow-x-hidden min-h-screen flex flex-col">
-    <div class="flex-1 flex flex-col overflow-x-hidden">
+<body class="min-h-screen flex flex-col">
+    <div class="flex-1 flex flex-col">
         @include('layouts.training.navigation')
 
         <!-- Page Heading -->
@@ -106,28 +106,28 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     @stack('scripts')
     <script>
-                // Wire up dark/light toggles
-                (function () {
-                    const root = document.documentElement;
-                    function applyTheme(theme) {
-                        const isDark = theme === 'dark';
-                        root.classList.toggle('dark', isDark);
-                        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
-                        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (_) { }
-                        // sync all toggles
-                        document.querySelectorAll('[data-theme-toggle]')
-                            .forEach(el => { if ('checked' in el) el.checked = isDark; });
-                    }
-                    // initialize toggles
-                    const initialTheme = root.classList.contains('dark') ? 'dark' : 'light';
-                    document.querySelectorAll('[data-theme-toggle]').forEach(el => {
-                        if ('checked' in el) el.checked = (initialTheme === 'dark');
-                        el.addEventListener('change', () => applyTheme(el.checked ? 'dark' : 'light'));
-                    });
-                    // optional buttons
-                    document.querySelectorAll('[data-set-theme]')
-                        .forEach(btn => btn.addEventListener('click', () => applyTheme(btn.dataset.setTheme)));
-                })();
+        // Wire up dark/light toggles
+        (function () {
+            const root = document.documentElement;
+            function applyTheme(theme) {
+                const isDark = theme === 'dark';
+                root.classList.toggle('dark', isDark);
+                root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+                try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (_) { }
+                // sync all toggles
+                document.querySelectorAll('[data-theme-toggle]')
+                    .forEach(el => { if ('checked' in el) el.checked = isDark; });
+            }
+            // initialize toggles
+            const initialTheme = root.classList.contains('dark') ? 'dark' : 'light';
+            document.querySelectorAll('[data-theme-toggle]').forEach(el => {
+                if ('checked' in el) el.checked = (initialTheme === 'dark');
+                el.addEventListener('change', () => applyTheme(el.checked ? 'dark' : 'light'));
+            });
+            // optional buttons
+            document.querySelectorAll('[data-set-theme]')
+                .forEach(btn => btn.addEventListener('click', () => applyTheme(btn.dataset.setTheme)));
+        })();
     </script>
 </body>
 

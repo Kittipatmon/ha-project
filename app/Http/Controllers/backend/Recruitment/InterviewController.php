@@ -61,6 +61,25 @@ class InterviewController extends Controller
             }
             DB::table($tableName)->insert($pivotData);
 
+            // อัปเดตสถานะใบสมัครอัตโนมัติเป็น 'interview' ถ้ายังไม่ได้เปลี่ยน
+            $statusesToAutoUpdate = ['new', 'screening'];
+            if (in_array($application->status, $statusesToAutoUpdate)) {
+                $oldStatus = $application->status;
+                $application->update([
+                    'status' => 'interview',
+                    'screened_by' => Auth::id(),
+                    'screened_at' => now(),
+                ]);
+
+                \App\Models\Recruitment\StatusLog::create([
+                    'application_id' => $application->id,
+                    'old_status' => $oldStatus,
+                    'new_status' => 'interview',
+                    'changed_by' => Auth::id(),
+                    'remark' => 'เปลี่ยนสถานะอัตโนมัติเมื่อนัดสัมภาษณ์รอบที่ ' . $validated['interview_round'],
+                ]);
+            }
+
             // แจ้งเตือนผู้สมัครทางอีเมล
             if ($application->applicant && $application->applicant->email) {
                 try {

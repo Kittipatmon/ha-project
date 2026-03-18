@@ -83,6 +83,8 @@ Route::get('news-all', [NewsController::class, 'newsAll'])->name('news.newsAll')
 
 // Public Recruitment Routes
 Route::get('/recruitment', [App\Http\Controllers\Frontend\RecruitmentController::class, 'index'])->name('recruitment.index');
+Route::get('/recruitment/reports', [App\Http\Controllers\Frontend\RecruitmentController::class, 'requestReport'])->name('recruitment.reports')->middleware('auth');
+Route::get('/recruitment/reports/{id}', [App\Http\Controllers\Frontend\RecruitmentController::class, 'requestShow'])->name('recruitment.request_show')->middleware('auth');
 Route::get('/recruitment/job/{slug}', [App\Http\Controllers\Frontend\RecruitmentController::class, 'show'])->name('recruitment.show');
 Route::get('/recruitment/apply/{slug}', [App\Http\Controllers\Frontend\RecruitmentController::class, 'apply'])->name('recruitment.apply');
 Route::post('/recruitment/apply/{slug}', [App\Http\Controllers\Frontend\RecruitmentController::class, 'submitApplication'])->name('recruitment.submit');
@@ -125,6 +127,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('divisions', DivisionController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('users', UserController::class);
+    Route::post('users/profile/avatar', [UserController::class, 'updateAvatar'])->name('users.update_avatar');
     Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::resource('usertypes', UserTypeController::class);
     // Route::post('users/storeUser', [UserController::class, 'store'])->name('users.storeUser');
@@ -193,6 +196,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/requests/{recruitmentRequest}', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'show'])->name('requests.show');
         Route::post('/requests/{recruitmentRequest}/approve', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'approve'])->name('requests.approve');
         Route::post('/requests/{recruitmentRequest}/reject', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'reject'])->name('requests.reject');
+        Route::post('/requests/{recruitmentRequest}/update-approver', [App\Http\Controllers\Backend\Recruitment\RequestController::class, 'updateApprover'])->name('requests.update-approver');
 
         // Job Posts
         Route::get('/posts', [App\Http\Controllers\Backend\Recruitment\JobPostController::class, 'index'])->name('posts.index');

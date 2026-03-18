@@ -50,8 +50,8 @@
 </head>
 
 
-<body class="overflow-x-hidden min-h-screen flex flex-col">
-    <div class="flex-1 flex flex-col overflow-x-hidden">
+<body class="min-h-screen flex flex-col">
+    <div class="flex-1 flex flex-col">
         @include('layouts.manpower.navigation')
 
         <!-- Page Heading -->
@@ -86,6 +86,7 @@
     @include('layouts.footer')
  <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     @stack('scripts')
+    @stack('js')
     <script>
         // Wire up dark/light toggles
         (function(){

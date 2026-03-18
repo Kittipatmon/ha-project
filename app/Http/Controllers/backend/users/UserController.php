@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -317,5 +318,45 @@ public function update(Request $request, $id)
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'ลบข้อมูลพนักงานเรียบร้อยแล้ว');
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+        ]);
+
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $filename = time() . '_' . $user->employee_code . '.' . $file->getClientOriginalExtension();
+            
+            // Ensure directory exists
+            $path = public_path('images/profiles');
+            if (!File::exists($path)) {
+                File::makeDirectory($path, 0755, true);
+            }
+
+            // Delete old photo if exists
+            if ($user->photo_user && File::exists(public_path($user->photo_user))) {
+                File::delete(public_path($user->photo_user));
+            }
+
+            $file->move($path, $filename);
+            $user->photo_user = 'images/profiles/' . $filename;
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'อัปโหลดรูปภาพสำเร็จ',
+                'avatar_url' => asset($user->photo_user)
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'ไม่พบไฟล์รูปภาพ'], 400);
     }
 }

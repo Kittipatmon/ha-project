@@ -259,7 +259,7 @@
                                             <div class="space-y-2">
                                                 <label
                                                     class="text-[10px] font-bold text-gray-400 uppercase">ระดับการศึกษา</label>
-                                                <select :name="'education['+index+'][level]'" required
+                                                <select :name="'education['+index+'][level]'" required x-model="edu.level"
                                                     class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-kumwell-red">
                                                     <option value="">เลือก...</option>
                                                     <option value="มัธยมศึกษา">มัธยมศึกษา</option>
@@ -272,37 +272,37 @@
                                             <div class="md:col-span-2 space-y-2">
                                                 <label
                                                     class="text-[10px] font-bold text-gray-400 uppercase">ชื่อสถาบัน</label>
-                                                <input type="text" :name="'education['+index+'][institution_name]'" required
+                                                <input type="text" :name="'education['+index+'][institution_name]'" required x-model="edu.institution_name"
                                                     class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-kumwell-red">
                                             </div>
                                             <div class="space-y-2">
                                                 <label class="text-[10px] font-bold text-gray-400 uppercase">เกรดเฉลี่ย
                                                     (GPA)</label>
-                                                <input type="number" step="0.01" min="0" max="4.00" :name="'education['+index+'][gpa]'"
+                                                <input type="number" step="0.01" min="0" max="4.00" :name="'education['+index+'][gpa]'" x-model="edu.gpa"
                                                     class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-kumwell-red"
                                                     placeholder="0.00 - 4.00">
                                             </div>
                                             <div class="space-y-2">
                                                 <label class="text-[10px] font-bold text-gray-400 uppercase">คณะ</label>
-                                                <input type="text" :name="'education['+index+'][faculty]'"
+                                                <input type="text" :name="'education['+index+'][faculty]'" x-model="edu.faculty"
                                                     class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-kumwell-red">
                                             </div>
                                             <div class="space-y-2">
                                                 <label
                                                     class="text-[10px] font-bold text-gray-400 uppercase">สาขาวิชา</label>
-                                                <input type="text" :name="'education['+index+'][major]'"
+                                                <input type="text" :name="'education['+index+'][major]'" x-model="edu.major"
                                                     class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-kumwell-red">
                                             </div>
                                             <div class="space-y-2">
                                                 <label
                                                     class="text-[10px] font-bold text-gray-400 uppercase">ปีที่เริ่ม</label>
-                                                <input type="text" :name="'education['+index+'][start_year]'"
+                                                <input type="text" :name="'education['+index+'][start_year]'" x-model="edu.start_year"
                                                     class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-kumwell-red"
                                                     placeholder="เช่น 2560">
                                             </div>
                                             <div class="space-y-2">
                                                 <label class="text-[10px] font-bold text-gray-400 uppercase">ปีที่จบ</label>
-                                                <input type="text" :name="'education['+index+'][end_year]'"
+                                                <input type="text" :name="'education['+index+'][end_year]'" x-model="edu.end_year"
                                                     class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-kumwell-red"
                                                     placeholder="เช่น 2564">
                                             </div>
@@ -346,49 +346,49 @@
                                                 <div class="md:col-span-2 space-y-2">
                                                     <label
                                                         class="text-[10px] font-bold text-gray-400 uppercase">ชื่อบริษัท</label>
-                                                    <input type="text" :name="'experience['+index+'][company_name]'"
+                                                    <input type="text" :name="'experience['+index+'][company_name]'" x-model="exp.company_name"
                                                         :required="hasExperience" :disabled="!hasExperience"
                                                         class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-kumwell-red">
                                                 </div>
                                                 <div class="md:col-span-2 space-y-2">
                                                     <label
                                                         class="text-[10px] font-bold text-gray-400 uppercase">ตำแหน่ง</label>
-                                                    <input type="text" :name="'experience['+index+'][position]'"
+                                                    <input type="text" :name="'experience['+index+'][position]'" x-model="exp.position"
                                                         :required="hasExperience" :disabled="!hasExperience"
                                                         class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-kumwell-red">
                                                 </div>
                                                 <div class="space-y-2">
                                                     <label
                                                         class="text-[10px] font-bold text-gray-400 uppercase">วันที่เริ่มงาน</label>
-                                                    <input type="date" :name="'experience['+index+'][start_date]'"
+                                                    <input type="date" :name="'experience['+index+'][start_date]'" x-model="exp.start_date"
                                                         :disabled="!hasExperience"
                                                         class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-kumwell-red">
                                                 </div>
                                                 <div class="space-y-2">
                                                     <label
                                                         class="text-[10px] font-bold text-gray-400 uppercase">วันที่สิ้นสุด</label>
-                                                    <input type="date" :name="'experience['+index+'][end_date]'"
+                                                    <input type="date" :name="'experience['+index+'][end_date]'" x-model="exp.end_date"
                                                         :disabled="!hasExperience"
                                                         class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-kumwell-red">
                                                 </div>
                                                 <div class="space-y-2">
                                                     <label
                                                         class="text-[10px] font-bold text-gray-400 uppercase">เงินเดือนสุดท้าย</label>
-                                                    <input type="number" :name="'experience['+index+'][salary]'"
+                                                    <input type="number" :name="'experience['+index+'][salary]'" x-model="exp.salary"
                                                         :disabled="!hasExperience"
                                                         class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-kumwell-red">
                                                 </div>
                                                 <div class="md:col-span-3 space-y-2">
                                                     <label
                                                         class="text-[10px] font-bold text-gray-400 uppercase">รายละเอียดงานโดยย่อ</label>
-                                                    <input type="text" :name="'experience['+index+'][job_detail]'"
+                                                    <input type="text" :name="'experience['+index+'][job_detail]'" x-model="exp.job_detail"
                                                         :disabled="!hasExperience"
                                                         class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-kumwell-red">
                                                 </div>
                                                 <div class="md:col-span-4 space-y-2">
                                                     <label
                                                         class="text-[10px] font-bold text-gray-400 uppercase">เหตุผลที่ลาออก</label>
-                                                    <input type="text" :name="'experience['+index+'][reason_for_leaving]'"
+                                                    <input type="text" :name="'experience['+index+'][reason_for_leaving]'" x-model="exp.reason_for_leaving"
                                                         :disabled="!hasExperience"
                                                         class="w-full bg-white dark:bg-slate-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-kumwell-red">
                                                 </div>

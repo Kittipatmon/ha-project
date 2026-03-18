@@ -63,7 +63,31 @@ class ApplicantController extends Controller
             'jobPost.jobPosition',
             'documents',
             'statusLogs.user',
+            'interviews.interviewers',
+            'interviews.scores',
         ])->findOrFail($id);
+
+        // อัปเดตสถานะอัตโนมัติ ถ้ามีการนัดสัมภาษณ์แล้ว แต่สถานะยังเป็น new/screening
+        if ($application->interviews->count() > 0 && in_array($application->status, ['new', 'screening'])) {
+            $oldStatus = $application->status;
+            $application->update([
+                'status' => 'interview',
+                'screened_by' => Auth::id(),
+                'screened_at' => now(),
+            ]);
+
+            StatusLog::create([
+                'application_id' => $application->id,
+                'old_status' => $oldStatus,
+                'new_status' => 'interview',
+                'changed_by' => Auth::id(),
+                'remark' => 'เปลี่ยนสถานะอัตโนมัติ — ตรวจพบว่ามีการนัดสัมภาษณ์แล้ว',
+            ]);
+
+            // Refresh เพื่อให้ view แสดงสถานะใหม่
+            $application->refresh();
+            $application->load('statusLogs.user');
+        }
 
         $interviewers = \App\Models\User::orderBy('first_name')->get();
 

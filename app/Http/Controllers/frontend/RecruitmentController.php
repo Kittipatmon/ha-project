@@ -8,6 +8,9 @@ use App\Models\Recruitment\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ApplicationReceived;
+use App\Models\Recruitment\RecruitmentRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class RecruitmentController extends Controller
 {
@@ -287,5 +290,44 @@ class RecruitmentController extends Controller
     {
         $post = JobPost::where('slug', $slug)->firstOrFail();
         return view('frontend.recruitment.success', compact('post'));
+    }
+
+    public function requestReport()
+    {
+        $user = Auth::user();
+        
+        // Authorization: Only Managers, Executives, or HR (hr_status=0)
+        // Managers/Executives are determined by being assigned to any request or having specific roles
+        // For simplicity, we check if they are in any approver field or have hr_status = 0
+        
+        $query = RecruitmentRequest::with(['department', 'jobPosition', 'requester', 'managerApprover', 'executiveApprover', 'targetManagerApprover', 'targetExecutiveApprover'])
+            ->orderBy('created_at', 'desc');
+
+        // If not HR, filter by where they are the manager or executive approver
+        if ($user->hr_status != 0) {
+            $query->where(function($q) use ($user) {
+                $q->where('approver_manager_id', $user->id)
+                  ->orWhere('approver_executive_id', $user->id);
+            });
+        }
+
+        $requests = $query->paginate(15);
+
+        return view('frontend.recruitment.report', compact('requests'));
+    }
+
+    public function requestShow($id)
+    {
+        $user = Auth::user();
+        $recruitmentRequest = RecruitmentRequest::with(['department', 'jobPosition', 'requester', 'managerApprover', 'executiveApprover', 'targetManagerApprover', 'targetExecutiveApprover'])->findOrFail($id);
+
+        // Authorization check
+        if ($user->hr_status != 0 && 
+            $user->id != $recruitmentRequest->approver_manager_id && 
+            $user->id != $recruitmentRequest->approver_executive_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('frontend.recruitment.request_show', compact('recruitmentRequest'));
     }
 }

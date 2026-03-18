@@ -52,8 +52,8 @@
 </head>
 
 
-<body class="overflow-x-hidden min-h-screen flex flex-col">
-    <div class="flex-1 flex flex-col overflow-x-hidden">
+<body class="min-h-screen flex flex-col">
+    <div class="flex-1 flex flex-col">
         @include('layouts.suggestion.navigation')
 
         <!-- Page Heading -->

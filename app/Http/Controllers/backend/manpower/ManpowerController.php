@@ -148,8 +148,37 @@ class ManpowerController extends Controller
             'probationUpcoming' => $probationUpcoming,
             'filter' => $filter,
             'startDate' => $startDate,
-            'endDate' => $endDate
+            'endDate' => $endDate,
+            'yearlyComparisonData' => $this->getMonthlyHiringComparison(),
+            // Extra data for ApexCharts
+            'divLabels' => $divisionStats->pluck('division_name')->toArray(),
+            'divData' => $divisionStats->pluck('count')->toArray(),
+            'secLabels' => $sectionStats->pluck('section_code')->toArray(),
+            'secData' => $sectionStats->pluck('count')->toArray(),
+            'wpLabels' => $workplaceStats->pluck('workplace')->toArray(),
+            'wpData' => $workplaceStats->pluck('count')->toArray(),
         ];
+    }
+
+    private function getMonthlyHiringComparison()
+    {
+        $hiringRaw = User::selectRaw('YEAR(startwork_date) as year, MONTH(startwork_date) as month, COUNT(*) as total')
+            ->whereNotNull('startwork_date')
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        $comparisonData = [];
+        foreach ($hiringRaw as $row) {
+            $yearStr = (string) ($row->year + 543);
+            if (!isset($comparisonData[$yearStr])) {
+                $comparisonData[$yearStr] = array_fill(1, 12, 0);
+            }
+            $comparisonData[$yearStr][$row->month] = (int) $row->total;
+        }
+
+        return $comparisonData;
     }
 
     public function exportExcel(Request $request)

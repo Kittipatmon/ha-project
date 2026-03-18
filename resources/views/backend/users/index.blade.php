@@ -2,22 +2,19 @@
 @section('content')
 
 <div>
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <!-- <button onclick="add_user_modal.showModal()" class="btn btn-success text-white w-full md:w-auto shadow-sm">
-            <i class="fa-solid fa-plus mr-1"></i>
-            เพิ่มพนักงานใหม่
-        </button> -->
-        <a href="{{ route('users.create') }}" class="btn btn-success text-white w-full md:w-auto shadow-sm">
-            <i class="fa-solid fa-plus mr-1"></i>
-            เพิ่มพนักงานใหม่
-        </a>
-        <h1 class="text-2xl text-red-600 font-bold text-center flex-grow">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+        <h1 class="text-2xl text-red-600 font-bold text-center md:text-left flex-grow w-full md:w-auto">
             ข้อมูลพนักงาน
         </h1>
-
-        <button type="button" id="toggle-filter" class="btn btn-warning btn-sm w-full md:w-auto shadow-sm">
-            <i class="fa-solid fa-filter mr-1"></i> Filter
-        </button>
+        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <a href="{{ route('users.create') }}" class="btn btn-success text-white w-full sm:w-auto shadow-sm">
+                <i class="fa-solid fa-plus mr-1"></i>
+                เพิ่มพนักงานใหม่
+            </a>
+            <button type="button" id="toggle-filter" class="btn btn-warning btn-sm w-full sm:w-auto shadow-sm">
+                <i class="fa-solid fa-filter mr-1"></i> Filter
+            </button>
+        </div>
     </div>
 
     @if ($errors->any())

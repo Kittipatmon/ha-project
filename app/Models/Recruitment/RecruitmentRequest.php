@@ -29,6 +29,8 @@ class RecruitmentRequest extends Model
         'approved_at_manager',
         'approved_by_executive',
         'approved_at_executive',
+        'approver_manager_id',
+        'approver_executive_id',
         'remarks',
     ];
 
@@ -61,6 +63,16 @@ class RecruitmentRequest extends Model
     public function executiveApprover(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by_executive');
+    }
+
+    public function targetManagerApprover(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approver_manager_id');
+    }
+
+    public function targetExecutiveApprover(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approver_executive_id');
     }
 
     public function jobPosts(): HasMany

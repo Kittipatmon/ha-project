@@ -182,6 +182,31 @@ class TrainingController extends Controller
             ->take(10)
             ->get();
 
+        // 5. Monthly Comparison Logic (Multi-Year)
+        $monthlyRaw = TrainingApply::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as total')
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        $comparisonData = [];
+        foreach ($monthlyRaw as $row) {
+            $yearStr = (string)($row->year + 543);
+            if (!isset($comparisonData[$yearStr])) {
+                $comparisonData[$yearStr] = array_fill(1, 12, 0); // Fill months 1-12 with 0
+            }
+            $comparisonData[$yearStr][$row->month] = (int)$row->total;
+        }
+
+        // Reformat for ApexCharts series
+        $monthlySeries = [];
+        foreach ($comparisonData as $year => $months) {
+            $monthlySeries[] = [
+                'name' => 'ปี ' . $year,
+                'data' => array_values($months) // Array of 12 counts
+            ];
+        }
+
         return view('training.dashboard', [
             'labels' => $labels,
             'data' => $data,
@@ -200,6 +225,7 @@ class TrainingController extends Controller
             'yearlyLabels' => $yearlyLabels,
             'yearlyCounts' => $yearlyCounts,
             'growth' => $growth,
+            'monthlySeries' => $monthlySeries,
         ]);
     }
 }

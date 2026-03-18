@@ -77,6 +77,32 @@
                     <input type="number" name="salary_max"
                         class="w-full bg-gray-50 dark:bg-kumwell-dark border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-kumwell-red transition-all">
                 </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">ผู้อนุมัติขั้นต้น (Manager Approver)</label>
+                    <select name="approver_manager_id"
+                        class="w-full bg-gray-50 dark:bg-kumwell-dark border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-kumwell-red transition-all select2-approver"
+                        required>
+                        <option value="">เลือกผู้อนุมัติ</option>
+                        @foreach($approvers as $approver)
+                            <option value="{{ $approver->id }}">{{ $approver->fullname }} ({{ $approver->position }})</option>
+                        @endforeach
+                    </select>
+                    @error('approver_manager_id') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">ผู้อนุมัติสูงสุด (Executive Approver)</label>
+                    <select name="approver_executive_id"
+                        class="w-full bg-gray-50 dark:bg-kumwell-dark border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-kumwell-red transition-all select2-approver"
+                        required>
+                        <option value="">เลือกผู้อนุมัติ</option>
+                        @foreach($approvers as $approver)
+                            <option value="{{ $approver->id }}">{{ $approver->fullname }} ({{ $approver->position }})</option>
+                        @endforeach
+                    </select>
+                    @error('approver_executive_id') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                </div>
             </div>
 
             <div class="space-y-2">
@@ -110,4 +136,62 @@
             </div>
         </form>
     </div>
+@endsection
+
+@section('scripts')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2-approver').select2({
+                placeholder: "เลือกผู้อนุมัติ",
+                allowClear: false,
+                width: '100%'
+            });
+        });
+    </script>
+    <style>
+        .select2-container--default .select2-selection--single {
+            background-color: rgb(249 250 251 / var(--tw-bg-opacity)); /* bg-gray-50 */
+            border: 1px solid rgb(229 231 235 / var(--tw-border-opacity)); /* border-gray-200 */
+            border-radius: 0.75rem; /* rounded-xl */
+            height: 42px;
+            display: flex;
+            align-items: center;
+        }
+        .dark .select2-container--default .select2-selection--single {
+            background-color: #121418; /* bg-kumwell-dark */
+            border-color: rgb(55 65 81 / var(--tw-border-opacity)); /* border-gray-700 */
+            color: white;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: inherit;
+            padding-left: 1rem;
+        }
+        .dark .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: rgb(209 213 219); /* text-gray-300 */
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px;
+        }
+        .select2-dropdown {
+            border-radius: 0.75rem;
+            border-color: rgb(229 231 235);
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+        .dark .select2-dropdown {
+            background-color: #1E2129;
+            border-color: rgb(55 65 81);
+            color: white;
+        }
+        .dark .select2-search__field {
+            background-color: #121418;
+            border-color: rgb(55 65 81);
+            color: white;
+        }
+        .select2-results__option--highlighted[aria-selected] {
+            background-color: #D71920 !important;
+        }
+    </style>
 @endsection

@@ -137,35 +137,66 @@
                 }
                 $('#published_date').val(pd);
                 $('#is_active').prop('checked', data.is_active);
-                // Images preview (multiple)
+                // Images preview (multiple) with individual delete
                 let imgHtml = '';
                 if (Array.isArray(data.image_path) && data.image_path.length) {
-                    data.image_path.forEach(function(p){
-                        imgHtml += `<img src="${p}" class="h-16 w-16 object-cover rounded-md inline-block mr-2 mb-2">`;
+                    data.image_path.forEach(function(p, index){
+                        imgHtml += `
+                            <div class="relative group inline-block mr-2 mb-2">
+                                <img src="${p}" class="h-20 w-20 object-cover rounded-md border border-gray-200 dark:border-gray-700">
+                                <button type="button" class="remove-old-image absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity" data-path="${p}">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <input type="hidden" name="existing_images[]" value="${p}">
+                            </div>`;
                     });
-                } else if (typeof data.image_path === 'string' && data.image_path) {
-                    imgHtml = `<img src="/${data.image_path}" class="h-16 w-16 object-cover rounded-md">`;
                 } else {
-                    imgHtml = '<span>ไม่มีภาพ</span>';
+                    imgHtml = '<span class="text-sm text-gray-500">ไม่มีภาพ</span>';
                 }
                 $('#images_preview').html(imgHtml);
 
-                // Files preview (multiple)
+                // Files preview (multiple) with individual delete
                 let fileHtml = '';
                 if (Array.isArray(data.file_news) && data.file_news.length) {
                     data.file_news.forEach(function(f){
                         const name = f.split('/').pop();
-                        fileHtml += `<div><a href="/${f}" target="_blank" class="text-blue-500 underline">${name}</a></div>`;
+                        fileHtml += `
+                            <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700/50 rounded-md group">
+                                <a href="/${f}" target="_blank" class="text-blue-500 hover:text-blue-600 underline truncate flex-grow mr-2 text-xs" title="${name}">${name}</a>
+                                <button type="button" class="remove-old-file text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity" data-path="${f}">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                                <input type="hidden" name="existing_files[]" value="${f}">
+                            </div>`;
                     });
-                } else if (typeof data.file_news === 'string' && data.file_news) {
-                    const name = data.file_news.split('/').pop();
-                    fileHtml = `<a href="/${data.file_news}" target="_blank" class="text-blue-500 underline">${name}</a>`;
                 } else {
-                    fileHtml = '<span>ไม่มีไฟล์แนบ</span>';
+                    fileHtml = '<span class="text-sm text-gray-500">ไม่มีไฟล์แนบ</span>';
                 }
                 $('#file_news_preview').html(fileHtml);
                 $('#link_news').val(data.link_news);
                 $('#newsModal').removeClass('hidden');
+            });
+        });
+
+        // Handle removing existing images/files in UI
+        $('body').on('click', '.remove-old-image, .remove-old-file', function() {
+            const path = $(this).data('path');
+            const isImage = $(this).hasClass('remove-old-image');
+            const inputName = isImage ? 'deleted_images[]' : 'deleted_files[]';
+            
+            // Add hidden input to track deletion
+            $('#newsForm').append(`<input type="hidden" name="${inputName}" value="${path}">`);
+            
+            // Remove from UI
+            $(this).closest(isImage ? '.relative' : '.flex').fadeOut(300, function() {
+                $(this).remove();
+                
+                // Show "none" message if empty
+                if (isImage && $('#images_preview').children().length === 0) {
+                    $('#images_preview').html('<span class="text-sm text-gray-500">ไม่มีภาพ</span>');
+                } else if (!isImage && $('#file_news_preview').children().length === 0) {
+                    $('#file_news_preview').html('<span class="text-sm text-gray-500">ไม่มีไฟล์แนบ</span>');
+                }
             });
         });
 
@@ -175,26 +206,62 @@
             var formData = new FormData(this);
             var newsId = $('#news_id').val();
             var url = newsId ? '/news/' + newsId : '/news';
-            var method = newsId ? 'POST' : 'POST'; 
+            
+            // Show loading state
+            const $btn = $('#saveBtn');
+            const $spinner = $('#btn-spinner');
+            $btn.prop('disabled', true).addClass('opacity-75 cursor-not-allowed');
+            $spinner.removeClass('hidden');
+
             if(newsId) {
                 formData.append('_method', 'PUT');
             }
 
-
             $.ajax({
                 url: url,
-                method: method,
+                method: 'POST', // Always POST when using FormData with _method: PUT
                 data: formData,
                 contentType: false,
                 processData: false,
                 success: function(response) {
                     $('#newsModal').addClass('hidden');
-                    // You can either reload the page or update the table dynamically
-                    location.reload(); 
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'บันทึกสำเร็จ',
+                            text: 'ข้อมูลข่าวสารถูกบันทึกเรียบร้อยแล้ว',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        location.reload();
+                    }
                 },
                 error: function(xhr) {
-                    // Handle errors
-                    console.log(xhr.responseText);
+                    // Reset loading state
+                    $btn.prop('disabled', false).removeClass('opacity-75 cursor-not-allowed');
+                    $spinner.addClass('hidden');
+
+                    let errorMsg = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
+                    
+                    if (xhr.status === 422) { // Validation error
+                        const errors = xhr.responseJSON.errors;
+                        errorMsg = Object.values(errors).flat().join('<br>');
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ไม่สามารถบันทึกได้',
+                            html: errorMsg
+                        });
+                    } else {
+                        alert(errorMsg.replace(/<br>/g, '\n'));
+                    }
                 }
             });
         });

@@ -32,9 +32,9 @@ class NewsController extends Controller
             'link_news' => 'nullable|string|max:255',
             'published_date' => 'nullable|date',
             'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
             'file_news' => 'nullable|array',
-            'file_news.*' => 'file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:5120',
+            'file_news.*' => 'file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:20480', // 20MB
         ]);
 
         $imagePaths = [];
@@ -55,17 +55,21 @@ class NewsController extends Controller
             }
         }
 
-        $news = News::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'published_date' => $request->published_date,
-            'is_active' => $request->has('is_active'),
-            'image_path' => $imagePaths,
-            'file_news' => $fileNewsPaths,
-            'link_news' => $request->link_news,
-        ]);
+        try {
+            $news = News::create([
+                'title' => $request->title,
+                'content' => $request->input('content'),
+                'published_date' => $request->published_date,
+                'is_active' => $request->has('is_active'),
+                'image_path' => $imagePaths,
+                'file_news' => $fileNewsPaths,
+                'link_news' => $request->link_news,
+            ]);
 
-        return response()->json($news);
+            return response()->json($news);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' . $e->getMessage()], 500);
+        }
     }
 
     public function edit(News $news)
@@ -81,14 +85,40 @@ class NewsController extends Controller
             'link_news' => 'nullable|string|max:255',
             'published_date' => 'nullable|date',
             'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
             'file_news' => 'nullable|array',
-            'file_news.*' => 'file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:5120',
+            'file_news.*' => 'file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:20480', // 20MB
         ]);
 
         // Normalize existing paths to arrays
         $existingImages = is_array($news->image_path) ? $news->image_path : ($news->image_path ? [$news->image_path] : []);
         $existingFiles = is_array($news->file_news) ? $news->file_news : ($news->file_news ? [$news->file_news] : []);
+
+        // Process deletions of existing images
+        if ($request->has('deleted_images')) {
+            foreach ($request->deleted_images as $path) {
+                if (($key = array_search($path, $existingImages)) !== false) {
+                    if (File::exists(public_path($path))) {
+                        File::delete(public_path($path));
+                    }
+                    unset($existingImages[$key]);
+                }
+            }
+            $existingImages = array_values($existingImages); // Re-index
+        }
+
+        // Process deletions of existing files
+        if ($request->has('deleted_files')) {
+            foreach ($request->deleted_files as $path) {
+                if (($key = array_search($path, $existingFiles)) !== false) {
+                    if (File::exists(public_path($path))) {
+                        File::delete(public_path($path));
+                    }
+                    unset($existingFiles[$key]);
+                }
+            }
+            $existingFiles = array_values($existingFiles); // Re-index
+        }
 
         $newImagePaths = $existingImages;
         if ($request->hasFile('images')) {
@@ -108,17 +138,21 @@ class NewsController extends Controller
             }
         }
 
-        $news->update([
-            'title' => $request->title,
-            'content' => $request->content,
-            'published_date' => $request->published_date,
-            'is_active' => $request->has('is_active'),
-            'image_path' => $newImagePaths,
-            'file_news' => $newFilePaths,
-            'link_news' => $request->link_news,
-        ]);
+        try {
+            $news->update([
+                'title' => $request->title,
+                'content' => $request->input('content'),
+                'published_date' => $request->published_date,
+                'is_active' => $request->has('is_active'),
+                'image_path' => $newImagePaths,
+                'file_news' => $newFilePaths,
+                'link_news' => $request->link_news,
+            ]);
 
-        return response()->json($news);
+            return response()->json($news);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'เกิดข้อผิดพลาดในการแก้ไขข้อมูล: ' . $e->getMessage()], 500);
+        }
     }
 
     public function destroy(News $news)
@@ -138,7 +172,7 @@ class NewsController extends Controller
                 File::delete(public_path($fp));
             }
         }
-        
+
         $news->delete();
         return response()->json(['success' => 'News deleted successfully.']);
     }

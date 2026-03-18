@@ -112,7 +112,19 @@
                             <div>
                                 <p
                                     class="text-sm font-bold @if($recruitmentRequest->approved_by_manager) text-green-600 @else text-gray-500 @endif">
-                                    หัวหน้างาน (Manager)</p>
+                                    หัวหน้างาน (Manager) 
+                                    @if($recruitmentRequest->targetManagerApprover)
+                                        <span class="text-[10px] font-medium text-gray-400">
+                                            (Target: {{ $recruitmentRequest->targetManagerApprover->fullname }})
+                                        </span>
+                                        @if(!$recruitmentRequest->approved_by_manager && (Auth::user()->hr_status == 0 || Auth::id() == $recruitmentRequest->requested_by))
+                                            <button onclick="openEditApproverModal('manager', '{{ $recruitmentRequest->approver_manager_id }}')" 
+                                                    class="text-kumwell-red hover:text-red-700 ml-1" title="แก้ไขผู้อนุมัติ">
+                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            </button>
+                                        @endif
+                                    @endif
+                                </p>
                                 @if($recruitmentRequest->approved_by_manager)
                                     <p class="text-xs text-gray-500">อนุมัติโดย:
                                         {{ $recruitmentRequest->managerApprover?->fullname ?? 'N/A' }}</p>
@@ -133,7 +145,19 @@
                             <div>
                                 <p
                                     class="text-sm font-bold @if($recruitmentRequest->approved_by_executive) text-green-600 @else text-gray-500 @endif">
-                                    ผู้บริหาร (Executive)</p>
+                                    ผู้บริหาร (Executive)
+                                    @if($recruitmentRequest->targetExecutiveApprover)
+                                        <span class="text-[10px] font-medium text-gray-400">
+                                            (Target: {{ $recruitmentRequest->targetExecutiveApprover->fullname }})
+                                        </span>
+                                        @if(!$recruitmentRequest->approved_by_executive && (Auth::user()->hr_status == 0 || Auth::id() == $recruitmentRequest->requested_by))
+                                            <button onclick="openEditApproverModal('executive', '{{ $recruitmentRequest->approver_executive_id }}')" 
+                                                    class="text-kumwell-red hover:text-red-700 ml-1" title="แก้ไขผู้อนุมัติ">
+                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            </button>
+                                        @endif
+                                    @endif
+                                </p>
                                 @if($recruitmentRequest->approved_by_executive)
                                     <p class="text-xs text-gray-500">อนุมัติโดย:
                                         {{ $recruitmentRequest->executiveApprover?->fullname ?? 'N/A' }}</p>
@@ -148,18 +172,31 @@
 
                     @if(in_array($recruitmentRequest->status, ['pending_manager', 'pending_executive']))
                         <div class="mt-8 space-y-3 pt-6 border-t border-gray-100 dark:border-gray-800">
-                            <form action="{{ route('backend.recruitment.requests.approve', $recruitmentRequest->id) }}"
-                                method="POST">
-                                @csrf
-                                <button type="submit"
-                                    class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-green-500/20 transition-all flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-check"></i>
-                                    อนุมัติคำขอ
-                                </button>
-                            </form>
+                            @php
+                                $canApprove = false;
+                                if (Auth::user()->hr_status == 0) {
+                                    $canApprove = true;
+                                } elseif ($recruitmentRequest->status === 'pending_manager' && $recruitmentRequest->approver_manager_id == Auth::id()) {
+                                    $canApprove = true;
+                                } elseif ($recruitmentRequest->status === 'pending_executive' && $recruitmentRequest->approver_executive_id == Auth::id()) {
+                                    $canApprove = true;
+                                }
+                            @endphp
+
+                            @if($canApprove)
+                                <form action="{{ route('backend.recruitment.requests.approve', $recruitmentRequest->id) }}"
+                                    method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-green-500/20 transition-all flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-check"></i>
+                                        อนุมัติคำขอ
+                                    </button>
+                                </form>
+                            @endif
                             <button onclick="toggleRejectModal()"
                                 class="w-full bg-white dark:bg-kumwell-dark border border-red-200 dark:border-red-900 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 font-bold py-2.5 rounded-xl transition-all">
-                                ปฏิเสธ
+                                ไม่อนุมัติ
                             </button>
                         </div>
                     @endif
@@ -183,7 +220,7 @@
     <!-- Simple Reject Modal (Mockup) -->
     <div id="rejectModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-kumwell-card rounded-3xl p-8 max-w-md w-full">
-            <h3 class="text-xl font-bold dark:text-white mb-4">ระบุเหตุผลที่ปฏิเสธ</h3>
+            <h3 class="text-xl font-bold dark:text-white mb-4">ระบุเหตุผลที่ไม่อนุมัติ</h3>
             <form action="{{ route('backend.recruitment.requests.reject', $recruitmentRequest->id) }}" method="POST"
                 class="space-y-4">
                 @csrf
@@ -192,9 +229,37 @@
                     placeholder="ระบุเหตุผล..." required></textarea>
                 <div class="flex gap-3">
                     <button type="button" onclick="toggleRejectModal()"
-                        class="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-bold">ยกเลิก</button>
+                        class="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-bold dark:text-white">ยกเลิก</button>
                     <button type="submit"
-                        class="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-bold">ยืนยันปฏิเสธ</button>
+                        class="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-bold">ยืนยัน</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Edit Approver Modal -->
+    <div id="editApproverModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-kumwell-card rounded-3xl p-8 max-w-md w-full">
+            <h3 class="text-xl font-bold dark:text-white mb-4">แก้ไขผู้อนุมัติ</h3>
+            <form action="{{ route('backend.recruitment.requests.update-approver', $recruitmentRequest->id) }}" method="POST"
+                class="space-y-4">
+                @csrf
+                <input type="hidden" name="approver_type" id="edit_approver_type">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">เลือกผู้อนุมัติใหม่</label>
+                    <div class="relative">
+                        <select name="approver_id" id="edit_approver_id" class="select2-edit-approver w-full">
+                            @foreach($approvers as $approver)
+                                <option value="{{ $approver->id }}">{{ $approver->fullname }} ({{ $approver->position }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeEditApproverModal()"
+                        class="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-bold dark:text-white">ยกเลิก</button>
+                    <button type="submit"
+                        class="flex-1 py-2.5 rounded-xl bg-kumwell-red text-white font-bold shadow-lg shadow-red-500/30 transition-all active:scale-95">บันทึก</button>
                 </div>
             </form>
         </div>
@@ -203,10 +268,83 @@
 @endsection
 
 @section('scripts')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        $(document).ready(function() {
+            $('.select2-edit-approver').select2({
+                placeholder: "เลือกผู้อนุมัติ",
+                allowClear: false,
+                width: '100%',
+                dropdownParent: $('#editApproverModal')
+            });
+        });
+
         function toggleRejectModal() {
             const modal = document.getElementById('rejectModal');
             modal.classList.toggle('hidden');
         }
+
+        function openEditApproverModal(type, currentId) {
+            document.getElementById('edit_approver_type').value = type;
+            $('#edit_approver_id').val(currentId).trigger('change');
+            document.getElementById('editApproverModal').classList.remove('hidden');
+        }
+
+        function closeEditApproverModal() {
+            document.getElementById('editApproverModal').classList.add('hidden');
+        }
     </script>
+    <style>
+        .select2-container--default .select2-selection--single {
+            background-color: rgb(249 250 251);
+            border: 1px solid rgb(229 231 235);
+            border-radius: 0.75rem;
+            height: 42px;
+            display: flex;
+            align-items: center;
+        }
+
+        .dark .select2-container--default .select2-selection--single {
+            background-color: #121418;
+            border-color: rgb(55 65 81);
+            color: white;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: inherit;
+            padding-left: 1rem;
+        }
+
+        .dark .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: rgb(209 213 219);
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px;
+        }
+
+        .select2-dropdown {
+            border-radius: 0.75rem;
+            border-color: rgb(229 231 235);
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .dark .select2-dropdown {
+            background-color: #1E2129;
+            border-color: rgb(55 65 81);
+            color: white;
+        }
+
+        .dark .select2-search__field {
+            background-color: #121418;
+            border-color: rgb(55 65 81);
+            color: white;
+        }
+
+        .select2-results__option--highlighted[aria-selected] {
+            background-color: #D71920 !important;
+        }
+    </style>
 @endsection
